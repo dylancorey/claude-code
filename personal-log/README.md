@@ -44,6 +44,18 @@ Per-category `fields`:
 Adding a category means adding one object to `CATS` in the page script — the form,
 the filter tabs, and the metadata line all read from it.
 
+## The extras
+
+| Feature | What it does |
+| --- | --- |
+| **Spin it** | Picks at random off the want-to list. Respects the active category filter, so "Food" + Spin only offers restaurants. |
+| **Order again** | Every `dish` you flagged on a food entry, in one list. Tap the place name to open the entry. |
+| **Year in review** | Per-year counts, top tags, who you were with most, first and last outing, cities, nights away. Year picker flips between years. |
+| **On this day** | A strip above the grid when today's month and day match an entry from an earlier year. Absent otherwise. |
+| **Away markers** | Set `home` (the top-level home base city, editable in Year in review). Any entry whose `city` doesn't contain it gets an Away chip and counts toward the away tally. Screen entries have no city, so they never count. |
+
+`home` lives alongside `hasSamples` and `entries` at the top of the JSON block.
+
 ## Telling Claude to update it
 
 Paste this into a Claude project's instructions:
@@ -54,6 +66,10 @@ Paste this into a Claude project's instructions:
 > or want to go to, update the ledger: read it with the Artifact tool, add or edit
 > the entry in the JSON block with id "entry-data", and publish back to the same
 > URL. Categories are food, screen, and live. Status is "logged" or "wishlist".
-> Keep my wording in the note.
+> Tags are lowercase. Keep my wording in the note.
+>
+> If I say what to order at a restaurant, put it in the food entry's "dish"
+> field — it feeds the Order this again list. "home" at the top level is my
+> home base city; anything logged in a different city is marked Away.
 
 Then: "Add Lucali to my ledger — went last night with Ari, get the calzone."

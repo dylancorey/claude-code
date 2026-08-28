@@ -294,6 +294,90 @@ dialog::backdrop { background: rgba(11,11,15,.6); }
   overflow-x: auto; border-left: 3px solid var(--ink);
 }
 
+/* ---------- tools ---------- */
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: 1.25rem; }
+.tool {
+  background: none; border: 1px solid var(--line-firm); color: var(--ink); cursor: pointer;
+  padding: .45rem .75rem; font-weight: 600; display: inline-flex; align-items: center; gap: .45rem;
+}
+.tool:hover { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.tool .n { font-family: var(--mono); font-size: .625rem; opacity: .55; font-variant-numeric: tabular-nums; }
+.tool:hover .n { opacity: .8; }
+.tools .spacer { flex: 1 1 auto; }
+
+/* ---------- on this day ---------- */
+.otd {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1rem;
+  margin-top: 1.5rem; padding: .875rem 1.125rem;
+  background: var(--wash); border-left: 4px solid var(--cat, var(--ink));
+}
+.otd .lede { color: var(--mute); }
+.otd button {
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--ink);
+  font-weight: 700; font-size: 1.0625rem; letter-spacing: -.02em;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.otd button:hover { color: var(--cat); }
+.chip-away { background: none; color: var(--mute); box-shadow: inset 0 0 0 1px var(--line-firm); }
+
+/* ---------- spin ---------- */
+.spin-stage { text-align: center; padding: 1.25rem 0 1.75rem; }
+.spin-kicker { color: var(--mute); margin: 0 0 .75rem; }
+.spin-name {
+  font-weight: 800; font-size: clamp(1.75rem, 5vw, 2.75rem); letter-spacing: -.045em;
+  line-height: 1.05; margin: 0; min-height: 1.1em; color: var(--cat, var(--ink));
+}
+.spin-rolling .spin-name { opacity: .35; }
+.spin-meta { color: var(--mute); margin: .75rem 0 0; }
+
+/* ---------- dishes ---------- */
+.dish {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem 1rem;
+  padding: .875rem 0; border-bottom: 1px solid var(--line);
+}
+.dish:last-child { border-bottom: 0; }
+.dish .what { font-weight: 600; font-size: 1.0625rem; flex: 1 1 16rem; }
+.dish .where {
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--mute);
+  text-decoration: underline; text-underline-offset: 3px; font-family: var(--mono); font-size: .75rem;
+}
+.dish .where:hover { color: var(--c-food); }
+
+/* ---------- year in review ---------- */
+.yearpick { display: flex; flex-wrap: wrap; gap: .375rem; margin-bottom: 1.25rem; }
+.tiles {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 1.75rem;
+}
+.tile { background: var(--paper); padding: .875rem 1rem; }
+.tile .v { font-weight: 800; font-size: 1.75rem; line-height: 1.05; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+.tile .k { color: var(--mute); font-family: var(--mono); font-size: .5625rem; letter-spacing: .1em; text-transform: uppercase; margin-top: .25rem; }
+.tile.food .v { color: var(--c-food); }
+.tile.screen .v { color: var(--c-screen); }
+.tile.live .v { color: var(--c-live); }
+.review h3 { margin: 0 0 .625rem; font-weight: 700; font-size: .875rem; letter-spacing: -.01em; }
+.review .block { margin-bottom: 1.75rem; }
+.review .none { color: var(--mute); margin: 0; }
+.bars { display: flex; flex-direction: column; gap: .5rem; }
+.bar { display: grid; grid-template-columns: minmax(4rem, 8rem) 1fr 2rem; gap: .75rem; align-items: center; }
+.bar .lbl { font-family: var(--mono); font-size: .6875rem; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar .track { display: block; height: 9px; background: var(--wash); }
+.bar .fill { display: block; height: 100%; background: var(--ink); }
+.bar .val { font-family: var(--mono); font-size: .6875rem; color: var(--mute); font-variant-numeric: tabular-nums; text-align: right; }
+.bookend { display: flex; flex-wrap: wrap; gap: .3rem .75rem; align-items: baseline; margin-bottom: .5rem; }
+.bookend .k { color: var(--mute); font-family: var(--mono); font-size: .5625rem; letter-spacing: .1em; text-transform: uppercase; min-width: 3.5rem; }
+.bookend button {
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--ink); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.bookend .when { color: var(--mute); font-family: var(--mono); font-size: .6875rem; }
+.homeset { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.homeset input {
+  background: var(--wash); border: 1px solid transparent; color: var(--ink);
+  padding: .45rem .625rem; font-weight: 500; min-width: 11rem; flex: 1 1 11rem;
+}
+.homeset input:focus { border-color: var(--ink); background: var(--paper); outline: none; }
+
 @media (max-width: 46rem) {
   .wrap { padding: 0 1.25rem 5rem; }
   .stats { gap: 0 1.5rem; }
@@ -423,9 +507,9 @@ dialog::backdrop { background: rgba(11,11,15,.6); }
     try {
       var parsed = JSON.parse(document.getElementById('entry-data').textContent);
       if (!parsed || !Array.isArray(parsed.entries)) throw new Error('shape');
-      return { hasSamples: !!parsed.hasSamples, entries: parsed.entries };
+      return { hasSamples: !!parsed.hasSamples, home: typeof parsed.home === 'string' ? parsed.home : '', entries: parsed.entries };
     } catch (err) {
-      return { hasSamples: false, entries: [] };
+      return { hasSamples: false, home: '', entries: [] };
     }
   }
 
@@ -494,6 +578,68 @@ dialog::backdrop { background: rgba(11,11,15,.6); }
     var parts = [entry.title, entry.note, entry['with'], CATS[catOf(entry)].label];
     if (entry.fields) Object.keys(entry.fields).forEach(function (k) { parts.push(entry.fields[k]); });
     return parts.concat(tagsOf(entry)).join(' ').toLowerCase();
+  }
+
+  function cityOf(entry) { return (entry.fields && entry.fields.city) || ''; }
+
+  function isAway(entry) {
+    var city = cityOf(entry).trim();
+    if (!state.home || !city) return false;
+    return city.toLowerCase().indexOf(state.home.trim().toLowerCase()) === -1;
+  }
+
+  function wishlist() {
+    return state.entries.filter(function (e) {
+      return e.status === 'wishlist' && (ui.cat === 'all' || catOf(e) === ui.cat);
+    });
+  }
+
+  function dishes() {
+    return state.entries.filter(function (e) { return catOf(e) === 'food' && e.fields && e.fields.dish; });
+  }
+
+  function onThisDay() {
+    var now = new Date();
+    var md = String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    var yr = String(now.getFullYear());
+    return state.entries.filter(function (e) {
+      return e.date && e.date.length === 10 && e.date.slice(5) === md && e.date.slice(0, 4) < yr;
+    }).sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+  }
+
+  function yearsWithEntries() {
+    var seen = Object.create(null);
+    state.entries.forEach(function (e) { if (e.date) seen[e.date.slice(0, 4)] = true; });
+    return Object.keys(seen).sort().reverse();
+  }
+
+  function topOf(map, n) {
+    return Object.keys(map)
+      .sort(function (a, b) { return map[b] - map[a] || a.localeCompare(b); })
+      .slice(0, n).map(function (k) { return { key: k, n: map[k] }; });
+  }
+
+  function reviewFor(year) {
+    var r = { year: year, total: 0, cat: { food: 0, screen: 0, live: 0 }, tags: {}, people: {},
+              months: {}, cities: {}, away: 0, first: null, last: null };
+    state.entries.forEach(function (e) {
+      if (!e.date || e.date.slice(0, 4) !== year) return;
+      r.total++;
+      r.cat[catOf(e)]++;
+      tagsOf(e).forEach(function (t) { r.tags[t] = (r.tags[t] || 0) + 1; });
+      String(e['with'] || '').split(/,| and /).forEach(function (raw) {
+        var who = raw.trim();
+        if (who) r.people[who] = (r.people[who] || 0) + 1;
+      });
+      var m = e.date.slice(5, 7);
+      r.months[m] = (r.months[m] || 0) + 1;
+      var c = cityOf(e).trim();
+      if (c) r.cities[c] = (r.cities[c] || 0) + 1;
+      if (isAway(e)) r.away++;
+      if (!r.first || e.date < r.first.date) r.first = e;
+      if (!r.last || e.date > r.last.date) r.last = e;
+    });
+    return r;
   }
 
   /* ---------------- selection ---------------- */
@@ -570,12 +716,12 @@ dialog::backdrop { background: rgba(11,11,15,.6); }
       + CAT_ORDER.map(function (cat) {
           return stat(cat, state.entries.filter(function (e) { return catOf(e) === cat; }).length, CATS[cat].short);
         }).join('')
-      + '<span class="spacer"></span>'
-      + '<button class="linkish" data-act="howto">How to update this</button>'
-      + '</div></header>';
+      + '</div>'
+      + toolsRow()
+      + '</header>';
 
     if (state.hasSamples) {
-      out += '<div class="banner"><p><strong>These eight entries are samples</strong> so you can see the shape of things. Clear them and the ledger is yours.</p>'
+      out += '<div class="banner"><p><strong>These eight entries are samples.</strong> None of it happened to you. Clear them and the ledger is yours.</p>'
         + '<span class="spacer"></span>'
         + '<button class="btn btn-quiet" data-act="clear-samples">Clear samples</button></div>';
     }
@@ -592,11 +738,21 @@ dialog::backdrop { background: rgba(11,11,15,.6); }
       + tagBar()
       + '</div>';
 
+    var otd = onThisDay();
+    if (otd.length) {
+      var back = new Date().getFullYear() - parseInt(otd[0].date.slice(0, 4), 10);
+      out += '<div class="otd cat-' + catOf(otd[0]) + '">'
+        + '<span class="lede mono">' + back + ' year' + (back === 1 ? '' : 's') + ' ago today</span>'
+        + '<button data-act="open" data-id="' + esc(otd[0].id) + '">' + esc(otd[0].title) + '</button>'
+        + (otd.length > 1 ? '<span class="lede">and ' + (otd.length - 1) + ' other' + (otd.length === 2 ? '' : 's') + '</span>' : '')
+        + '</div>';
+    }
+
     if (!list.length) {
-      out += '<div class="empty"><h2>' + (total ? 'Nothing matches' : 'The ledger is empty') + '</h2>'
+      out += '<div class="empty"><h2>' + (total ? 'Nothing matches' : 'Nothing here yet') + '</h2>'
         + '<p>' + (total
-          ? 'Loosen the search, or clear the filters above.'
-          : 'Add the last place you ate, the last thing you watched, the last show you stood through.') + '</p>'
+          ? 'Those filters are working a little too well. Loosen one.'
+          : 'Presumably you have been somewhere. Start with the last place you ate.') + '</p>'
         + (total || readOnly ? '' : '<div><button class="btn" data-act="new">Add the first entry</button></div>')
         + '</div>';
     } else {
@@ -610,6 +766,18 @@ dialog::backdrop { background: rgba(11,11,15,.6); }
     out += '</div>';
     app.innerHTML = out;
     wire();
+  }
+
+  function toolsRow() {
+    var years = yearsWithEntries();
+    var w = wishlist().length, d = dishes().length;
+    return '<div class="tools">'
+      + '<button class="tool" data-act="spin">Spin it<span class="n">' + w + '</span></button>'
+      + '<button class="tool" data-act="dishes">Order again<span class="n">' + d + '</span></button>'
+      + (years.length ? '<button class="tool" data-act="review">' + esc(years[0]) + ' in review</button>' : '')
+      + '<span class="spacer"></span>'
+      + '<button class="linkish" data-act="howto">How to update this</button>'
+      + '</div>';
   }
 
   function stat(cat, n, label) {
@@ -659,7 +827,8 @@ dialog::backdrop { background: rgba(11,11,15,.6); }
       + '<div class="card-top">'
       + '<span class="chip">' + esc(CATS[cat].short) + '</span>'
       + (entry.status === 'wishlist' ? '<span class="chip chip-ghost">Want to</span>' : '')
-      + (entry.sample ? '<span class="chip chip-ghost" style="color:var(--mute);box-shadow:inset 0 0 0 1px var(--line-firm)">Sample</span>' : '')
+      + (isAway(entry) ? '<span class="chip chip-away">Away</span>' : '')
+      + (entry.sample ? '<span class="chip chip-away">Sample</span>' : '')
       + '<span class="spacer"></span>'
       + '<span class="when mono">' + esc(dayLabel(entry.date)) + '</span>'
       + '</div>'
@@ -703,6 +872,12 @@ dialog::backdrop { background: rgba(11,11,15,.6); }
       ui.status = ui.status === want ? 'all' : want; stashUi(); render();
     } else if (act === 'tag') {
       toggleTag(el.getAttribute('data-tag'));
+    } else if (act === 'spin') {
+      openSpin();
+    } else if (act === 'dishes') {
+      openDishes();
+    } else if (act === 'review') {
+      openReview(yearsWithEntries()[0]);
     } else if (act === 'tags-more') {
       tagsExpanded = !tagsExpanded; render();
     } else if (act === 'clear-filters') {
@@ -752,7 +927,7 @@ dialog::backdrop { background: rgba(11,11,15,.6); }
         + '</div><h2>' + esc(entry.title) + '</h2></div>'
         + '<span class="spacer"></span><button class="closex" data-x="close" aria-label="Close">\u00d7</button></div>'
         + '<div class="dlg-body">'
-        + '<p class="detail-note">' + (entry.note ? esc(entry.note) : '<span class="none">No note yet.</span>') + '</p>'
+        + '<p class="detail-note">' + (entry.note ? esc(entry.note) : '<span class="none">No note. You will not remember.</span>') + '</p>'
         + '<dl class="facts">' + facts + '</dl>'
         + (tagsOf(entry).length ? '<div class="detail-tags">' + tagsOf(entry).map(function (t) {
             return '<button class="tagchip" data-x="tag" data-tag="' + esc(t) + '">' + esc(t) + '</button>';
@@ -835,7 +1010,7 @@ dialog::backdrop { background: rgba(11,11,15,.6); }
       out += '<label class="field"><span class="flabel">Tags</span><input data-f="tags" value="' + esc((draft.tags || []).join(', ')) + '">'
         + '<span class="hint">Comma separated. These become filter chips \u2014 pizza, brooklyn, byob</span></label>';
 
-      out += '<label class="field"><span class="flabel">The note</span><textarea data-f="note" placeholder="What it was like. What to do differently next time.">' + esc(draft.note) + '</textarea></label>';
+      out += '<label class="field"><span class="flabel">The note</span><textarea data-f="note" placeholder="What it was like. What past-you wants future-you to know.">' + esc(draft.note) + '</textarea></label>';
 
       out += '</div><div class="dlg-foot"><span class="spacer"></span>'
         + '<button type="button" class="btn btn-quiet" data-x="close">Cancel</button>'
@@ -920,12 +1095,224 @@ dialog::backdrop { background: rgba(11,11,15,.6); }
       + '<p class="quote">\u201cWhat did I say about the last three places I ate in Brooklyn?\u201d</p>'
       + '<h3>For the project instructions</h3>'
       + '<p>Copy this in so Claude knows what to do without being told twice:</p>'
-      + '<code class="snippet">' + esc('My activity ledger lives at ' + here + '\n\nWhen I mention a restaurant, bar, movie, show, concert, or live event I went to or want to go to, update the ledger: read it with the Artifact tool, add or edit the entry in the JSON block with id "entry-data", and publish back to the same URL. Categories are food, screen, and live. Status is "logged" or "wishlist". Tags are lowercase. Keep my wording in the note.') + '</code>'
+      + '<code class="snippet">' + esc('My activity ledger lives at ' + here + '\n\nWhen I mention a restaurant, bar, movie, show, concert, or live event I went to or want to go to, update the ledger: read it with the Artifact tool, add or edit the entry in the JSON block with id "entry-data", and publish back to the same URL. Categories are food, screen, and live. Status is "logged" or "wishlist". Tags are lowercase. Keep my wording in the note.\n\nIf I say what to order at a restaurant, put it in the food entry\'s "dish" field - it feeds the Order this again list. "home" at the top level is my home base city; anything logged in a different city is marked Away.') + '</code>'
       + '</div><div class="dlg-foot"><span class="spacer"></span><button type="button" class="btn" data-x="close">Close</button></div>';
     dlg.addEventListener('click', function (event) {
       if (event.target.closest('[data-x="close"]')) dlg.close();
     });
     dlg.addEventListener('close', function () { dlg.remove(); });
+    dlg.showModal();
+  }
+
+  /* ---------------- spin, dishes, year in review ---------------- */
+
+  function modal(cls) {
+    var dlg = document.createElement('dialog');
+    if (cls) dlg.className = cls;
+    document.body.appendChild(dlg);
+    dlg.addEventListener('close', function () { dlg.remove(); });
+    return dlg;
+  }
+
+  function dlgHead(title) {
+    return '<div class="dlg-head"><h2>' + esc(title) + '</h2><span class="spacer"></span>'
+      + '<button type="button" class="closex" data-x="close" aria-label="Close">\u00d7</button></div>';
+  }
+
+  function openSpin() {
+    var pool = wishlist();
+    var dlg = modal('');
+    var picked = null, timer = null;
+    dlg.addEventListener('close', function () { clearInterval(timer); });
+
+    function paint(entry, rolling) {
+      dlg.className = entry ? 'cat-' + catOf(entry) : '';
+      dlg.innerHTML = dlgHead('Spin it')
+        + '<div class="dlg-body">'
+        + (pool.length
+            ? '<div class="spin-stage' + (rolling ? ' spin-rolling' : '') + '">'
+              + '<p class="spin-kicker mono">' + (rolling ? 'Deciding' : 'Go here') + '</p>'
+              + '<p class="spin-name">' + esc(entry ? entry.title : '') + '</p>'
+              + '<p class="spin-meta">' + (entry && !rolling
+                  ? esc([CATS[catOf(entry)].label].concat(summaryBits(entry)).join(' \u00b7 '))
+                  : '&nbsp;') + '</p></div>'
+            : '<p style="color:var(--mute);margin:0">Your want-to list is empty'
+              + (ui.cat === 'all' ? '' : ' in this category') + '. Nothing to decide.</p>')
+        + '</div><div class="dlg-foot"><span class="spacer"></span>'
+        + (pool.length && !rolling
+            ? '<button type="button" class="btn btn-quiet" data-x="again">Spin again</button>'
+              + '<button type="button" class="btn" data-x="open">Open it</button>'
+            : '')
+        + '<button type="button" class="btn btn-quiet" data-x="close">Close</button></div>';
+    }
+
+    function roll() {
+      if (!pool.length) { paint(null, false); return; }
+      picked = pool[Math.floor(Math.random() * pool.length)];
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || pool.length === 1) { paint(picked, false); return; }
+      var ticks = 11;
+      paint(pool[Math.floor(Math.random() * pool.length)], true);
+      clearInterval(timer);
+      timer = setInterval(function () {
+        ticks--;
+        if (ticks > 0) paint(pool[Math.floor(Math.random() * pool.length)], true);
+        else { clearInterval(timer); paint(picked, false); }
+      }, 80);
+    }
+
+    dlg.addEventListener('click', function (event) {
+      var el = event.target.closest('[data-x]');
+      if (!el) return;
+      var what = el.getAttribute('data-x');
+      if (what === 'close') dlg.close();
+      else if (what === 'again') roll();
+      else if (what === 'open' && picked) { var keep = picked; dlg.close(); openDetail(keep); }
+    });
+
+    roll();
+    dlg.showModal();
+  }
+
+  function openDishes() {
+    var list = dishes();
+    var dlg = modal('cat-food');
+    dlg.innerHTML = dlgHead('Order this again')
+      + '<div class="dlg-body">'
+      + (list.length
+          ? list.map(function (e) {
+              return '<div class="dish"><span class="what">' + esc(e.fields.dish) + '</span>'
+                + '<button type="button" class="where" data-x="open" data-id="' + esc(e.id) + '">'
+                + esc(e.title) + (cityOf(e) ? ', ' + esc(cityOf(e)) : '') + '</button></div>';
+            }).join('')
+          : '<p style="color:var(--mute);margin:0">Not one dish flagged. There is a field for it on every restaurant entry.</p>')
+      + '</div><div class="dlg-foot"><span class="spacer"></span>'
+      + '<button type="button" class="btn btn-quiet" data-x="close">Close</button></div>';
+
+    dlg.addEventListener('click', function (event) {
+      var el = event.target.closest('[data-x]');
+      if (!el) return;
+      var what = el.getAttribute('data-x');
+      if (what === 'close') dlg.close();
+      else if (what === 'open') { var e = find(el.getAttribute('data-id')); dlg.close(); openDetail(e); }
+    });
+    dlg.showModal();
+  }
+
+  function openReview(year) {
+    var years = yearsWithEntries();
+    if (!years.length) return;
+    var cur = years.indexOf(year) !== -1 ? year : years[0];
+    var dlg = modal('review');
+
+    function tile(v, k, cls) {
+      return '<div class="tile' + (cls ? ' ' + cls : '') + '"><div class="v">' + v + '</div>'
+        + '<div class="k">' + esc(k) + '</div></div>';
+    }
+
+    function bookend(label, entry) {
+      if (!entry) return '';
+      return '<div class="bookend"><span class="k">' + esc(label) + '</span>'
+        + '<button type="button" data-x="open" data-id="' + esc(entry.id) + '">' + esc(entry.title) + '</button>'
+        + '<span class="when">' + esc(dayLabel(entry.date)) + '</span></div>';
+    }
+
+    function paint() {
+      var r = reviewFor(cur);
+      var tags = topOf(r.tags, 6), people = topOf(r.people, 5), cities = topOf(r.cities, 6);
+      var maxTag = tags.length ? tags[0].n : 1;
+
+      var body = '<div class="yearpick">' + years.map(function (y) {
+        return '<button type="button" class="tagchip" data-x="year" data-year="' + esc(y) + '"'
+          + ' aria-pressed="' + (y === cur) + '">' + esc(y) + '</button>';
+      }).join('') + '</div>';
+
+      if (!r.total) {
+        body += '<p class="none">Nothing logged in ' + esc(cur) + '.</p>';
+      } else {
+        body += '<div class="tiles">'
+          + tile(r.total, r.total === 1 ? 'Outing' : 'Outings', '')
+          + tile(r.cat.food, 'Food', 'food')
+          + tile(r.cat.screen, 'Screen', 'screen')
+          + tile(r.cat.live, 'Live', 'live')
+          + (state.home ? tile(r.away, 'Away', '') : '')
+          + '</div>';
+
+        if (r.total === 1) body += '<p class="none" style="margin-top:-1rem;margin-bottom:1.75rem">One entry. A restrained year.</p>';
+
+        body += '<div class="block"><h3>Most-used tags</h3>'
+          + (tags.length
+              ? '<div class="bars">' + tags.map(function (t) {
+                  return '<div class="bar"><span class="lbl">' + esc(t.key) + '</span>'
+                    + '<span class="track"><span class="fill" style="width:' + Math.round(t.n / maxTag * 100) + '%"></span></span>'
+                    + '<span class="val">' + t.n + '</span></div>';
+                }).join('') + '</div>'
+              : '<p class="none">No tags this year.</p>')
+          + '</div>';
+
+        body += '<div class="block"><h3>Who you were with</h3>'
+          + (people.length
+              ? '<div class="detail-tags">' + people.map(function (pp) {
+                  return '<span class="tagchip" style="cursor:default">' + esc(pp.key)
+                    + '<span class="n">' + pp.n + '</span></span>';
+                }).join('') + '</div>'
+              : '<p class="none">All of them alone. No judgement.</p>')
+          + '</div>';
+
+        var busiest = topOf(r.months, 1)[0];
+        var months = Object.keys(r.months).length;
+        body += '<div class="block"><h3>The shape of it</h3>'
+          + (busiest.n > 1
+              ? '<div class="bookend"><span class="k">Busiest</span><span>'
+                + MONTHS[parseInt(busiest.key, 10) - 1] + ' \u2014 ' + busiest.n + '</span></div>'
+              : '<div class="bookend"><span class="k">Pace</span><span>Never twice in a month. '
+                + months + ' month' + (months === 1 ? '' : 's') + ' with anything in them.</span></div>')
+          + bookend('First', r.first)
+          + (r.last && r.first && r.last.id !== r.first.id ? bookend('Last', r.last) : '')
+          + '</div>';
+
+        if (cities.length) {
+          body += '<div class="block"><h3>Cities</h3><div class="detail-tags">'
+            + cities.map(function (c) {
+                return '<span class="tagchip" style="cursor:default">' + esc(c.key)
+                  + '<span class="n">' + c.n + '</span></span>';
+              }).join('')
+            + '</div></div>';
+        }
+      }
+
+      body += '<div class="block" style="margin-bottom:0"><h3>Home base</h3>'
+        + '<div class="homeset">'
+        + '<input data-h="home" value="' + esc(state.home) + '" placeholder="Which city?" aria-label="Home base city">'
+        + '<button type="button" class="btn btn-quiet" data-x="home">Save</button></div>'
+        + '<p class="none" style="margin-top:.5rem;font-size:.8125rem">'
+        + (state.home
+            ? 'Anything logged outside ' + esc(state.home) + ' is marked Away.'
+            : 'Set it and anything logged elsewhere gets marked Away.')
+        + '</p></div>';
+
+      dlg.innerHTML = dlgHead(cur + ' in review')
+        + '<div class="dlg-body">' + body + '</div>'
+        + '<div class="dlg-foot"><span class="spacer"></span>'
+        + '<button type="button" class="btn btn-quiet" data-x="close">Close</button></div>';
+    }
+
+    dlg.addEventListener('click', function (event) {
+      var el = event.target.closest('[data-x]');
+      if (!el) return;
+      var what = el.getAttribute('data-x');
+      if (what === 'close') dlg.close();
+      else if (what === 'year') { cur = el.getAttribute('data-year'); paint(); }
+      else if (what === 'open') { var e = find(el.getAttribute('data-id')); dlg.close(); openDetail(e); }
+      else if (what === 'home') {
+        var input = dlg.querySelector('[data-h="home"]');
+        state.home = input ? input.value.trim() : '';
+        dlg.close();
+        persist();
+      }
+    });
+
+    paint();
     dlg.showModal();
   }
 
