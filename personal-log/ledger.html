@@ -1,0 +1,1013 @@
+<title>Dylan's Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<style id="app-style">
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+img { max-width: 100%; }
+
+:root {
+  --paper:      #EFEBE1;
+  --surface:    #F8F5ED;
+  --sunk:       #E7E2D5;
+  --ink:        #221F1A;
+  --ink-soft:   #5E5748;
+  --ink-faint:  #8D8472;
+  --rule:       #D9D2C2;
+  --rule-firm:  #C0B7A2;
+  --ivy:        #4C6640;
+  --indigo:     #35526E;
+  --mulberry:   #7A3F55;
+  --focus:      #35526E;
+  --shadow:     0 1px 2px rgba(34,31,26,.06), 0 8px 24px -16px rgba(34,31,26,.30);
+
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --display: "Bodoni Moda", "Newsreader", Georgia, serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:      #171512;
+    --surface:    #201D19;
+    --sunk:       #12100E;
+    --ink:        #EAE4D7;
+    --ink-soft:   #A79E8C;
+    --ink-faint:  #7C7364;
+    --rule:       #322E27;
+    --rule-firm:  #474137;
+    --ivy:        #A3C08B;
+    --indigo:     #90B3D2;
+    --mulberry:   #D79BAF;
+    --focus:      #90B3D2;
+    --shadow:     0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"] {
+  --paper:      #171512;
+  --surface:    #201D19;
+  --sunk:       #12100E;
+  --ink:        #EAE4D7;
+  --ink-soft:   #A79E8C;
+  --ink-faint:  #7C7364;
+  --rule:       #322E27;
+  --rule-firm:  #474137;
+  --ivy:        #A3C08B;
+  --indigo:     #90B3D2;
+  --mulberry:   #D79BAF;
+  --focus:      #90B3D2;
+  --shadow:     0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.8);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+}
+
+.cat-food   { --cat: var(--ivy); }
+.cat-screen { --cat: var(--indigo); }
+.cat-live   { --cat: var(--mulberry); }
+
+.shell { max-width: 64rem; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+.label {
+  font-family: var(--mono);
+  font-size: .688rem;
+  font-weight: 500;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 1px; }
+
+/* ---------- masthead ---------- */
+.masthead { padding: 3.5rem 0 0; }
+.masthead .eyebrow { color: var(--ink-faint); margin: 0 0 1.25rem; }
+.masthead h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 7vw, 4.5rem);
+  line-height: .95;
+  letter-spacing: -.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+.dek {
+  font-size: 1.0625rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  max-width: 34rem;
+  margin: 1rem 0 0;
+}
+.masthead-foot {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 1.25rem;
+  margin-top: 1.75rem; padding-top: .875rem;
+  border-top: 1px solid var(--rule-firm);
+  color: var(--ink-faint);
+}
+.masthead-foot .spacer { flex: 1 1 auto; }
+.linkish {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--ink-soft); border-bottom: 1px solid var(--rule-firm);
+  font-family: var(--mono); font-size: .688rem; letter-spacing: .11em; text-transform: uppercase;
+}
+.linkish:hover { color: var(--ink); border-bottom-color: currentColor; }
+
+/* ---------- banner ---------- */
+.banner {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem;
+  margin-top: 2rem; padding: .875rem 1.125rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--rule-firm);
+}
+.banner p { margin: 0; font-size: .9375rem; color: var(--ink-soft); }
+.banner .spacer { flex: 1 1 auto; }
+
+/* ---------- controls ---------- */
+.controls {
+  position: sticky; top: 0; z-index: 20;
+  margin-top: 2.25rem;
+  padding: .875rem 0;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.controls-row { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+.search {
+  flex: 1 1 15rem; min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  padding: .5rem .75rem;
+  font-family: var(--serif); font-size: .9375rem;
+}
+.search::placeholder { color: var(--ink-faint); font-style: italic; }
+.select {
+  background: var(--surface); border: 1px solid var(--rule);
+  padding: .5rem .625rem; font-family: var(--mono); font-size: .75rem;
+  letter-spacing: .04em; cursor: pointer;
+}
+.btn {
+  background: var(--ink); color: var(--paper);
+  border: 1px solid var(--ink); padding: .5rem .9rem; cursor: pointer;
+  font-family: var(--mono); font-size: .688rem; font-weight: 500;
+  letter-spacing: .11em; text-transform: uppercase;
+}
+.btn:hover { background: transparent; color: var(--ink); }
+.btn-quiet {
+  background: transparent; color: var(--ink-soft); border: 1px solid var(--rule-firm);
+}
+.btn-quiet:hover { background: var(--surface); color: var(--ink); border-color: var(--ink-soft); }
+.btn-danger { background: transparent; color: var(--mulberry); border-color: var(--mulberry); }
+.btn-danger:hover { background: var(--mulberry); color: var(--paper); }
+
+.tabs { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: .875rem; }
+.tab {
+  background: none; border: 0; padding: 0 0 .3rem; cursor: pointer;
+  color: var(--ink-faint); border-bottom: 2px solid transparent;
+  display: inline-flex; align-items: baseline; gap: .45rem;
+}
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--cat, var(--ink)); border-bottom-color: currentColor; }
+.tab .n { font-size: .625rem; opacity: .7; }
+
+.savechip { color: var(--ink-faint); }
+.savechip[data-tone="warn"] { color: var(--mulberry); }
+
+/* ---------- entries ---------- */
+.year {
+  display: flex; align-items: baseline; gap: 1rem;
+  margin: 3rem 0 .25rem;
+}
+.year h2 {
+  font-family: var(--display); font-weight: 400; font-size: 1.5rem;
+  margin: 0; letter-spacing: .01em; font-variant-numeric: lining-nums;
+}
+.year .hr { flex: 1 1 auto; height: 1px; background: var(--rule); }
+.year .n { color: var(--ink-faint); }
+
+.entry { border-bottom: 1px solid var(--rule); }
+.entry:first-of-type { border-top: 1px solid var(--rule); }
+
+.row {
+  width: 100%; text-align: left; background: none; border: 0; cursor: pointer;
+  display: grid; grid-template-columns: 7rem 1fr; gap: 0 1.5rem;
+  padding: 1.125rem .75rem 1.125rem .875rem;
+  margin-left: -.875rem; margin-right: -.75rem;
+  width: calc(100% + 1.625rem);
+  position: relative;
+}
+.row::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--cat); opacity: 0; transition: opacity .12s ease;
+}
+.row:hover { background: var(--surface); }
+.row:hover::before, .row[aria-expanded="true"]::before { opacity: 1; }
+
+.margin { display: flex; flex-direction: column; gap: .3rem; padding-top: .3rem; }
+.margin .day { color: var(--ink-soft); }
+.margin .cat { color: var(--cat); display: inline-flex; align-items: center; gap: .4rem; }
+.margin .cat::before {
+  content: ""; width: 6px; height: 6px; background: var(--cat); flex: none;
+}
+
+.body .ttl {
+  font-family: var(--serif); font-weight: 500; font-size: 1.3125rem;
+  line-height: 1.25; letter-spacing: -.003em; text-wrap: balance;
+}
+.pill {
+  display: inline-block; vertical-align: .18em; margin-left: .55rem;
+  border: 1px solid var(--cat); color: var(--cat);
+  padding: .1rem .4rem .05rem;
+  font-family: var(--mono); font-size: .5625rem; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
+}
+.meta { display: block; color: var(--ink-faint); margin-top: .4rem; font-size: .875rem; }
+.note-preview {
+  margin-top: .5rem; color: var(--ink-soft); max-width: 60ch;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.detail { padding: 0 .75rem 1.75rem 8.5rem; max-width: 58rem; }
+.detail dl {
+  margin: 0 0 1.25rem; display: grid;
+  grid-template-columns: max-content 1fr; gap: .4rem 1.25rem;
+}
+.detail dt { color: var(--ink-faint); font-family: var(--mono); font-size: .688rem;
+  letter-spacing: .11em; text-transform: uppercase; padding-top: .28rem; }
+.detail dd { margin: 0; }
+.detail .note { margin: 0 0 1.25rem; max-width: 62ch; white-space: pre-wrap; }
+.detail .note em.empty { color: var(--ink-faint); }
+.tags { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 1.25rem; }
+.tag {
+  background: var(--sunk); border: 1px solid var(--rule); color: var(--ink-soft);
+  padding: .16rem .5rem; cursor: pointer;
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .04em;
+}
+.tag:hover { color: var(--ink); border-color: var(--ink-soft); }
+.actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.actions .warn { color: var(--mulberry); font-size: .8125rem; font-style: italic; }
+
+.filterchip {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--sunk); border: 1px solid var(--rule-firm);
+  padding: .25rem .5rem .25rem .625rem;
+}
+.filterchip button { background: none; border: 0; cursor: pointer; color: var(--ink-soft); font-size: 1rem; line-height: 1; }
+.filterchip button:hover { color: var(--ink); }
+
+.empty { padding: 4.5rem 0; text-align: center; color: var(--ink-faint); }
+.empty h2 { font-family: var(--display); font-weight: 400; font-size: 1.75rem; color: var(--ink); margin: 0 0 .5rem; }
+.empty p { margin: 0 auto; max-width: 34ch; font-style: italic; }
+.empty .btn { margin-top: 1.75rem; }
+
+/* ---------- dialog ---------- */
+dialog {
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--rule-firm); box-shadow: var(--shadow);
+  padding: 0; width: min(42rem, 94vw); max-height: 88vh;
+}
+dialog::backdrop { background: rgba(20,17,14,.55); }
+.dlg-head {
+  display: flex; align-items: baseline; gap: 1rem;
+  padding: 1.375rem 1.5rem .875rem; border-bottom: 1px solid var(--rule);
+}
+.dlg-head h2 { font-family: var(--display); font-weight: 400; font-size: 1.5rem; margin: 0; }
+.dlg-head .spacer { flex: 1 1 auto; }
+.dlg-body { padding: 1.375rem 1.5rem; overflow-y: auto; max-height: calc(88vh - 9.5rem); }
+.dlg-foot {
+  display: flex; gap: .625rem; justify-content: flex-end;
+  padding: .875rem 1.5rem 1.125rem; border-top: 1px solid var(--rule);
+}
+.closex { background: none; border: 0; cursor: pointer; color: var(--ink-faint); font-size: 1.25rem; line-height: 1; }
+.closex:hover { color: var(--ink); }
+
+.fieldset { margin: 0 0 1.25rem; }
+.flabel { display: block; margin-bottom: .4rem; color: var(--ink-faint);
+  font-family: var(--mono); font-size: .688rem; letter-spacing: .11em; text-transform: uppercase; }
+.seg { display: flex; flex-wrap: wrap; gap: .5rem; }
+.seg button {
+  background: var(--paper); border: 1px solid var(--rule-firm); color: var(--ink-soft);
+  padding: .4rem .7rem; cursor: pointer;
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .09em; text-transform: uppercase;
+}
+.seg button[aria-pressed="true"] { background: var(--cat); border-color: var(--cat); color: var(--paper); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.field { display: flex; flex-direction: column; gap: .3rem; margin-bottom: 1rem; }
+.field > span:not(.hint) { color: var(--ink-faint); font-family: var(--mono); font-size: .688rem; letter-spacing: .11em; text-transform: uppercase; }
+.field input, .field textarea, .field select {
+  background: var(--paper); border: 1px solid var(--rule); color: var(--ink);
+  padding: .5rem .625rem; font-family: var(--serif); font-size: 1rem; width: 100%;
+}
+.field textarea { resize: vertical; min-height: 7rem; line-height: 1.55; }
+.field .hint { color: var(--ink-faint); font-size: .8125rem; font-style: italic; }
+
+.howto h3 { font-family: var(--display); font-weight: 400; font-size: 1.125rem; margin: 1.5rem 0 .5rem; }
+.howto h3:first-child { margin-top: 0; }
+.howto p { margin: 0 0 .75rem; color: var(--ink-soft); font-size: .9375rem; }
+.howto ul { margin: 0 0 .75rem; padding-left: 1.1rem; color: var(--ink-soft); font-size: .9375rem; }
+.howto li { margin-bottom: .3rem; }
+.howto .quote {
+  font-style: italic; color: var(--ink); border-left: 2px solid var(--rule-firm);
+  padding-left: .875rem; margin: 0 0 .5rem;
+}
+.howto code, .snippet {
+  font-family: var(--mono); font-size: .8125rem; background: var(--sunk);
+  border: 1px solid var(--rule); padding: .1rem .3rem; word-break: break-all;
+}
+.snippet { display: block; padding: .875rem; white-space: pre-wrap; line-height: 1.55; word-break: normal; }
+
+@media (max-width: 46rem) {
+  .row { grid-template-columns: 1fr; gap: .5rem; }
+  .margin { flex-direction: row; gap: .9rem; align-items: center; padding-top: 0; }
+  .detail { padding-left: .875rem; }
+  .grid2 { grid-template-columns: 1fr; }
+  .detail dl { grid-template-columns: 1fr; gap: .1rem .75rem; }
+  .detail dd { margin-bottom: .6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+<div id="app"></div>
+<noscript><p style="font:italic 17px/1.6 Georgia,serif;padding:3rem 1.5rem">This ledger renders its entries with JavaScript. Enable it to read the log.</p></noscript>
+<script id="entry-data" type="application/json">
+{
+  "hasSamples": true,
+  "entries": [
+    {
+      "id": "s1", "sample": true, "category": "food", "status": "logged",
+      "title": "Katz's Delicatessen", "date": "2026-03-21",
+      "fields": { "city": "Lower East Side, NYC", "cuisine": "Jewish deli", "dish": "Pastrami on rye, extra mustard" },
+      "with": "Sam", "tags": ["classic", "nyc"],
+      "note": "Loud, bright, chaotic in the good way. Take the ticket seriously \u2014 losing it is apparently a whole thing. Worth the line on a weekday; skip it on a Saturday."
+    },
+    {
+      "id": "s2", "sample": true, "category": "food", "status": "logged",
+      "title": "Lucali", "date": "2026-05-02",
+      "fields": { "city": "Carroll Gardens, Brooklyn", "cuisine": "Pizza", "dish": "Plain pie plus the calzone to split" },
+      "with": "Ari and Jess", "tags": ["pizza", "brooklyn", "byob"],
+      "note": "Put your name in at 5, walked around for two hours, ate at 7:30. Candlelit and quiet in a way pizza places never are. Bring your own wine."
+    },
+    {
+      "id": "s3", "sample": true, "category": "food", "status": "wishlist",
+      "title": "The Dead Rabbit", "date": "",
+      "fields": { "city": "Financial District, NYC", "cuisine": "Cocktail bar", "dish": "" },
+      "with": "", "tags": ["cocktails", "nyc"],
+      "note": "Kept getting recommended. Go upstairs to the parlor, not the ground-floor taproom."
+    },
+    {
+      "id": "s4", "sample": true, "category": "screen", "status": "logged",
+      "title": "Dune: Part Two", "date": "2026-01-17",
+      "fields": { "kind": "Film", "year": "2024", "by": "Denis Villeneuve", "where": "IMAX" },
+      "with": "Sam", "tags": ["sci-fi", "rewatch"],
+      "note": "Second time and the sound design still does most of the work. The arena sequence in black and white is the part I keep thinking about."
+    },
+    {
+      "id": "s5", "sample": true, "category": "screen", "status": "logged",
+      "title": "Severance", "date": "2026-04-08",
+      "fields": { "kind": "Series", "year": "2022", "by": "Dan Erickson", "where": "Apple TV+" },
+      "with": "", "tags": ["mystery", "season 2"],
+      "note": "Finished season two. The pacing sags around the middle but the last three episodes earn it back completely."
+    },
+    {
+      "id": "s6", "sample": true, "category": "screen", "status": "wishlist",
+      "title": "Anora", "date": "",
+      "fields": { "kind": "Film", "year": "2024", "by": "Sean Baker", "where": "" },
+      "with": "", "tags": [],
+      "note": "Three separate people have told me to watch this."
+    },
+    {
+      "id": "s7", "sample": true, "category": "live", "status": "logged",
+      "title": "Vampire Weekend", "date": "2026-06-14",
+      "fields": { "kind": "Concert", "venue": "Forest Hills Stadium", "city": "Queens, NY", "support": "" },
+      "with": "Ari", "tags": ["outdoor", "summer"],
+      "note": "Perfect weather, terrible transit home. They played the full request-a-cover bit \u2014 took 'Take On Me' from someone in the third row and actually pulled it off."
+    },
+    {
+      "id": "s8", "sample": true, "category": "live", "status": "wishlist",
+      "title": "Fleet Foxes", "date": "",
+      "fields": { "kind": "Concert", "venue": "Beacon Theatre", "city": "NYC", "support": "" },
+      "with": "", "tags": ["tickets pending"],
+      "note": "Presale is in two weeks. Beacon is the right room for them."
+    }
+  ]
+}
+</script>
+<script id="app-script">
+(function () {
+  'use strict';
+
+  var FONT_HREF = "https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap";
+  var BODY_MARKUP = '<div id="app"></div>\n<noscript><p style="font:italic 17px/1.6 Georgia,serif;padding:3rem 1.5rem">This ledger renders its entries with JavaScript. Enable it to read the log.</p></noscript>';
+  var ARTIFACT_URL = "https://claude.ai/code/artifact/7b605c39-2263-438a-b9bc-d10ed7c6a127";
+
+  var MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+  var CATS = {
+    food: {
+      label: 'Restaurants & Bars', pill: 'Table',
+      fields: [
+        { key: 'city',    label: 'City / neighborhood' },
+        { key: 'cuisine', label: 'Cuisine' },
+        { key: 'dish',    label: 'Order this again', wide: true }
+      ],
+      summary: ['city', 'cuisine']
+    },
+    screen: {
+      label: 'Movies & TV', pill: 'Screen',
+      fields: [
+        { key: 'kind',  label: 'Film or series', options: ['Film','Series','Documentary','Short','Special'] },
+        { key: 'year',  label: 'Released' },
+        { key: 'by',    label: 'Director / creator' },
+        { key: 'where', label: 'Watched on' }
+      ],
+      summary: ['kind', 'year', 'by']
+    },
+    live: {
+      label: 'Concerts & Live', pill: 'Stage',
+      fields: [
+        { key: 'kind',    label: 'Kind', options: ['Concert','Comedy','Theater','Sports','Festival','Talk'] },
+        { key: 'venue',   label: 'Venue' },
+        { key: 'city',    label: 'City' },
+        { key: 'support', label: 'Opener / support' }
+      ],
+      summary: ['kind', 'venue', 'city']
+    }
+  };
+  var CAT_ORDER = ['food', 'screen', 'live'];
+
+  var state = readState();
+  var ui = readUi();
+  var expanded = Object.create(null);
+  var confirming = null;
+  var readOnly = false;
+  var save = { tone: 'idle', text: '' };
+  var app = document.getElementById('app');
+
+  /* ---------------- data ---------------- */
+
+  function readState() {
+    try {
+      var parsed = JSON.parse(document.getElementById('entry-data').textContent);
+      if (!parsed || !Array.isArray(parsed.entries)) throw new Error('shape');
+      return { hasSamples: !!parsed.hasSamples, entries: parsed.entries };
+    } catch (err) {
+      return { hasSamples: false, entries: [] };
+    }
+  }
+
+  function readUi() {
+    var base = { q: '', cat: 'all', status: 'all', sort: 'new', tag: '' };
+    try {
+      var raw = sessionStorage.getItem('ledger.ui');
+      if (raw) {
+        var saved = JSON.parse(raw);
+        Object.keys(base).forEach(function (k) {
+          if (typeof saved[k] === 'string') base[k] = saved[k];
+        });
+      }
+    } catch (err) { /* private mode, blocked storage \u2014 defaults are fine */ }
+    return base;
+  }
+
+  function stashUi() {
+    try { sessionStorage.setItem('ledger.ui', JSON.stringify(ui)); } catch (err) {}
+  }
+
+  function newId() {
+    return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+
+  /* ---------------- helpers ---------------- */
+
+  function esc(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function catOf(entry) { return CATS[entry.category] ? entry.category : 'food'; }
+
+  function yearOf(entry) { return entry.date ? entry.date.slice(0, 4) : 'Someday'; }
+
+  function dayLabel(date) {
+    if (!date) return 'Undated';
+    var parts = date.split('-');
+    var m = parseInt(parts[1], 10);
+    if (!m || m < 1 || m > 12) return date;
+    if (!parts[2]) return MONTHS[m - 1];
+    return MONTHS[m - 1] + ' ' + parseInt(parts[2], 10);
+  }
+
+  function fieldDefs(category) { return CATS[catOf({ category: category })].fields; }
+
+  function fieldLabel(category, key) {
+    var defs = fieldDefs(category);
+    for (var i = 0; i < defs.length; i++) if (defs[i].key === key) return defs[i].label;
+    return key;
+  }
+
+  function summaryBits(entry) {
+    var conf = CATS[catOf(entry)];
+    var bits = [];
+    conf.summary.forEach(function (key) {
+      var val = entry.fields && entry.fields[key];
+      if (val) bits.push(val);
+    });
+    if (entry['with']) bits.push('with ' + entry['with']);
+    return bits;
+  }
+
+  function haystack(entry) {
+    var parts = [entry.title, entry.note, entry['with'], CATS[catOf(entry)].label];
+    if (entry.fields) Object.keys(entry.fields).forEach(function (k) { parts.push(entry.fields[k]); });
+    if (Array.isArray(entry.tags)) parts = parts.concat(entry.tags);
+    return parts.join(' \u00b7 ').toLowerCase();
+  }
+
+  /* ---------------- selection ---------------- */
+
+  function visible() {
+    var q = ui.q.trim().toLowerCase();
+    return state.entries.filter(function (entry) {
+      if (ui.cat !== 'all' && catOf(entry) !== ui.cat) return false;
+      if (ui.status !== 'all' && (entry.status || 'logged') !== ui.status) return false;
+      if (ui.tag && !(Array.isArray(entry.tags) && entry.tags.indexOf(ui.tag) !== -1)) return false;
+      if (q && haystack(entry).indexOf(q) === -1) return false;
+      return true;
+    }).sort(compare);
+  }
+
+  function compare(a, b) {
+    if (ui.sort === 'az') return a.title.localeCompare(b.title);
+    var dir = ui.sort === 'old' ? 1 : -1;
+    if (!a.date && !b.date) return a.title.localeCompare(b.title);
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    if (a.date === b.date) return a.title.localeCompare(b.title);
+    return a.date < b.date ? dir : -dir;
+  }
+
+  function groups(list) {
+    if (ui.sort === 'az') return list.length ? [{ key: 'All entries, A to Z', items: list }] : [];
+    var order = [];
+    var byKey = Object.create(null);
+    list.forEach(function (entry) {
+      var key = yearOf(entry);
+      if (!byKey[key]) { byKey[key] = []; order.push(key); }
+      byKey[key].push(entry);
+    });
+    return order.map(function (key) { return { key: key, items: byKey[key] }; });
+  }
+
+  function countFor(cat) {
+    return state.entries.filter(function (e) { return cat === 'all' || catOf(e) === cat; }).length;
+  }
+
+  /* ---------------- render ---------------- */
+
+  function render() {
+    var list = visible();
+    var total = state.entries.length;
+    var years = state.entries.map(yearOf).filter(function (y) { return y !== 'Someday'; }).sort();
+    var since = years.length ? years[0] : '';
+    var wish = state.entries.filter(function (e) { return e.status === 'wishlist'; }).length;
+
+    var out = '<div class="shell">';
+
+    /* masthead */
+    out += '<header class="masthead">'
+      + '<p class="eyebrow label">A record of where I went, what I watched, who I was with</p>'
+      + '<h1>Dylan\u2019s Ledger</h1>'
+      + '<p class="dek">Restaurants and bars, movies and television, concerts and live nights \u2014 kept as notes rather than scores, because the note is the part worth rereading.</p>'
+      + '<div class="masthead-foot">'
+      + '<span class="label">' + total + ' ' + (total === 1 ? 'entry' : 'entries') + '</span>'
+      + (since ? '<span class="label">since ' + esc(since) + '</span>' : '')
+      + (wish ? '<span class="label">' + wish + ' on the list</span>' : '')
+      + '<span class="spacer"></span>'
+      + '<button class="linkish" data-act="howto">How to update this</button>'
+      + '</div></header>';
+
+    /* sample banner */
+    if (state.hasSamples) {
+      out += '<div class="banner"><p><strong>These eight entries are samples</strong> so you can see the shape of things. Clear them and the ledger is yours.</p>'
+        + '<span class="spacer"></span>'
+        + '<button class="btn btn-quiet" data-act="clear-samples">Clear samples</button></div>';
+    }
+
+    /* controls */
+    out += '<div class="controls"><div class="controls-row">'
+      + '<input class="search" id="q" type="search" placeholder="Search titles, notes, people, places\u2026" value="' + esc(ui.q) + '" aria-label="Search the ledger">'
+      + '<select class="select" id="status" aria-label="Filter by status">'
+      + opt('all', 'Everything', ui.status) + opt('logged', 'Been there', ui.status) + opt('wishlist', 'Want to', ui.status)
+      + '</select>'
+      + '<select class="select" id="sort" aria-label="Sort order">'
+      + opt('new', 'Newest first', ui.sort) + opt('old', 'Oldest first', ui.sort) + opt('az', 'A \u2013 Z', ui.sort)
+      + '</select>'
+      + (readOnly ? '' : '<button class="btn" data-act="new">Add entry</button>')
+      + '</div>';
+
+    out += '<div class="tabs" role="tablist">' + tab('all', 'Everything');
+    CAT_ORDER.forEach(function (cat) { out += tab(cat, CATS[cat].label); });
+    out += '</div>';
+
+    if (ui.tag || save.text) {
+      out += '<div class="controls-row" style="margin-top:.875rem">';
+      if (ui.tag) {
+        out += '<span class="filterchip label">tagged \u201c' + esc(ui.tag) + '\u201d'
+          + '<button data-act="clear-tag" aria-label="Clear tag filter">\u00d7</button></span>';
+      }
+      if (save.text) {
+        out += '<span class="spacer"></span><span class="savechip label" data-tone="' + esc(save.tone) + '">' + esc(save.text) + '</span>';
+      }
+      out += '</div>';
+    }
+    out += '</div>';
+
+    /* entries */
+    if (!list.length) {
+      out += '<div class="empty"><h2>' + (total ? 'Nothing matches that' : 'The ledger is empty') + '</h2>'
+        + '<p>' + (total
+          ? 'Try a looser search, or switch back to everything.'
+          : 'Add the last place you ate, the last thing you watched, the last show you stood through.') + '</p>'
+        + (total || readOnly ? '' : '<div><button class="btn" data-act="new">Add the first entry</button></div>')
+        + '</div>';
+    } else {
+      groups(list).forEach(function (group) {
+        out += '<div class="year"><h2>' + esc(group.key) + '</h2><span class="hr"></span>'
+          + '<span class="n label">' + group.items.length + '</span></div>';
+        group.items.forEach(function (entry) { out += renderEntry(entry); });
+      });
+    }
+
+    out += '</div>';
+    app.innerHTML = out;
+    wire();
+  }
+
+  function opt(value, text, current) {
+    return '<option value="' + value + '"' + (current === value ? ' selected' : '') + '>' + text + '</option>';
+  }
+
+  function tab(cat, text) {
+    var on = ui.cat === cat;
+    return '<button class="tab' + (cat === 'all' ? '' : ' cat-' + cat) + '" role="tab" data-act="cat" data-cat="' + cat + '"'
+      + ' aria-selected="' + (on ? 'true' : 'false') + '">' + esc(text)
+      + '<span class="n label">' + countFor(cat) + '</span></button>';
+  }
+
+  function renderEntry(entry) {
+    var cat = catOf(entry);
+    var open = !!expanded[entry.id];
+    var bits = summaryBits(entry);
+    var out = '<article class="entry cat-' + cat + '">';
+
+    out += '<button class="row" data-act="toggle" data-id="' + esc(entry.id) + '" aria-expanded="' + (open ? 'true' : 'false') + '">'
+      + '<span class="margin">'
+      + '<span class="day label">' + esc(dayLabel(entry.date)) + '</span>'
+      + '<span class="cat label">' + esc(CATS[cat].pill) + '</span>'
+      + '</span>'
+      + '<span class="body">'
+      + '<span class="ttl">' + esc(entry.title) + '</span>'
+      + (entry.status === 'wishlist' ? '<span class="pill">Want to</span>' : '')
+      + (entry.sample ? '<span class="pill" style="border-color:var(--ink-faint);color:var(--ink-faint)">Sample</span>' : '')
+      + (bits.length ? '<span class="meta">' + esc(bits.join(' \u00b7 ')) + '</span>' : '')
+      + (entry.note && !open ? '<span class="note-preview">' + esc(entry.note) + '</span>' : '')
+      + '</span></button>';
+
+    if (open) {
+      out += '<div class="detail">';
+      out += '<p class="note">' + (entry.note ? esc(entry.note) : '<em class="empty">No note yet.</em>') + '</p>';
+
+      var rows = '';
+      fieldDefs(cat).forEach(function (def) {
+        var val = entry.fields && entry.fields[def.key];
+        if (val) rows += '<dt>' + esc(def.label) + '</dt><dd>' + esc(val) + '</dd>';
+      });
+      if (entry['with']) rows += '<dt>Who with</dt><dd>' + esc(entry['with']) + '</dd>';
+      if (entry.date) rows += '<dt>Date</dt><dd>' + esc(entry.date) + '</dd>';
+      if (rows) out += '<dl>' + rows + '</dl>';
+
+      if (Array.isArray(entry.tags) && entry.tags.length) {
+        out += '<div class="tags">' + entry.tags.map(function (t) {
+          return '<button class="tag" data-act="tag" data-tag="' + esc(t) + '">' + esc(t) + '</button>';
+        }).join('') + '</div>';
+      }
+
+      if (!readOnly) {
+        out += '<div class="actions">'
+          + '<button class="btn btn-quiet" data-act="edit" data-id="' + esc(entry.id) + '">Edit</button>';
+        if (confirming === entry.id) {
+          out += '<button class="btn btn-danger" data-act="delete-confirm" data-id="' + esc(entry.id) + '">Delete for good</button>'
+            + '<button class="btn btn-quiet" data-act="delete-cancel">Keep it</button>'
+            + '<span class="warn">This cannot be undone.</span>';
+        } else {
+          out += '<button class="btn btn-quiet" data-act="delete" data-id="' + esc(entry.id) + '">Delete</button>';
+        }
+        out += '</div>';
+      }
+      out += '</div>';
+    }
+
+    out += '</article>';
+    return out;
+  }
+
+  /* ---------------- events ---------------- */
+
+  function wire() {
+    var q = document.getElementById('q');
+    if (q) {
+      q.addEventListener('input', function () {
+        ui.q = q.value; stashUi();
+        var pos = q.selectionStart;
+        render();
+        var next = document.getElementById('q');
+        if (next) { next.focus(); try { next.setSelectionRange(pos, pos); } catch (err) {} }
+      });
+    }
+    bindSelect('status');
+    bindSelect('sort');
+  }
+
+  function bindSelect(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('change', function () { ui[id] = el.value; stashUi(); render(); });
+  }
+
+  app.addEventListener('click', function (event) {
+    var el = event.target.closest('[data-act]');
+    if (!el) return;
+    var act = el.getAttribute('data-act');
+
+    if (act === 'toggle') {
+      var id = el.getAttribute('data-id');
+      if (expanded[id]) { delete expanded[id]; } else { expanded[id] = true; }
+      if (confirming && confirming !== id) confirming = null;
+      render();
+    } else if (act === 'cat') {
+      ui.cat = el.getAttribute('data-cat'); stashUi(); render();
+    } else if (act === 'tag') {
+      ui.tag = el.getAttribute('data-tag'); stashUi(); render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (act === 'clear-tag') {
+      ui.tag = ''; stashUi(); render();
+    } else if (act === 'new') {
+      openForm(null);
+    } else if (act === 'edit') {
+      openForm(find(el.getAttribute('data-id')));
+    } else if (act === 'delete') {
+      confirming = el.getAttribute('data-id'); render();
+    } else if (act === 'delete-cancel') {
+      confirming = null; render();
+    } else if (act === 'delete-confirm') {
+      var gone = el.getAttribute('data-id');
+      state.entries = state.entries.filter(function (e) { return e.id !== gone; });
+      confirming = null; delete expanded[gone];
+      persist();
+    } else if (act === 'clear-samples') {
+      state.entries = state.entries.filter(function (e) { return !e.sample; });
+      state.hasSamples = false;
+      persist();
+    } else if (act === 'howto') {
+      openHowto();
+    }
+  });
+
+  function find(id) {
+    for (var i = 0; i < state.entries.length; i++) if (state.entries[i].id === id) return state.entries[i];
+    return null;
+  }
+
+  /* ---------------- entry form ---------------- */
+
+  function openForm(entry) {
+    var editing = !!entry;
+    var draft = entry
+      ? JSON.parse(JSON.stringify(entry))
+      : { id: newId(), category: ui.cat === 'all' ? 'food' : ui.cat, status: 'logged', title: '', date: today(), fields: {}, 'with': '', tags: [], note: '' };
+
+    var dlg = document.createElement('dialog');
+    dlg.className = 'cat-' + catOf(draft);
+    document.body.appendChild(dlg);
+
+    function paint() {
+      dlg.className = 'cat-' + catOf(draft);
+      var out = '<form method="dialog"><div class="dlg-head"><h2>' + (editing ? 'Edit entry' : 'New entry') + '</h2>'
+        + '<span class="spacer"></span><button type="button" class="closex" data-x="close" aria-label="Close">\u00d7</button></div>'
+        + '<div class="dlg-body">';
+
+      out += '<div class="fieldset"><span class="flabel">Category</span><div class="seg">';
+      CAT_ORDER.forEach(function (cat) {
+        out += '<button type="button" class="cat-' + cat + '" data-x="cat" data-cat="' + cat + '" aria-pressed="'
+          + (catOf(draft) === cat ? 'true' : 'false') + '">' + esc(CATS[cat].label) + '</button>';
+      });
+      out += '</div></div>';
+
+      out += '<div class="fieldset"><span class="flabel">Status</span><div class="seg">'
+        + '<button type="button" class="cat-' + catOf(draft) + '" data-x="status" data-status="logged" aria-pressed="' + (draft.status !== 'wishlist') + '">Been there</button>'
+        + '<button type="button" class="cat-' + catOf(draft) + '" data-x="status" data-status="wishlist" aria-pressed="' + (draft.status === 'wishlist') + '">Want to</button>'
+        + '</div></div>';
+
+      out += '<label class="field"><span>' + (catOf(draft) === 'food' ? 'Place' : catOf(draft) === 'screen' ? 'Title' : 'Artist or event') + '</span>'
+        + '<input data-f="title" value="' + esc(draft.title) + '" required></label>';
+
+      out += '<div class="grid2">'
+        + '<label class="field"><span>Date</span><input data-f="date" type="date" value="' + esc(draft.date) + '">'
+        + '<span class="hint">Leave blank for something you have not done yet.</span></label>'
+        + '<label class="field"><span>Who with</span><input data-f="with" value="' + esc(draft['with'] || '') + '"></label>'
+        + '</div>';
+
+      var defs = fieldDefs(catOf(draft));
+      var narrow = defs.filter(function (d) { return !d.wide; });
+      var wide = defs.filter(function (d) { return d.wide; });
+      out += '<div class="grid2">';
+      narrow.forEach(function (def) { out += fieldInput(def, draft); });
+      out += '</div>';
+      wide.forEach(function (def) { out += fieldInput(def, draft); });
+
+      out += '<label class="field"><span>Tags</span><input data-f="tags" value="' + esc((draft.tags || []).join(', ')) + '">'
+        + '<span class="hint">Comma separated \u2014 pizza, brooklyn, byob</span></label>';
+
+      out += '<label class="field"><span>The note</span><textarea data-f="note" placeholder="What it was like. What to do differently next time.">' + esc(draft.note) + '</textarea></label>';
+
+      out += '</div><div class="dlg-foot">'
+        + '<button type="button" class="btn btn-quiet" data-x="close">Cancel</button>'
+        + '<button type="button" class="btn" data-x="save">' + (editing ? 'Save changes' : 'Add to ledger') + '</button>'
+        + '</div></form>';
+      dlg.innerHTML = out;
+      var first = dlg.querySelector('[data-f="title"]');
+      if (first) first.focus();
+    }
+
+    function fieldInput(def, d) {
+      var val = (d.fields && d.fields[def.key]) || '';
+      var input;
+      if (def.options) {
+        input = '<select data-f="fields.' + def.key + '"><option value=""></option>'
+          + def.options.map(function (o) {
+            return '<option value="' + esc(o) + '"' + (val === o ? ' selected' : '') + '>' + esc(o) + '</option>';
+          }).join('') + '</select>';
+      } else {
+        input = '<input data-f="fields.' + def.key + '" value="' + esc(val) + '">';
+      }
+      return '<label class="field"><span>' + esc(def.label) + '</span>' + input + '</label>';
+    }
+
+    function collect() {
+      draft.fields = draft.fields || {};
+      dlg.querySelectorAll('[data-f]').forEach(function (el) {
+        var key = el.getAttribute('data-f');
+        var val = el.value.trim();
+        if (key.indexOf('fields.') === 0) draft.fields[key.slice(7)] = val;
+        else if (key === 'tags') draft.tags = val ? val.split(',').map(function (t) { return t.trim(); }).filter(Boolean) : [];
+        else draft[key] = val;
+      });
+    }
+
+    dlg.addEventListener('click', function (event) {
+      var el = event.target.closest('[data-x]');
+      if (!el) return;
+      var what = el.getAttribute('data-x');
+      if (what === 'close') { dlg.close(); }
+      else if (what === 'cat') { collect(); draft.category = el.getAttribute('data-cat'); paint(); }
+      else if (what === 'status') { collect(); draft.status = el.getAttribute('data-status'); paint(); }
+      else if (what === 'save') {
+        collect();
+        if (!draft.title) { var t = dlg.querySelector('[data-f="title"]'); if (t) t.focus(); return; }
+        delete draft.sample;
+        var existing = find(draft.id);
+        if (existing) {
+          state.entries[state.entries.indexOf(existing)] = draft;
+        } else {
+          state.entries.push(draft);
+          expanded[draft.id] = true;
+        }
+        dlg.close();
+        persist();
+      }
+    });
+
+    dlg.addEventListener('close', function () { dlg.remove(); render(); });
+    paint();
+    dlg.showModal();
+  }
+
+  function today() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  /* ---------------- how to update ---------------- */
+
+  function openHowto() {
+    var dlg = document.createElement('dialog');
+    document.body.appendChild(dlg);
+    var here = ARTIFACT_URL || (window.location && window.location.href) || '';
+    dlg.innerHTML = '<div class="dlg-head"><h2>Keeping this up to date</h2><span class="spacer"></span>'
+      + '<button type="button" class="closex" data-x="close" aria-label="Close">\u00d7</button></div>'
+      + '<div class="dlg-body howto">'
+      + '<h3>Right here on the page</h3>'
+      + '<p>Add entry, then edit or delete any entry from its expanded view. Every change publishes a new version of this page, so it is saved for good \u2014 no export, no separate file.</p>'
+      + '<h3>Or just tell Claude</h3>'
+      + '<p>Paste this ledger\u2019s address into a Claude project\u2019s instructions and Claude can read and update it the same way you do:</p>'
+      + '<code class="snippet">' + esc(here) + '</code>'
+      + '<p>Then say things like:</p>'
+      + '<p class="quote">\u201cAdd Lucali to my ledger \u2014 went last night with Ari, get the calzone.\u201d</p>'
+      + '<p class="quote">\u201cLog Severance, finished season two, watched on Apple TV+.\u201d</p>'
+      + '<p class="quote">\u201cMove Anora from want-to to watched, saw it Tuesday.\u201d</p>'
+      + '<p class="quote">\u201cWhat did I say about the last three places I ate in Brooklyn?\u201d</p>'
+      + '<h3>For the project instructions</h3>'
+      + '<p>Copy this into the project so Claude knows what to do without being told twice:</p>'
+      + '<code class="snippet">' + esc('My activity ledger lives at ' + here + '\n\nWhen I mention a restaurant, bar, movie, show, concert, or live event I went to or want to go to, update the ledger: read it with the Artifact tool, add or edit the entry in the JSON block with id "entry-data", and publish back to the same URL. Categories are food, screen, and live. Status is "logged" or "wishlist". Keep my wording in the note.') + '</code>'
+      + '</div><div class="dlg-foot"><button type="button" class="btn" data-x="close">Close</button></div>';
+    dlg.addEventListener('click', function (event) {
+      if (event.target.closest('[data-x="close"]')) dlg.close();
+    });
+    dlg.addEventListener('close', function () { dlg.remove(); });
+    dlg.showModal();
+  }
+
+  /* ---------------- publish ---------------- */
+
+  function buildDocument(next) {
+    var css = document.getElementById('app-style').textContent;
+    var js = document.getElementById('app-script').textContent;
+    var json = JSON.stringify(next, null, 2).replace(/</g, '\\u003c');
+    return [
+      '<!doctype html>',
+      '<html lang="en">',
+      '<head>',
+      '<meta charset="utf-8">',
+      '<meta name="viewport" content="width=device-width, initial-scale=1">',
+      '<title>Dylan\u2019s Ledger</title>',
+      '<link rel="preconnect" href="https://fonts.googleapis.com">',
+      '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
+      '<link rel="stylesheet" href="' + FONT_HREF + '">',
+      '<style id="app-style">' + css + '<\/style>',
+      '</head>',
+      '<body>',
+      BODY_MARKUP,
+      '<script id="entry-data" type="application/json">',
+      json,
+      '<\/script>',
+      '<script id="app-script">' + js + '<\/script>',
+      '</body>',
+      '</html>'
+    ].join('\n');
+  }
+
+  function setSave(tone, text) { save = { tone: tone, text: text }; }
+
+  function persist() {
+    setSave('idle', 'Saving\u2026');
+    render();
+    stashUi();
+    if (!window.claude || typeof window.claude.use !== 'function') {
+      setSave('warn', 'Not saved \u2014 open this page from its own address');
+      render();
+      return;
+    }
+    window.claude.use('artifact').then(function (api) {
+      if (!api) {
+        setSave('warn', 'Saving unavailable in this view');
+        render();
+        return;
+      }
+      return api.publish(buildDocument(state)).then(function () {
+        setSave('idle', 'Saved');
+        render();
+      });
+    }).catch(function (err) {
+      var code = err && err.code;
+      if (code === 'conflict') {
+        setSave('warn', 'Someone published first \u2014 reloading');
+      } else if (code === 'not_writer' || code === 'not_granted' || code === 'not_declared'
+        || code === 'capability_disabled' || code === 'capability_removed' || code === 'consent_required') {
+        readOnly = true;
+        setSave('warn', 'This view is read-only');
+      } else if (code === 'rate_limited') {
+        setSave('warn', 'Saving too fast \u2014 wait a moment and try again');
+      } else if (code === 'too_large') {
+        setSave('warn', 'The ledger is too large to publish');
+      } else {
+        setSave('warn', 'Could not save \u2014 try again');
+      }
+      render();
+    });
+  }
+
+  render();
+}());
+</script>
