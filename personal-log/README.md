@@ -52,9 +52,16 @@ the filter tabs, and the metadata line all read from it.
 | **Order again** | Every `dish` you flagged on a food entry, in one list. Tap the place name to open the entry. |
 | **Year in review** | Per-year counts, top tags, who you were with most, first and last outing, cities, nights away. Year picker flips between years. |
 | **On this day** | A strip above the grid when today's month and day match an entry from an earlier year. Absent otherwise. |
-| **Away markers** | Set `home` (the top-level home base city, editable in Year in review). Any entry whose `city` doesn't contain it gets an Away chip and counts toward the away tally. Screen entries have no city, so they never count. |
+| **Away markers** | Any entry whose `city` isn't home gets an Away chip and counts toward the away tally. Screen entries have no city, so they never count. |
 
-`home` lives alongside `hasSamples` and `entries` at the top of the JSON block.
+`home` sits alongside `hasSamples` and `entries` at the top of the JSON block. It
+is a **comma-separated list**, not one city: the first item is the display name,
+the rest are neighborhoods that still count as home. Seeded for Los Angeles
+(90069) with WeHo, Silver Lake, Santa Monica and the other usual names, and
+editable from Year in review.
+
+Matching is whole-word on a punctuation-stripped, lowercased form of both sides,
+so `LA` matches "Downtown LA" but not Atlanta, Dallas, Portland, or Oakland.
 
 ## Telling Claude to update it
 
