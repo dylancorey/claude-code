@@ -9,6 +9,12 @@ Notes rather than ratings — the note is the part worth rereading.
 `artifact` capability, so adding or editing an entry on the page publishes a new
 version of itself to that same URL. There is no separate database file.
 
+Navigation: search across every field, category filter (the big number row),
+been-there / want-to toggles, sort, and a tag filter bar. Tags stack — selecting
+two narrows to entries carrying both — and each chip shows how many entries it
+would leave, so combinations that lead nowhere are visible before you click.
+Tags are stored lowercase.
+
 ## Data shape
 
 Entries live in the `<script id="entry-data" type="application/json">` block:
