@@ -37,6 +37,7 @@ Per-category `fields`:
 
 | category | fields | statuses |
 | --- | --- | --- |
+| `place` | `kind`, `city`, `address` | `logged` (Been there), `wishlist` (Want to go) |
 | `food` | `city`, `cuisine`, `address`, `dish` | `logged` (Been there), `wishlist` (Want to go) |
 | `screen` | `kind`, `year`, `by`, `where` | `logged` (Watched), `watching` (Watching), `wishlist` (Want to watch) |
 | `live` | `kind`, `venue`, `city`, `address`, `support` | `logged` (Went), `wishlist` (Want to go) |
@@ -102,3 +103,35 @@ Claude sets the top-level `recs`:
 
 They render above the computed picks under a "From Claude" heading. Ask for them
 in the project and they are written into the ledger like any other edit.
+
+## Discovery
+
+`Discover` in the header searches a catalog of real, sourced items across movies
+and TV, restaurants, and things to do. Results carry artwork tiles, year and
+director or address and neighborhood, a candid blurb, a link back to the source,
+and a map link. Two actions per result: open the source, or save — which opens
+the normal entry form prefilled with title, category, status, year, creator,
+cuisine, address, city, tags, description, source and sourceUrl, so you review
+and edit before confirming.
+
+Restaurants and places matching your home base rank first; the Near box lets you
+search another city. Titles already in the ledger show "In your ledger" and offer
+Open entry instead of Save.
+
+**The page cannot call an API.** Published artifacts run under a CSP that blocks
+fetch, XHR and WebSocket to every external host, and this account's artifact
+runtime serves only `artifact`, `downloads`, `mcp` and `self` — there is no
+network capability to declare. So the index is Claude-fed: ask for a search and
+Claude appends to the top-level `catalog` array. A query with no match shows a
+copy-ready prompt that does exactly that. Item shape:
+
+```json
+{ "id": "unique", "kind": "screen | food | place | live", "title": "...",
+  "year": "2022", "by": "director or creator", "form": "Film | Museum | ...",
+  "cuisine": "...", "city": "...", "address": "street address",
+  "tags": ["lowercase"], "w": 1, "q": "extra search words",
+  "blurb": "candid overview", "source": "Wikipedia", "sourceUrl": "https://..." }
+```
+
+`w` is 1–5 editorial prominence and drives ranking. Use only facts present in the
+source; omit a field rather than guess — the card says when an address is missing.

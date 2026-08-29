@@ -25,6 +25,7 @@ img { max-width: 100%; }
   --c-food:    #D2600B;
   --c-screen:  #4F52D8;
   --c-live:    #C42D6B;
+  --c-place:   #10827A;
 
   --shadow-1:  0 1px 2px rgba(16,17,22,.05), 0 1px 1px rgba(16,17,22,.03);
   --shadow-2:  0 10px 28px -10px rgba(16,17,22,.18), 0 2px 6px rgba(16,17,22,.05);
@@ -54,6 +55,7 @@ img { max-width: 100%; }
     --c-food:    #F5883C;
     --c-screen:  #8C8EF5;
     --c-live:    #F0619B;
+    --c-place:   #3FBDB0;
     --shadow-1:  0 1px 2px rgba(0,0,0,.5);
     --shadow-2:  0 10px 28px -10px rgba(0,0,0,.7), 0 2px 6px rgba(0,0,0,.4);
     --shadow-3:  0 32px 70px -20px rgba(0,0,0,.85), 0 4px 12px rgba(0,0,0,.5);
@@ -74,6 +76,7 @@ img { max-width: 100%; }
   --c-food:    #F5883C;
   --c-screen:  #8C8EF5;
   --c-live:    #F0619B;
+  --c-place:   #3FBDB0;
   --shadow-1:  0 1px 2px rgba(0,0,0,.5);
   --shadow-2:  0 10px 28px -10px rgba(0,0,0,.7), 0 2px 6px rgba(0,0,0,.4);
   --shadow-3:  0 32px 70px -20px rgba(0,0,0,.85), 0 4px 12px rgba(0,0,0,.5);
@@ -91,6 +94,7 @@ body {
 .cat-food   { --cat: var(--c-food); }
 .cat-screen { --cat: var(--c-screen); }
 .cat-live   { --cat: var(--c-live); }
+.cat-place  { --cat: var(--c-place); }
 
 .wrap { max-width: 78rem; margin: 0 auto; padding: 0 1.75rem 6rem; }
 .num { font-variant-numeric: tabular-nums; }
@@ -413,6 +417,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
 .tile.food .v { color: var(--c-food); }
 .tile.screen .v { color: var(--c-screen); }
 .tile.live .v { color: var(--c-live); }
+.tile.place .v { color: var(--c-place); }
 .block { margin-bottom: 1.5rem; }
 .block:last-child { margin-bottom: 0; }
 .block h3 { margin: 0 0 .5rem; font-weight: 600; font-size: .9375rem; letter-spacing: -.01em; }
@@ -439,6 +444,55 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   font-family: var(--mono); font-size: .78125rem; line-height: 1.6; white-space: pre-wrap; overflow-x: auto;
 }
 
+/* ---------- discovery ---------- */
+.disc-top { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .625rem; }
+.disc-in {
+  flex: 1 1 14rem; min-width: 0; background: var(--bg); color: var(--ink);
+  border: 1px solid transparent; border-radius: var(--r); padding: .55rem .75rem; font-size: .9375rem;
+}
+.disc-in:focus { border-color: var(--accent); outline: none; }
+.disc-in::placeholder { color: var(--ink-3); }
+.disc-near { flex: 0 1 11rem; }
+.scopes { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: .25rem; }
+.disc-hint { color: var(--ink-3); font-size: .75rem; margin: .5rem 0 0; }
+
+.dcard { display: flex; gap: .875rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+.dcard:last-child { border-bottom: 0; }
+.dart {
+  flex: none; width: 54px; border-radius: var(--r); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .1rem; text-align: center;
+  background: color-mix(in srgb, var(--cat) var(--tint), transparent); color: var(--cat);
+}
+.dart.poster { height: 76px; }
+.dart.square { height: 54px; }
+.dart .ini { font-weight: 700; font-size: 1.0625rem; letter-spacing: -.02em; }
+.dart .yr { font-size: .625rem; opacity: .8; font-variant-numeric: tabular-nums; }
+.dbody { flex: 1 1 auto; min-width: 0; }
+.dtitle { font-weight: 600; font-size: 1rem; letter-spacing: -.012em; }
+.dmeta { color: var(--ink-3); font-size: .8125rem; margin: .1rem 0 0; }
+.dblurb { color: var(--ink-2); font-size: .875rem; line-height: 1.5; margin: .45rem 0 0; }
+.dmissing { color: var(--ink-3); font-style: italic; }
+.dfoot { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-top: .625rem; }
+.dsrc { color: var(--ink-3); font-size: .75rem; margin-right: auto; }
+.dbtn {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-pill);
+  padding: .3rem .7rem; cursor: pointer; color: var(--ink); font-size: .8125rem; font-weight: 500;
+  text-decoration: none; display: inline-flex; align-items: center; gap: .3rem;
+  transition: border-color .16s var(--ease), background .16s var(--ease);
+}
+.dbtn:hover { border-color: var(--line-2); background: var(--bg); }
+.dbtn.primary { background: var(--accent); border-color: transparent; color: #fff; }
+.dbtn.primary:hover { filter: brightness(1.08); background: var(--accent); }
+.dbtn svg { width: 13px; height: 13px; }
+.dbtn[disabled] { opacity: .55; cursor: default; }
+.dhave { color: var(--cat); font-size: .75rem; font-weight: 600; }
+
+.askbox { background: var(--bg); border-radius: var(--r-lg); padding: 1.125rem; margin-top: .5rem; }
+.askbox h3 { margin: 0 0 .375rem; font-weight: 600; font-size: .9375rem; }
+.askbox p { margin: 0 0 .75rem; color: var(--ink-2); font-size: .875rem; }
+.askbox .snippet { background: var(--surface); margin-bottom: .75rem; }
+.chipset { display: flex; flex-wrap: wrap; gap: .3rem; }
+
 @media (max-width: 46rem) {
   .wrap { padding: 0 1rem 4.5rem; }
   .grid2 { grid-template-columns: 1fr; }
@@ -454,9 +508,320 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
 <script id="entry-data" type="application/json">
 {
   "hasSamples": false,
-  "tone": "dry",
-  "home": "Los Angeles, LA, West Hollywood, WeHo, Hollywood, Beverly Hills, Silver Lake, Echo Park, Los Feliz, Santa Monica, Venice, Culver City, Downtown LA, DTLA, Koreatown, Studio City, Sherman Oaks, Highland Park, Glendale, Pasadena, The Grove, Grove, Fairfax, Miracle Mile, Mid-Wilshire, Larchmont, Melrose, Brentwood, Westwood, Century City, Marina del Rey, Atwater Village, Eagle Rock, Chinatown, Arts District, Burbank, Sawtelle, Palms, Mar Vista",
+  "tone": "salty",
+  "home": "West Hollywood, WeHo, Hollywood, Beverly Hills,, The Grove, Grove, Fairfax, Miracle Mile, Mid-Wilshire, Larchmont, Melrose Century City",
   "recs": null,
+  "catalogAt": "2026-08-29",
+  "catalog": [
+    {
+      "id": "cthebatman2022",
+      "kind": "screen",
+      "form": "Film",
+      "title": "The Batman",
+      "year": "2022",
+      "by": "Matt Reeves",
+      "blurb": "Reeves ditches cape-and-punch for a soaked, grimy detective picture. Pattinson plays Bruce as a shut-in with a war journal and the whole thing is lit like a crime scene. It is long as hell and deadly serious, so be in the mood before you start it.",
+      "tags": [
+        "batman",
+        "noir"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/The_Batman_(film)",
+      "q": "batman dc gotham",
+      "w": 5
+    },
+    {
+      "id": "cthedarkknight2008",
+      "kind": "screen",
+      "form": "Film",
+      "title": "The Dark Knight",
+      "year": "2008",
+      "by": "Christopher Nolan",
+      "blurb": "The one people mean when they say a Batman movie is actually good. Ledger's Joker is the reason and it holds up: a crime thriller that happens to have a guy in a bat suit. Nolan's sound mix will still have you fighting the volume knob.",
+      "tags": [
+        "batman",
+        "crime"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/The_Dark_Knight",
+      "q": "",
+      "w": 5
+    },
+    {
+      "id": "cbatmanbegins2005",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Batman Begins",
+      "year": "2005",
+      "by": "Christopher Nolan",
+      "blurb": "The origin done straight, and the film that made the character legible again after the neon years. Slower and smaller than what follows, and the fight scenes are chopped to hell, but the groundwork is solid.",
+      "tags": [
+        "batman",
+        "origin"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Batman_Begins",
+      "q": "batman dc gotham",
+      "w": 4
+    },
+    {
+      "id": "cthedarkknightrises2012",
+      "kind": "screen",
+      "form": "Film",
+      "title": "The Dark Knight Rises",
+      "year": "2012",
+      "by": "Christopher Nolan",
+      "blurb": "Nolan closing the book: bigger, heavier, and noticeably more full of shit than the middle film. Bane's voice is a choice. Worth it for the ending if you sat through the other two.",
+      "tags": [
+        "batman"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/The_Dark_Knight_Rises",
+      "q": "",
+      "w": 3
+    },
+    {
+      "id": "cbatman1989",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Batman",
+      "year": "1989",
+      "by": "Tim Burton",
+      "blurb": "Burton's gothic toy box with Nicholson chewing every set he walks onto. More about production design than plot, and Batman himself barely gets a personality, but it reset what these movies could look like.",
+      "tags": [
+        "batman",
+        "burton"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Batman_(film)",
+      "q": "batman dc gotham",
+      "w": 4
+    },
+    {
+      "id": "cbatmanreturns1992",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Batman Returns",
+      "year": "1992",
+      "by": "Tim Burton",
+      "blurb": "Weirder, hornier and meaner than a Christmas blockbuster has any right to be. DeVito's Penguin is genuinely upsetting. The studio hated it, which is usually a good sign.",
+      "tags": [
+        "batman",
+        "burton"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Batman_Returns",
+      "q": "batman dc gotham",
+      "w": 3
+    },
+    {
+      "id": "cbatmanforever1995",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Batman Forever",
+      "year": "1995",
+      "by": "Joel Schumacher",
+      "blurb": "Schumacher turns the lights on and the neon way up. Carrey is doing a lot. Loud, dumb fun in the right mood and unwatchable in the wrong one.",
+      "tags": [
+        "batman"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Batman_Forever",
+      "q": "batman dc gotham",
+      "w": 1
+    },
+    {
+      "id": "cbatmanandrobin1997",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Batman & Robin",
+      "year": "1997",
+      "by": "Joel Schumacher",
+      "blurb": "The famous disaster. Ice puns, nipples on the suit, and a film that put the franchise in the ground for years. Only worth a night as a hate-watch with company and something to drink.",
+      "tags": [
+        "batman"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Batman_%26_Robin_(film)",
+      "q": "batman dc gotham",
+      "w": 1
+    },
+    {
+      "id": "cbatman1966",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Batman",
+      "year": "1966",
+      "by": "Leslie H. Martinson",
+      "blurb": "The Adam West one, shark repellent bat spray and all. Deliberately ridiculous and completely aware of it. Charming for ninety minutes if you show up without expectations.",
+      "tags": [
+        "batman",
+        "camp"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Batman_(1966_film)",
+      "q": "batman dc gotham",
+      "w": 2
+    },
+    {
+      "id": "cthebatmanpartii2027",
+      "kind": "screen",
+      "form": "Film",
+      "title": "The Batman: Part II",
+      "year": "2027",
+      "by": "Matt Reeves",
+      "blurb": "Reeves' sequel, not out yet. Nothing to watch here \u2014 park it on the want-to list and forget about it until it actually shows up.",
+      "tags": [
+        "batman",
+        "upcoming"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/The_Batman_Part_II",
+      "q": "batman dc gotham",
+      "w": 1
+    },
+    {
+      "id": "cdune2021",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Dune",
+      "year": "2021",
+      "by": "Denis Villeneuve",
+      "blurb": "Half a book shot like a cathedral. Villeneuve cares more about scale and dread than plot, so it can feel like a very expensive prologue, because it is. Biggest screen you can find.",
+      "tags": [
+        "sci-fi"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Dune_(2021_film)",
+      "q": "",
+      "w": 4
+    },
+    {
+      "id": "cduneparttwo2024",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Dune: Part Two",
+      "year": "2024",
+      "by": "Denis Villeneuve",
+      "blurb": "The half where things actually happen. Bigger, meaner, and it finally pays off the first film's setup. Do not start here.",
+      "tags": [
+        "sci-fi"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Dune:_Part_Two",
+      "q": "",
+      "w": 5
+    },
+    {
+      "id": "cgranvillewh",
+      "kind": "food",
+      "form": "",
+      "title": "Granville West Hollywood",
+      "cuisine": "New American",
+      "city": "West Hollywood",
+      "address": "8701 Beverly Blvd, West Hollywood, CA 90048",
+      "blurb": "Neighborhood American cooking on Beverly, built for the weeknight where nobody wants to make a decision. Broad menu, reliable rather than thrilling. Weekend brunch is a scrum.",
+      "tags": [
+        "granville",
+        "weho"
+      ],
+      "source": "Yelp",
+      "sourceUrl": "https://www.yelp.com/biz/granville-west-hollywood-2",
+      "q": "granville",
+      "w": 3
+    },
+    {
+      "id": "cgranvillesc",
+      "kind": "food",
+      "form": "",
+      "title": "Granville Studio City",
+      "cuisine": "New American",
+      "city": "Studio City",
+      "address": "12345 Ventura Blvd, Studio City, CA",
+      "blurb": "The Ventura Blvd branch of the same operation. Same menu, easier parking, valley crowd. Fine call if you are already over the hill.",
+      "tags": [
+        "granville",
+        "valley"
+      ],
+      "source": "Tripadvisor",
+      "sourceUrl": "https://www.tripadvisor.com/Restaurant_Review-g32655-d7098574-Reviews-Granville-Los_Angeles_California.html",
+      "q": "granville",
+      "w": 3
+    },
+    {
+      "id": "cgranvillepas",
+      "kind": "food",
+      "form": "",
+      "title": "Granville Pasadena",
+      "cuisine": "New American",
+      "city": "Pasadena",
+      "address": "270 S Lake Ave, Pasadena, CA 91101",
+      "blurb": "South Lake Ave location, calmer room than the WeHo one. Same globally-inspired menu. Good for a group that cannot agree on a single damn thing.",
+      "tags": [
+        "granville",
+        "pasadena"
+      ],
+      "source": "Beverly Press",
+      "sourceUrl": "https://beverlypress.com/2018/09/globally-inspired-dining-at-granville/",
+      "q": "granville",
+      "w": 3
+    },
+    {
+      "id": "cgriffith",
+      "kind": "place",
+      "form": "Landmark",
+      "title": "Griffith Observatory",
+      "city": "Los Feliz",
+      "address": "2800 E Observatory Rd, Los Angeles, CA 90027",
+      "blurb": "Free, genuinely good, and the basin at dusk is the one LA postcard that earns it. Public telescopes and space exhibits inside. Parking is a nightmare \u2014 take the bus or go on a weekday.",
+      "tags": [
+        "free",
+        "view",
+        "museum"
+      ],
+      "source": "Visit California",
+      "sourceUrl": "https://www.visitcalifornia.com/experience/griffith-park-observatory/",
+      "q": "griffith observatory",
+      "w": 5
+    },
+    {
+      "id": "cbroad",
+      "kind": "place",
+      "form": "Museum",
+      "title": "The Broad",
+      "city": "Downtown LA",
+      "address": "",
+      "blurb": "Free timed entry to a contemporary collection downtown. The Kusama room is what everyone queues for. Book ahead or you are not getting in.",
+      "tags": [
+        "free",
+        "art",
+        "museum"
+      ],
+      "source": "Discover Los Angeles",
+      "sourceUrl": "https://www.discoverlosangeles.com/things-to-do/enjoy-free-museum-days-in-los-angeles",
+      "q": "broad museum art",
+      "w": 4
+    },
+    {
+      "id": "cgetty",
+      "kind": "place",
+      "form": "Museum",
+      "title": "Getty Center",
+      "city": "Brentwood",
+      "address": "",
+      "blurb": "Free museum on a hill with a tram ride up, gardens, and a view over the whole west side. Parking costs money even though admission does not. Easy half-day.",
+      "tags": [
+        "free",
+        "art",
+        "museum",
+        "view"
+      ],
+      "source": "Discover Los Angeles",
+      "sourceUrl": "https://www.discoverlosangeles.com/things-to-do/enjoy-free-museum-days-in-los-angeles",
+      "q": "getty museum art",
+      "w": 4
+    }
+  ],
   "entries": [
     {
       "id": "s4",
@@ -496,7 +861,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       "id": "emtd4hfcret93",
       "category": "food",
       "status": "logged",
-      "title": "Las Pampas",
+      "title": "Pampas Grill Churrascaria",
       "date": "2026-08-27",
       "fields": {
         "city": "Grove",
@@ -504,7 +869,8 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         "dish": "Spicy Chicken",
         "kind": "",
         "venue": "",
-        "support": ""
+        "support": "",
+        "address": ""
       },
       "with": "Trish",
       "tags": [
@@ -525,13 +891,13 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         "kind": "",
         "year": "",
         "by": "",
-        "where": "YouTube Tv"
+        "where": "YouTube TV"
       },
       "with": "Trish",
       "tags": [
         "reality"
       ],
-      "note": ""
+      "note": "Hilarious show with very talented people"
     }
   ]
 }
@@ -552,7 +918,9 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     moon: '<path d="M13.4 9.6A5.8 5.8 0 0 1 6.4 2.6a5.9 5.9 0 1 0 7 7Z"/>',
     auto: '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.8a6.2 6.2 0 0 1 0 12.4Z"/>',
     gear: '<path d="M8 5.4a2.6 2.6 0 1 0 0 5.2 2.6 2.6 0 0 0 0-5.2Zm6.1 3.4.03-.8-.03-.8 1.3-1a.4.4 0 0 0 .1-.5l-1.3-2.2a.4.4 0 0 0-.5-.2l-1.5.6a5.9 5.9 0 0 0-1.4-.8l-.2-1.6a.4.4 0 0 0-.4-.3H7.8a.4.4 0 0 0-.4.3l-.2 1.6c-.5.2-1 .5-1.4.8l-1.5-.6a.4.4 0 0 0-.5.2L2.5 5.7a.4.4 0 0 0 .1.5l1.3 1-.03.8.03.8-1.3 1a.4.4 0 0 0-.1.5l1.3 2.2c.1.2.3.3.5.2l1.5-.6c.4.3.9.6 1.4.8l.2 1.6c0 .2.2.3.4.3h2.4c.2 0 .4-.1.4-.3l.2-1.6c.5-.2 1-.5 1.4-.8l1.5.6c.2.1.4 0 .5-.2l1.3-2.2a.4.4 0 0 0-.1-.5Z"/>',
-    spark: '<path d="M8 .9 9.5 5 13.6 6.5 9.5 8 8 12.1 6.5 8 2.4 6.5 6.5 5Zm4.6 7.5.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7Z"/>'
+    spark: '<path d="M8 .9 9.5 5 13.6 6.5 9.5 8 8 12.1 6.5 8 2.4 6.5 6.5 5Zm4.6 7.5.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7Z"/>',
+    find: '<circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.6 10.6 14.4 14.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>',
+    ext: '<path d="M6.4 2.4h7.2v7.2h-1.6V5.1l-6 6L4.9 10l6-6H6.4Z"/><path d="M2.4 4.8h3.2v1.6H4v7.2h7.2v-1.6h1.6v3.2H2.4Z"/>'
   };
   function svg(name) { return '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">' + ICON[name] + '</svg>'; }
 
@@ -579,6 +947,16 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       summary: ['kind', 'year', 'by'],
       statuses: [['logged', 'Watched'], ['watching', 'Watching'], ['wishlist', 'Want to watch']]
     },
+    place: {
+      label: 'Activities & Places', short: 'Do', titleLabel: 'Place or activity',
+      fields: [
+        { key: 'kind',    label: 'Kind', options: ['Museum','Landmark','Park','Hike','Gallery','Tour','Class','Market','Beach','Viewpoint'] },
+        { key: 'city',    label: 'Neighborhood or city' },
+        { key: 'address', label: 'Address', wide: true, hint: 'Makes the map link work.' }
+      ],
+      summary: ['kind', 'city'],
+      statuses: [['logged', 'Been there'], ['wishlist', 'Want to go']]
+    },
     live: {
       label: 'Concerts & Live', short: 'Live', titleLabel: 'Artist or event',
       fields: [
@@ -592,7 +970,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       statuses: [['logged', 'Went'], ['wishlist', 'Want to go']]
     }
   };
-  var CAT_ORDER = ['food', 'screen', 'live'];
+  var CAT_ORDER = ['food', 'screen', 'live', 'place'];
   var GENERIC_STATUS = { logged: 'Done', watching: 'Watching', wishlist: 'Want to' };
 
   var LINES = {
@@ -669,7 +1047,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   /* ---------------- data ---------------- */
 
   function readState() {
-    var base = { hasSamples: false, tone: 'dry', home: '', recs: null, entries: [] };
+    var base = { hasSamples: false, tone: 'dry', home: '', recs: null, catalog: [], catalogAt: '', entries: [] };
     try {
       var parsed = JSON.parse(document.getElementById('entry-data').textContent);
       if (!parsed || !Array.isArray(parsed.entries)) throw new Error('shape');
@@ -678,6 +1056,8 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         tone: LINES.emptyTitle[parsed.tone] ? parsed.tone : 'dry',
         home: typeof parsed.home === 'string' ? parsed.home : '',
         recs: parsed.recs && Array.isArray(parsed.recs.items) ? parsed.recs : null,
+        catalog: Array.isArray(parsed.catalog) ? parsed.catalog : [],
+        catalogAt: typeof parsed.catalogAt === 'string' ? parsed.catalogAt : '',
         entries: parsed.entries
       };
     } catch (err) { return base; }
@@ -824,7 +1204,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   }
 
   function reviewFor(year) {
-    var r = { year: year, total: 0, cat: { food: 0, screen: 0, live: 0 }, tags: {}, people: {},
+    var r = { year: year, total: 0, cat: { food: 0, screen: 0, live: 0, place: 0 }, tags: {}, people: {},
               months: {}, cities: {}, away: 0, first: null, last: null };
     state.entries.forEach(function (e) {
       if (!e.date || e.date.slice(0, 4) !== year) return;
@@ -1060,6 +1440,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   function toolsRow() {
     var w = wishlist().length, d = dishes().length, years = yearsWithEntries();
     return '<div class="tools">'
+      + '<button class="tool" data-act="discover">' + svg('find') + 'Discover</button>'
       + '<button class="tool" data-act="suggest">' + svg('spark') + 'Suggest something</button>'
       + '<button class="tool" data-act="spin">Spin it<span class="c">' + w + '</span></button>'
       + '<button class="tool" data-act="dishes">Order again<span class="c">' + d + '</span></button>'
@@ -1178,6 +1559,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     else if (act === 'spin') openSpin();
     else if (act === 'dishes') openDishes();
     else if (act === 'review') openReview(yearsWithEntries()[0]);
+    else if (act === 'discover') openDiscover();
     else if (act === 'suggest') openSuggest();
     else if (act === 'settings') openSettings();
     else if (act === 'howto') openHowto();
@@ -1249,8 +1631,14 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         + '<div class="dlg-body">'
         + '<p class="detail-note">' + (entry.note ? esc(entry.note) : '<span class="none">' + esc(say('noNote')) + '</span>') + '</p>'
         + '<dl class="facts">' + facts + '</dl>'
-        + (url ? '<p style="margin:0 0 1.25rem"><a class="maplink-full" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">'
-                + svg('pin') + 'Open in Maps</a></p>' : '')
+        + (url || entry.sourceUrl
+            ? '<div class="dfoot" style="margin:0 0 1.25rem">'
+              + (url ? '<a class="maplink-full" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">'
+                      + svg('pin') + 'Open in Maps</a>' : '')
+              + (entry.sourceUrl ? '<a class="maplink-full" href="' + esc(entry.sourceUrl) + '" target="_blank" rel="noopener noreferrer">'
+                      + svg('ext') + 'Open ' + esc(entry.source || 'source') + '</a>' : '')
+              + '</div>'
+            : '')
         + (tagsOf(entry).length ? '<div class="detail-tags">' + tagsOf(entry).map(function (t) {
             return '<button class="tagchip" data-x="tag" data-tag="' + esc(t) + '">' + esc(t) + '</button>';
           }).join('') + '</div>' : '')
@@ -1282,10 +1670,10 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
 
   /* ---------------- form ---------------- */
 
-  function openForm(entry) {
+  function openForm(entry, prefill) {
     var editing = !!entry;
     var draft = entry ? JSON.parse(JSON.stringify(entry))
-      : { id: newId(), category: ui.cat === 'all' ? 'food' : ui.cat, status: 'logged', title: '',
+      : prefill || { id: newId(), category: ui.cat === 'all' ? 'food' : ui.cat, status: 'logged', title: '',
           date: today(), fields: {}, 'with': '', tags: [], note: '' };
     var dlg = modal('');
 
@@ -1542,6 +1930,230 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     dlg.showModal();
   }
 
+  /* ---------------- discovery ---------------- */
+
+  function catalog() { return Array.isArray(state.catalog) ? state.catalog : []; }
+
+  function discCat(item) {
+    return item.kind === 'screen' ? 'screen'
+      : item.kind === 'food' ? 'food'
+      : item.kind === 'live' ? 'live' : 'place';
+  }
+
+  function discHay(item) {
+    return [item.title, item.by, item.city, item.address, item.year, item.form, item.cuisine,
+            (item.tags || []).join(' '), item.q || ''].join(' ').toLowerCase();
+  }
+
+  function initials(t) {
+    var w = String(t || '').replace(/^(the|a|an)\s+/i, '').split(/\s+/).filter(Boolean);
+    return (w.slice(0, 2).map(function (x) { return x.charAt(0); }).join('') || '?').toUpperCase();
+  }
+
+  function existingFor(item) {
+    var t = norm(item.title), c = discCat(item);
+    for (var i = 0; i < state.entries.length; i++) {
+      if (catOf(state.entries[i]) === c && norm(state.entries[i].title) === t) return state.entries[i];
+    }
+    return null;
+  }
+
+  function nearScore(item, near) {
+    if (discCat(item) === 'screen') return 0;
+    var want = String(near || '').trim();
+    if (!want) return 0;
+    var hay = norm((item.city || '') + ' ' + (item.address || ''));
+    var label = homeLabel();
+    var terms = (label && want.toLowerCase() === label.toLowerCase()) ? homeTerms() : [norm(want)];
+    for (var i = 0; i < terms.length; i++) {
+      if (terms[i].trim() && hay.indexOf(terms[i]) !== -1) return 8;
+    }
+    return 0;
+  }
+
+  function discSearch(q, scope, near) {
+    var terms = String(q || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if (!terms.length) return [];
+    var out = [];
+    catalog().forEach(function (item) {
+      if (scope !== 'all' && discCat(item) !== scope) return;
+      var hay = discHay(item);
+      for (var i = 0; i < terms.length; i++) if (hay.indexOf(terms[i]) === -1) return;
+      var title = String(item.title || '').toLowerCase().replace(/^(the|a|an)\s+/, '');
+      var whole = q.trim().toLowerCase().replace(/^(the|a|an)\s+/, '');
+      var score = 0;
+      if (title === whole) score += 14;
+      else if (title.indexOf(terms[0]) === 0) score += 10;
+      else if (title.indexOf(terms[0]) !== -1) score += 6;
+      score += (parseInt(item.w, 10) || 2) * 3;
+      if ((item.tags || []).indexOf(whole) !== -1) score += 5;
+      score += nearScore(item, near);
+      var y = parseInt(item.year, 10);
+      if (y) score += Math.min(y / 1000, 2.5);
+      out.push({ item: item, score: score });
+    });
+    out.sort(function (a, b) { return b.score - a.score || a.item.title.localeCompare(b.item.title); });
+    return out.map(function (r) { return r.item; });
+  }
+
+  function discMapUrl(item) {
+    if (discCat(item) === 'screen') return '';
+    var q = item.address || (item.city ? item.title + ', ' + item.city : '');
+    return q ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q) : '';
+  }
+
+  function draftFrom(item) {
+    var cat = discCat(item), f = {};
+    if (cat === 'screen') {
+      f.kind = item.form || 'Film'; f.year = item.year || ''; f.by = item.by || ''; f.where = '';
+    } else if (cat === 'food') {
+      f.city = item.city || ''; f.cuisine = item.cuisine || ''; f.address = item.address || ''; f.dish = '';
+    } else if (cat === 'place') {
+      f.kind = item.form || ''; f.city = item.city || ''; f.address = item.address || '';
+    } else {
+      f.kind = item.form || ''; f.venue = ''; f.city = item.city || ''; f.address = item.address || ''; f.support = '';
+    }
+    return {
+      id: newId(), category: cat, status: 'wishlist', title: item.title || '', date: '',
+      fields: f, 'with': '', tags: (item.tags || []).slice(), note: item.blurb || '',
+      source: item.source || '', sourceUrl: item.sourceUrl || ''
+    };
+  }
+
+  function openDiscover() {
+    var dlg = modal('');
+    var q = '', scope = 'all', near = homeLabel();
+    var SCOPES = [['all', 'Everything'], ['screen', 'Movies & TV'], ['food', 'Restaurants'], ['place', 'Things to do']];
+    var here = ARTIFACT_URL || (window.location && window.location.href) || '';
+
+    dlg.innerHTML = dlgHead('Discovery')
+      + '<div class="dlg-body">'
+      + '<div class="disc-top">'
+      + '<input class="disc-in" id="discQ" type="search" placeholder="Batman, Granville, Griffith\u2026" aria-label="Search sources">'
+      + '<input class="disc-in disc-near" id="discNear" value="' + esc(near) + '" placeholder="Near\u2026" aria-label="Near which city">'
+      + '</div>'
+      + '<div class="scopes" id="discScopes">' + SCOPES.map(function (p) {
+          return '<button class="tagchip" data-x="scope" data-scope="' + p[0] + '" aria-pressed="'
+            + (scope === p[0]) + '">' + esc(p[1]) + '</button>';
+        }).join('') + '</div>'
+      + '<div id="discResults"></div>'
+      + '</div>' + dlgFoot();
+
+    var results = dlg.querySelector('#discResults');
+    var input = dlg.querySelector('#discQ');
+    var nearIn = dlg.querySelector('#discNear');
+
+    function card(item) {
+      var cat = discCat(item);
+      var have = existingFor(item);
+      var map = discMapUrl(item);
+      var loc = item.address || item.city || '';
+      var meta = cat === 'screen'
+        ? [item.form, item.year, item.by].filter(Boolean).join(' \u00b7 ')
+        : [item.form || item.cuisine, loc].filter(Boolean).join(' \u00b7 ');
+      var missing = (cat !== 'screen' && !item.address)
+        ? 'No street address in this source \u2014 the map link searches by name.' : '';
+
+      return '<div class="dcard cat-' + cat + '">'
+        + '<div class="dart ' + (cat === 'screen' ? 'poster' : 'square') + '">'
+        + '<span class="ini">' + esc(initials(item.title)) + '</span>'
+        + (item.year ? '<span class="yr">' + esc(item.year) + '</span>' : '')
+        + '</div><div class="dbody">'
+        + '<div class="dtitle">' + esc(item.title) + '</div>'
+        + (meta ? '<p class="dmeta">' + esc(meta) + '</p>' : '')
+        + (missing ? '<p class="dmeta dmissing">' + esc(missing) + '</p>' : '')
+        + (item.blurb ? '<p class="dblurb">' + esc(item.blurb) + '</p>' : '')
+        + '<div class="dfoot">'
+        + '<span class="dsrc">via ' + esc(item.source || 'unknown source') + '</span>'
+        + (have
+            ? '<span class="dhave">In your ledger</span>'
+              + '<button class="dbtn" data-x="have" data-id="' + esc(have.id) + '">Open entry</button>'
+            : '<button class="dbtn primary" data-x="save" data-cid="' + esc(item.id) + '">Save to ledger</button>')
+        + (item.sourceUrl ? '<a class="dbtn" href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener noreferrer">'
+            + svg('ext') + 'Open source</a>' : '')
+        + (map ? '<a class="dbtn" href="' + esc(map) + '" target="_blank" rel="noopener noreferrer">'
+            + svg('pin') + 'Map</a>' : '')
+        + '</div></div></div>';
+    }
+
+    function askBox(term) {
+      var prompt = 'Add "' + term + '" to the discovery catalog in my ledger at ' + here
+        + ' \u2014 search real sources, append entries to the top-level "catalog" array with title, year, creator, address, city, tags, source, sourceUrl and a candid blurb, then publish.';
+      return '<div class="askbox"><h3>Nothing indexed for \u201c' + esc(term) + '\u201d</h3>'
+        + '<p>This page is sandboxed and cannot reach the internet on its own, so Claude keeps the index stocked. '
+        + 'Ask it and it will search real sources and add them here.</p>'
+        + '<code class="snippet">' + esc(prompt) + '</code>'
+        + '<button class="dbtn primary" data-x="copy">Copy prompt</button></div>';
+    }
+
+    function idle() {
+      var n = catalog().length;
+      return '<p class="disc-hint">Try one</p><div class="chipset">'
+        + ['Batman', 'Granville', 'Griffith', 'Dune'].map(function (t) {
+            return '<button class="tagchip" data-x="try" data-q="' + esc(t) + '">' + esc(t) + '</button>';
+          }).join('') + '</div>'
+        + '<p class="disc-hint">' + n + ' item' + (n === 1 ? '' : 's') + ' indexed'
+        + (state.catalogAt ? ', last updated ' + esc(state.catalogAt) : '')
+        + '. Every result links back to where it came from. Restaurants and places near '
+        + esc(homeLabel() || 'home') + ' rank first \u2014 change the Near box to look elsewhere.</p>';
+    }
+
+    function renderResults() {
+      if (!q.trim()) { results.innerHTML = idle(); return; }
+      var list = discSearch(q, scope, near);
+      results.innerHTML = list.length ? list.map(card).join('') : askBox(q.trim());
+    }
+
+    function syncScopes() {
+      dlg.querySelectorAll('[data-x="scope"]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-scope') === scope));
+      });
+    }
+
+    input.addEventListener('input', function () { q = input.value; renderResults(); });
+    nearIn.addEventListener('input', function () { near = nearIn.value; renderResults(); });
+
+    onClose(dlg, function (what, el) {
+      if (what === 'scope') { scope = el.getAttribute('data-scope'); syncScopes(); renderResults(); }
+      else if (what === 'try') { q = el.getAttribute('data-q'); input.value = q; renderResults(); input.focus(); }
+      else if (what === 'have') { var e = find(el.getAttribute('data-id')); dlg.close(); openDetail(e); }
+      else if (what === 'copy') { copyText(el.parentNode.querySelector('.snippet').textContent, el); }
+      else if (what === 'save') {
+        var cid = el.getAttribute('data-cid'), item = null;
+        catalog().forEach(function (c) { if (c.id === cid) item = c; });
+        if (!item) return;
+        dlg.close();
+        openForm(null, draftFrom(item));
+      }
+    });
+
+    renderResults();
+    dlg.showModal();
+    input.focus();
+  }
+
+  function copyText(text, btn) {
+    var label = btn.textContent;
+    function done() {
+      btn.textContent = 'Copied';
+      setTimeout(function () { btn.textContent = label; }, 1600);
+    }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); }
+      catch (err) { btn.textContent = 'Select the text above'; }
+      ta.remove();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else fallback();
+  }
+
   /* ---------------- year in review ---------------- */
 
   function openReview(year) {
@@ -1578,6 +2190,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
           + tile(r.cat.food, 'Food', 'food')
           + tile(r.cat.screen, 'Screen', 'screen')
           + tile(r.cat.live, 'Live', 'live')
+          + tile(r.cat.place, 'Do', 'place')
           + (state.home ? tile(r.away, 'Away', '') : '')
           + '</div>';
 
@@ -1696,6 +2309,10 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         + 'When I mention a restaurant, bar, movie, show, concert, or live event, update the ledger: read it with the Artifact tool, edit the JSON in the script block with id "entry-data", and publish back to the same URL.\n\n'
         + 'Categories: food, screen, live. Statuses: food and live use "logged" or "wishlist"; screen also allows "watching". Tags are lowercase. Put street addresses in fields.address on food and live entries so the map links work, and what to order in fields.dish. Keep my wording in the note.\n\n'
         + 'To write suggestions, set the top-level "recs" to {"at": "<today>", "items": [{"category": "food", "title": "...", "body": "..."}]}. Base them only on what is already in the ledger. Match the "tone" field: plain, dry, or salty.') + '</code>'
+      + '<h3>Stocking Discovery</h3>'
+      + '<p>The page is sandboxed and cannot call an API, so the Discovery index holds whatever Claude has put in it. Ask for a search and it appends to the top-level catalog array:</p>'
+      + '<code class="snippet">' + esc('{ "id": "unique", "kind": "screen" | "food" | "place" | "live", "title": "...",\n  "year": "2022", "by": "director or creator", "form": "Film | Series | Museum | Landmark",\n  "cuisine": "...", "city": "...", "address": "street address",\n  "tags": ["lowercase"], "w": 1-5 how notable, "q": "extra search words",\n  "blurb": "candid overview: what it is, why bother, the drawback",\n  "source": "Wikipedia", "sourceUrl": "https://..." }') + '</code>'
+      + '<p>Use only facts that are actually in the source; leave a field out rather than guessing, and the card will say an address is missing. Bump catalogAt to the date.</p>'
       + '</div>' + dlgFoot();
     onClose(dlg);
     dlg.showModal();
