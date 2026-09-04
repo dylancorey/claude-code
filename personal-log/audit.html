@@ -114,6 +114,20 @@ body {
 .verdict p:last-child { margin-bottom: 0; }
 .verdict strong { font-weight: 600; }
 
+.decided {
+  background: var(--accent-w); border: 1px solid var(--accent);
+  padding: 1.25rem 1.5rem; margin: -2rem 0 3rem;
+}
+.decided .dhead {
+  font-family: var(--mono); font-size: .6875rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--accent);
+  margin: 0 0 .625rem;
+}
+.decided ul { margin: 0; padding-left: 1.1rem; }
+.decided li { font-size: .9375rem; margin-bottom: .3rem; color: var(--ink-2); }
+.decided li:last-child { margin-bottom: 0; }
+.decided b { color: var(--ink); font-weight: 600; }
+
 /* ---------- sections ---------- */
 section { margin-bottom: 3.5rem; scroll-margin-top: 1rem; }
 .snum {
@@ -332,7 +346,19 @@ pre {
 <div class="verdict">
   <p><strong>The architecture is better than the product.</strong> The persistence layer, the self-rebuilding document, and the theme system are genuinely well built — better than most artifacts of this size, and they should not be touched. What's weak is everything that decides <em>what a memory is worth</em>: there is no rating, no capture timestamp, and no undo. The ledger records that you went somewhere. It cannot record whether it was any good.</p>
   <p>Three findings are live data bugs, not design opinions: a malformed home-base string that permanently mislabels two neighborhoods, a fabricated street address shipped in the Discovery catalog, and a sort order that files every undated entry at the bottom of the page under "Someday" — where three of your nine entries currently sit.</p>
-  <p>Nothing here was implemented. Six questions in §11 need answers before Phase 1 starts.</p>
+  <p>Nothing here was implemented. The six open questions were resolved on 2026-09-04 and are recorded in §11; the execution spec below has been rewritten to match them, so the agent has no product decisions left to make.</p>
+</div>
+
+<div class="decided">
+  <p class="dhead">Decisions · 2026-09-04</p>
+  <ul>
+    <li><b>Quality signal</b> — "Would I go again?" only. Yes/no. No star scale.</li>
+    <li><b>Want-to entries</b> — own tab, pulled out of the main list entirely.</li>
+    <li><b>Share link</b> — repointed to the current version.</li>
+    <li><b>Photos</b> — deferred. Not scheduled.</li>
+    <li><b>Trash retention</b> — kept until manually emptied.</li>
+    <li><b>Voice scope</b> — setting relabelled rather than triple-authoring blurbs.</li>
+  </ul>
 </div>
 
 <!-- ===================== 1 ===================== -->
@@ -970,16 +996,16 @@ pre {
     <table>
       <thead><tr><th>ID</th><th>Upgrade</th><th class="n">Impact</th><th class="n">Effort</th><th>Depends on</th><th>Risk</th></tr></thead>
       <tbody>
-        <tr><td class="id">F01</td><td>Ratings + "would repeat"</td><td class="n">5</td><td class="n">2</td><td>—</td><td>Low · additive field</td></tr>
+        <tr><td class="id">F01</td><td>"Would I go again?" — binary</td><td class="n">5</td><td class="n">1</td><td>—</td><td>Low · additive field</td></tr>
         <tr><td class="id">F04</td><td><code>createdAt</code> / <code>updatedAt</code></td><td class="n">5</td><td class="n">2</td><td>—</td><td>Low · backfill must not fabricate</td></tr>
         <tr><td class="id">F02</td><td>Soft delete, trash, undo</td><td class="n">5</td><td class="n">2</td><td>F04</td><td>Med · touches delete path</td></tr>
-        <tr><td class="id">F03</td><td>Sort + grouping rework</td><td class="n">5</td><td class="n">3</td><td>F04</td><td>Med · changes default view</td></tr>
+        <tr><td class="id">F03</td><td>Want-to becomes its own tab</td><td class="n">5</td><td class="n">4</td><td>F04</td><td>Med · navigation change</td></tr>
         <tr><td class="id">F12</td><td>Full export / import</td><td class="n">4</td><td class="n">3</td><td>—</td><td>Med · import can overwrite</td></tr>
         <tr><td class="id">F21</td><td>Offline buffer + retry</td><td class="n">3</td><td class="n">3</td><td>F04</td><td>Med · restore-conflict UX</td></tr>
         <tr><td class="id">F10</td><td>Partial render + debounce</td><td class="n">3</td><td class="n">3</td><td>—</td><td>Med · touches render core</td></tr>
         <tr><td class="id">F14</td><td>Mobile filter sheet + tablet tier</td><td class="n">3</td><td class="n">3</td><td>—</td><td>Low</td></tr>
         <tr><td class="id">F23</td><td>Regroup tools by intent</td><td class="n">2</td><td class="n">3</td><td>—</td><td>Med · relearning cost</td></tr>
-        <tr><td class="id">—</td><td>Photos via <code>assets</code></td><td class="n">4</td><td class="n">4</td><td>capability</td><td>High · size + privacy</td></tr>
+        <tr><td class="id">—</td><td>Photos via <code>assets</code> — <em>deferred (D6)</em></td><td class="n">4</td><td class="n">4</td><td>capability</td><td>High · size + privacy</td></tr>
       </tbody>
     </table>
   </div>
@@ -991,7 +1017,7 @@ pre {
   <h2>Phased roadmap</h2>
 
   <div class="phase">
-    <div class="ph"><span class="pnum">Phase 0</span><h3>Map and confirm</h3><span class="gate">Gate: answers to §11</span></div>
+    <div class="ph"><span class="pnum">Phase 0</span><h3>Map and confirm</h3><span class="gate">§11 decisions locked</span></div>
     <ul>
       <li>Re-read the live artifact; confirm no drift since version <code>1788304833-dea8</code>.</li>
       <li>Document the current data model and every field in use across all 9 entries.</li>
@@ -1034,10 +1060,11 @@ pre {
   </div>
 
   <div class="phase">
-    <div class="ph"><span class="pnum">Phase 5</span><h3>Discovery and reflection</h3><span class="gate">Gate: Q2, Q4</span></div>
+    <div class="ph"><span class="pnum">Phase 5</span><h3>Discovery and reflection</h3><span class="gate">Unblocked</span></div>
     <ul>
-      <li>F13 OR search · F15 near aliases · F18 voice scope · F21 offline buffer</li>
-      <li>Companion view · rolling and lifetime review · rating-weighted recommendations</li>
+      <li>F13 OR search · F15 near aliases · F18 relabel voice · F21 offline buffer</li>
+      <li>Companion view · rolling and lifetime review · repeat-weighted recommendations</li>
+      <li>Photos remain out of scope per D6.</li>
     </ul>
   </div>
 </section>
@@ -1045,48 +1072,53 @@ pre {
 <!-- ===================== 11 ===================== -->
 <section>
   <p class="snum">§ 11</p>
-  <h2>Questions that must be answered first</h2>
+  <h2>Decisions</h2>
+
+  <p>Resolved 2026-09-04. The execution spec has been rewritten against these; the agent has no product calls left to make.</p>
 
   <div class="q">
-    <span class="qid">Q1</span>
+    <span class="qid">D1</span>
     <div>
-      <div class="qt">Rating scale — five dots, or thumbs?</div>
-      <p>Five gives the review and recommender real resolution but invites fiddling over 3 vs 4. A binary "would repeat" is faster to capture and matches how you actually decide. F01 is specified as both; if you only want one, say which. <em>My recommendation: five dots plus repeat, dots optional.</em></p>
+      <div class="qt">Quality signal: "would I go again?" only</div>
+      <p>Binary yes/no on the entry root. No star scale. Fastest possible capture, and it matches how the decision actually gets made.</p>
+      <p><b>Consequence:</b> the Second-Chance list in §12 is dead — it needed a middle value to find the "fine, but not great" places. Its inverse survives and is the better half: things you said you would return to and then never did.</p>
     </div>
   </div>
   <div class="q">
-    <span class="qid">Q2</span>
+    <span class="qid">D2</span>
     <div>
-      <div class="qt">Is "Someday" a bucket you like, or an accident you tolerate?</div>
-      <p>F03 assumes undated entries are being lost at the bottom of the page. If you deliberately use "Someday" as a parking lot and are happy with it living at the end, the fix is only the sort label, not the grouping.</p>
+      <div class="qt">Want-to entries get their own tab</div>
+      <p>Bigger than the "move to top" option and cleaner. The main list becomes only things that happened; everything on the want-to list moves to a dedicated view, sorted by when it was added.</p>
+      <p><b>Consequence:</b> F03 grows from a sort fix into a navigation change, and the header counts need a rule — my read is that the category counts cover done things and the want-to tab carries its own count. Say so if you want them combined.</p>
     </div>
   </div>
   <div class="q">
-    <span class="qid">Q3</span>
+    <span class="qid">D3</span>
     <div>
-      <div class="qt">Trash retention — 30 days, or forever until purged?</div>
-      <p>Forever is safest and costs document size on a ledger you intend to keep for years. 30 days needs a purge job that runs on load, which is one more thing that can go wrong.</p>
+      <div class="qt">Trash is kept until manually emptied</div>
+      <p>No auto-purge on a timer — nothing deletes itself behind your back. Costs a little document size, which is not a real constraint at this scale.</p>
     </div>
   </div>
   <div class="q">
-    <span class="qid">Q4</span>
+    <span class="qid">D4</span>
     <div>
-      <div class="qt">Does the voice setting need to control Discovery blurbs?</div>
-      <p>F18 has a one-line fix (relabel the setting) and a real fix (store three variants per blurb, and every future catalog item costs 3× the writing). Only worth it if switching to Plain and still seeing profanity actually bothers you.</p>
+      <div class="qt">Voice setting relabelled, blurbs left alone</div>
+      <p>Renamed to "Ledger voice" with a note that Discovery copy is written when an item is indexed. Storing three variants per blurb would triple the authoring cost of every future catalog item permanently, for a small payoff.</p>
     </div>
   </div>
   <div class="q">
-    <span class="qid">Q5</span>
+    <span class="qid">D5</span>
     <div>
-      <div class="qt">What should the share link show?</div>
-      <p>It is currently pinned to a pre-Discovery version, so anyone you shared it with sees a stale page. Options: move the pin to current, keep it pinned deliberately as a curated snapshot, or unshare. This is the one item in the audit with an audience beyond you, and it needs a decision either way.</p>
+      <div class="qt">Share link repointed to current</div>
+      <p>Done from the artifact's own share menu — no tool exposes this, so it is a manual step for the owner, not agent work.</p>
+      <p><b>Consequence:</b> viewers now see live entries and notes as they are written. Worth adding a private-note flag later if anything sensitive ever goes in; not scheduled.</p>
     </div>
   </div>
   <div class="q">
-    <span class="qid">Q6</span>
+    <span class="qid">D6</span>
     <div>
-      <div class="qt">Photos — worth the privacy and size cost?</div>
-      <p>The <code>assets</code> capability would let entries carry an image, which is the biggest emotional upgrade available here. But photos travel with any share link and inflate the document. Not scheduled in the roadmap until you say yes.</p>
+      <div class="qt">Photos deferred</div>
+      <p>The <code>assets</code> capability stays unscheduled. Nothing in Phases 1–5 forecloses it; it can be added later without rework.</p>
     </div>
   </div>
 </section>
@@ -1106,8 +1138,8 @@ pre {
     </div>
     <div class="bigitem">
       <p class="why">02 · Needs F01 only</p>
-      <h3>The Second-Chance list</h3>
-      <p>Places you rated 3 — not bad enough to write off, not good enough to return to. That is the most useful and least-served list in anyone's life, and no product surfaces it because no product asks. Pair it with the opposite: the 5s you have not been back to in six months.</p>
+      <h3>The list of broken promises</h3>
+      <p>Everything you marked "I'd go again" and then never went back to, ranked by how long ago you said it. That is a list nobody keeps and everybody has. <em>Revised after D1 — the original version of this idea sorted on a middle rating value, which the binary yes/no does not produce.</em></p>
     </div>
     <div class="bigitem">
       <p class="why">03 · Zero new data</p>
@@ -1218,10 +1250,15 @@ PHASE 2 — DATA MODEL (gated on verified Phase 1 backup)
        embedded base-36 timestamp parses to a plausible date. Leave null for
        s4, s6 and any id that does not parse. Never fabricate.
        Set updatedAt on every write from this point.
-  F01  Add rating (integer 1–5 or null) and again (boolean or null) to the
-       entry root — NOT to fields, they are cross-category.
-       Render a five-dot control in openForm() and a compact glyph on the card.
-       Weight recommend() by rating. Null must never read as zero.
+  F01  Add "again" (true | false | null) to the entry root — NOT to fields, it
+       is cross-category. DECIDED (D1): binary only. Do NOT add a star or
+       numeric rating; it was explicitly declined.
+       Render as a two-state control in openForm() labelled "Would I go again?"
+       ("Watch again?" for screen), defaulting to null — null is "not
+       answered", never "no", and must render differently from false.
+       Card shows a compact mark for true, nothing for null, a muted mark for
+       false. Weight recommend(): again === true on a comparable entry is a
+       positive signal, false is negative, null is neutral.
   F09  On category change in openForm(), retain keys declared by the new
        category plus shared keys (city, address); drop the rest — but if a
        dropped key holds a non-empty value, ask before discarding.
@@ -1244,9 +1281,24 @@ PHASE 3 — RETRIEVAL AND RECOVERY (depends on Phase 2)
   F02  Soft delete: move to a trash array with deletedAt. "Deleted — Undo" for
        10s in the live region. Trash view in Settings with restore and purge.
        Hard delete exists ONLY behind purge, with its own confirm.
-       Retention per Q3 — do not choose it yourself.
-  F03  "Newest" sorts on (date || createdAt). Rename sorts to Recent / Oldest /
-       A–Z. Undated wishlist grouping per Q2 — do not choose it yourself.
+       DECIDED (D3): no auto-purge, no retention timer. Trash is kept until
+       the owner empties it manually. Do not add expiry logic.
+  F03  DECIDED (D2): want-to entries move OUT of the main list into their own
+       top-level tab.
+       - Main list shows only status logged and watching, sorted on
+         (date || createdAt). Rename sorts to Recent / Oldest / A–Z.
+       - New "Want to" tab holds every wishlist entry across all four
+         categories, sorted by createdAt descending (most recently added
+         first) — these have no dates by definition, so date sorting is
+         meaningless here.
+       - Retire the "Someday" year-group entirely; it has no members once
+         wishlist entries move out.
+       - Header counts: category counts cover the main list; the Want-to tab
+         carries its own count. FLAG THIS and confirm before building if the
+         owner expects combined totals.
+       - Category and tag filters must work inside the Want-to tab too.
+       - Spin it, Suggest something and Order again read the wishlist and must
+         keep working unchanged — verify explicitly after this change.
   F16  reviewFor() falls back to createdAt for year bucketing, marks those
        entries approximate, and shows an undated count linking to a filter.
   F17  isAway() returns home | away | unknown. Review tile reads
@@ -1282,7 +1334,10 @@ PHASE 5 — DISCOVERY AND REFLECTION (gated on Q2, Q4)
        above single, keep the exact-title bonus. Empty state only at zero hits.
   F15  Alias map for Near (westside, valley, eastside, beach). Graded bonus:
        exact 8, alias 5, same city 2.
-  F18  Per Q4 — relabel the setting, or store blurb as {plain, dry, salty}.
+  F18  DECIDED (D4): relabel only. Setting becomes "Ledger voice" with a hint
+       that Discovery descriptions are written when an item is indexed and do
+       not follow this setting. Do NOT restructure blurb into per-tone
+       variants — that option was declined.
   F21  Mirror state to localStorage on every mutation. Detect offline, hold the
        write, retry on reconnect. On load, if the buffer is newer than the
        published JSON, OFFER to restore. Never restore silently.
