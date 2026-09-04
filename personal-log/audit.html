@@ -1,0 +1,1376 @@
+<title>Ledger Audit Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root {
+  --paper:    #F7F8FA;
+  --surface:  #FFFFFF;
+  --sunk:     #EFF1F4;
+  --ink:      #14171B;
+  --ink-2:    #474E57;
+  --ink-3:    #69707A;
+  --line:     #DFE3E8;
+  --line-2:   #C4CAD2;
+  --accent:   #0B5B57;
+  --accent-w: #E2F0EE;
+
+  --crit:     #A32B22;
+  --crit-w:   #FBEAE8;
+  --high:     #8A5410;
+  --high-w:   #FAF0DF;
+  --med:      #4E5661;
+  --med-w:    #ECEFF2;
+
+  --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:    #101317;
+    --surface:  #171B20;
+    --sunk:     #1E232A;
+    --ink:      #EDEFF2;
+    --ink-2:    #B0B7C0;
+    --ink-3:    #8E96A1;
+    --line:     #2A3038;
+    --line-2:   #3C444E;
+    --accent:   #5FBDB5;
+    --accent-w: #16302E;
+    --crit:     #F0857A;
+    --crit-w:   #351916;
+    --high:     #E0A94E;
+    --high-w:   #2E2415;
+    --med:      #98A0AB;
+    --med-w:    #232830;
+  }
+}
+:root[data-theme="dark"] {
+  --paper:    #101317;
+  --surface:  #171B20;
+  --sunk:     #1E232A;
+  --ink:      #EDEFF2;
+  --ink-2:    #B0B7C0;
+  --ink-3:    #8E96A1;
+  --line:     #2A3038;
+  --line-2:   #3C444E;
+  --accent:   #5FBDB5;
+  --accent-w: #16302E;
+  --crit:     #F0857A;
+  --crit-w:   #351916;
+  --high:     #E0A94E;
+  --high-w:   #2E2415;
+  --med:      #98A0AB;
+  --med-w:    #232830;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sheet { max-width: 60rem; margin: 0 auto; padding: 0 1.5rem 7rem; }
+
+/* ---------- masthead ---------- */
+.mast { padding: 4rem 0 0; border-bottom: 2px solid var(--ink); margin-bottom: 2.5rem; }
+.eyebrow {
+  font-family: var(--mono); font-size: .6875rem; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--accent);
+  margin: 0 0 1rem;
+}
+.mast h1 {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(2.4rem, 6vw, 3.6rem); line-height: 1.05;
+  letter-spacing: -.02em; margin: 0 0 .75rem; text-wrap: balance;
+}
+.mast .standfirst {
+  font-family: var(--serif); font-size: 1.25rem; line-height: 1.5;
+  color: var(--ink-2); margin: 0 0 1.75rem; max-width: 44ch;
+}
+.slug {
+  display: flex; flex-wrap: wrap; gap: .5rem 2rem;
+  font-family: var(--mono); font-size: .75rem; color: var(--ink-3);
+  padding-bottom: 1.25rem;
+}
+.slug b { color: var(--ink-2); font-weight: 500; }
+
+/* ---------- verdict ---------- */
+.verdict {
+  background: var(--surface); border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  padding: 1.5rem 1.75rem; margin-bottom: 3rem;
+}
+.verdict p { margin: 0 0 .875rem; max-width: 66ch; }
+.verdict p:last-child { margin-bottom: 0; }
+.verdict strong { font-weight: 600; }
+
+/* ---------- sections ---------- */
+section { margin-bottom: 3.5rem; scroll-margin-top: 1rem; }
+.snum {
+  font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  color: var(--accent); letter-spacing: .08em;
+}
+h2 {
+  font-family: var(--serif); font-weight: 500; font-size: 1.875rem;
+  letter-spacing: -.015em; line-height: 1.2; margin: .25rem 0 1.25rem;
+  padding-bottom: .625rem; border-bottom: 1px solid var(--line-2);
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--sans); font-weight: 600; font-size: 1rem;
+  letter-spacing: -.005em; margin: 2rem 0 .625rem;
+}
+p { margin: 0 0 1rem; max-width: 68ch; }
+ul, ol { margin: 0 0 1rem; padding-left: 1.25rem; max-width: 68ch; }
+li { margin-bottom: .4rem; }
+a { color: var(--accent); text-underline-offset: 2px; }
+code {
+  font-family: var(--mono); font-size: .8125em;
+  background: var(--sunk); padding: .1em .35em; border-radius: 3px;
+  color: var(--ink-2);
+}
+.ref { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); white-space: nowrap; }
+
+/* ---------- keep list ---------- */
+.keep { display: flex; flex-direction: column; gap: 0; }
+.keep-row {
+  display: grid; grid-template-columns: 1.5rem 1fr; gap: .875rem;
+  padding: .875rem 0; border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.keep-row:last-child { border-bottom: 0; }
+.keep-row .mark {
+  font-family: var(--mono); font-size: .8125rem; color: var(--accent);
+  line-height: 1.6;
+}
+.keep-row .what { font-weight: 600; }
+.keep-row p { margin: .15rem 0 0; font-size: .9375rem; color: var(--ink-2); max-width: 62ch; }
+
+/* ---------- journeys ---------- */
+.journeys { display: grid; gap: .625rem; }
+.journey {
+  display: grid; grid-template-columns: 3.25rem 1fr; gap: 1rem;
+  background: var(--surface); border: 1px solid var(--line);
+  padding: 1rem 1.125rem;
+}
+.journey .jid {
+  font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  color: var(--accent); padding-top: .1rem;
+}
+.journey .jname { font-weight: 600; font-size: .9375rem; margin-bottom: .2rem; }
+.journey .jpath {
+  font-family: var(--mono); font-size: .78125rem; color: var(--ink-3);
+  line-height: 1.7; word-break: break-word;
+}
+.journey .jnote { font-size: .875rem; color: var(--ink-2); margin-top: .45rem; }
+
+/* ---------- finding register ---------- */
+.reg { border-top: 2px solid var(--ink); }
+.find {
+  display: grid; grid-template-columns: 3.5rem 1fr;
+  gap: 0 1rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line);
+}
+.find .fid {
+  font-family: var(--mono); font-size: .875rem; font-weight: 600;
+  color: var(--ink); padding-top: .05rem;
+}
+.find .fhead {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem .75rem;
+  margin-bottom: .5rem;
+}
+.find .ftitle {
+  font-weight: 600; font-size: 1.0625rem; letter-spacing: -.01em;
+  flex: 1 1 20rem; min-width: 0;
+}
+.find p { font-size: .9375rem; margin: 0 0 .625rem; }
+.find p:last-of-type { margin-bottom: 0; }
+.find .fix {
+  margin-top: .75rem; padding-left: .875rem;
+  border-left: 2px solid var(--accent);
+}
+.find .fix b {
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent); display: block; margin-bottom: .2rem;
+}
+.find .fix p { color: var(--ink-2); }
+
+.sev {
+  font-family: var(--mono); font-size: .625rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: .2rem .45rem; border-radius: 2px; white-space: nowrap;
+}
+.sev-crit { background: var(--crit-w); color: var(--crit); }
+.sev-high { background: var(--high-w); color: var(--high); }
+.sev-med  { background: var(--med-w);  color: var(--med); }
+
+.ie {
+  font-family: var(--mono); font-size: .6875rem; color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* ---------- tables ---------- */
+.tw { overflow-x: auto; margin: 0 0 1.25rem; border: 1px solid var(--line); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .875rem; min-width: 34rem; }
+th, td { text-align: left; padding: .625rem .875rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th {
+  font-family: var(--mono); font-size: .6875rem; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3);
+  background: var(--sunk); white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: 0; }
+td.id { font-family: var(--mono); font-size: .8125rem; color: var(--ink-2); white-space: nowrap; }
+td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink-2); }
+
+/* ---------- phases ---------- */
+.phase {
+  background: var(--surface); border: 1px solid var(--line);
+  border-top: 3px solid var(--accent);
+  padding: 1.25rem 1.5rem; margin-bottom: .875rem;
+}
+.phase .ph {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .625rem;
+  margin-bottom: .5rem;
+}
+.phase .pnum {
+  font-family: var(--mono); font-size: .6875rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent);
+}
+.phase h3 { margin: 0; font-size: 1.0625rem; }
+.phase .gate {
+  font-family: var(--mono); font-size: .6875rem; color: var(--ink-3);
+  margin-left: auto;
+}
+.phase ul { margin-bottom: 0; font-size: .9375rem; }
+
+/* ---------- questions ---------- */
+.q {
+  display: grid; grid-template-columns: 2.5rem 1fr; gap: 1rem;
+  padding: 1rem 0; border-bottom: 1px solid var(--line);
+}
+.q:last-child { border-bottom: 0; }
+.q .qid { font-family: var(--mono); font-size: .8125rem; font-weight: 600; color: var(--crit); }
+.q .qt { font-weight: 600; margin-bottom: .25rem; }
+.q p { font-size: .9375rem; color: var(--ink-2); margin: 0; }
+
+/* ---------- badass ---------- */
+.big { display: grid; gap: 1rem; }
+.bigitem {
+  background: var(--surface); border: 1px solid var(--line);
+  padding: 1.25rem 1.5rem;
+}
+.bigitem h3 { margin: 0 0 .375rem; font-size: 1.0625rem; font-family: var(--serif); font-weight: 600; }
+.bigitem p { font-size: .9375rem; color: var(--ink-2); margin: 0 0 .5rem; }
+.bigitem p:last-child { margin-bottom: 0; }
+.bigitem .why {
+  font-family: var(--mono); font-size: .6875rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--accent);
+}
+
+/* ---------- spec ---------- */
+.specwrap { border: 2px solid var(--ink); background: var(--surface); }
+.spechead {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .75rem;
+  padding: .875rem 1.25rem; border-bottom: 1px solid var(--line); background: var(--sunk);
+}
+.spechead .st {
+  font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.spechead .sp { flex: 1 1 auto; }
+.copybtn {
+  font-family: var(--mono); font-size: .75rem; font-weight: 500;
+  background: var(--ink); color: var(--paper); border: 0;
+  padding: .4rem .8rem; border-radius: 3px; cursor: pointer;
+}
+.copybtn:hover { opacity: .85; }
+pre {
+  margin: 0; padding: 1.25rem; overflow-x: auto;
+  font-family: var(--mono); font-size: .75rem; line-height: 1.65;
+  white-space: pre-wrap; word-break: break-word; color: var(--ink-2);
+}
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 40rem) {
+  .sheet { padding: 0 1.125rem 4rem; }
+  .find { grid-template-columns: 1fr; gap: .35rem; }
+  .find .fid { padding-top: 0; }
+  .journey { grid-template-columns: 1fr; gap: .35rem; }
+  .q { grid-template-columns: 1fr; gap: .25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+</style>
+
+<div class="sheet">
+
+<header class="mast">
+  <p class="eyebrow">Stage 1 · Audit only · No changes made</p>
+  <h1>Ledger Audit Register</h1>
+  <p class="standfirst">Twenty-three findings against the live artifact, ranked, with an execution spec for the agent that fixes them.</p>
+  <div class="slug">
+    <span><b>Artifact</b> 7b605c39</span>
+    <span><b>Version read</b> 1788304833-dea8</span>
+    <span><b>Source</b> 2,474 lines, read in full</span>
+    <span><b>Entries</b> 9</span>
+    <span><b>Catalog</b> 18</span>
+    <span><b>Date</b> 2026-09-04</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <p><strong>The architecture is better than the product.</strong> The persistence layer, the self-rebuilding document, and the theme system are genuinely well built — better than most artifacts of this size, and they should not be touched. What's weak is everything that decides <em>what a memory is worth</em>: there is no rating, no capture timestamp, and no undo. The ledger records that you went somewhere. It cannot record whether it was any good.</p>
+  <p>Three findings are live data bugs, not design opinions: a malformed home-base string that permanently mislabels two neighborhoods, a fabricated street address shipped in the Discovery catalog, and a sort order that files every undated entry at the bottom of the page under "Someday" — where three of your nine entries currently sit.</p>
+  <p>Nothing here was implemented. Six questions in §11 need answers before Phase 1 starts.</p>
+</div>
+
+<!-- ===================== 1 ===================== -->
+<section>
+  <p class="snum">§ 01</p>
+  <h2>What already works and should be preserved</h2>
+
+  <p>These are load-bearing. The execution spec in Stage 2 forbids touching them without explicit approval.</p>
+
+  <div class="keep">
+    <div class="keep-row">
+      <span class="mark">01</span>
+      <div>
+        <div class="what">Self-publishing persistence <span class="ref">L2444–2468</span></div>
+        <p><code>persist()</code> calls <code>window.claude.use('artifact')</code> and republishes the whole document. Entries survive browsers, devices and sessions — this is real durability, not <code>localStorage</code>. The error taxonomy is unusually complete: it distinguishes <code>conflict</code>, <code>rate_limited</code>, <code>too_large</code> and six separate permission codes, and flips the page to <code>readOnly</code> rather than pretending a save worked.</p>
+      </div>
+    </div>
+    <div class="keep-row">
+      <span class="mark">02</span>
+      <div>
+        <div class="what">The document rebuilds itself <span class="ref">L2422–2440</span></div>
+        <p><code>buildDocument()</code> reconstructs the page from its own <code>&lt;style&gt;</code> and <code>&lt;script&gt;</code> text plus fresh JSON. The <code>&lt;</code> → <code>&#92;u003c</code> escape correctly prevents a note containing <code>&lt;/script&gt;</code> from destroying the file. This is the mechanism that lets both you and Claude edit the same ledger. Preserve exactly.</p>
+      </div>
+    </div>
+    <div class="keep-row">
+      <span class="mark">03</span>
+      <div>
+        <div class="what">Three-state theming <span class="ref">L17–88, L1111–1144</span></div>
+        <p>Tokens are defined on bare <code>:root</code>, redefined under <code>prefers-color-scheme</code> guarded by <code>:not([data-theme="light"])</code>, and again under <code>[data-theme="dark"]</code>. A <code>MutationObserver</code> re-applies the choice when the host restamps the root. This is the correct pattern and most pages get it wrong.</p>
+      </div>
+    </div>
+    <div class="keep-row">
+      <span class="mark">04</span>
+      <div>
+        <div class="what">Category-driven schema <span class="ref">L1026–1071</span></div>
+        <p><code>CATS</code> drives form fields, summary lines, per-category statuses and the title label from one object. Adding a category is a data change, not a code change — which is exactly how <code>place</code> got added. Extend this; don't route around it.</p>
+      </div>
+    </div>
+    <div class="keep-row">
+      <span class="mark">05</span>
+      <div>
+        <div class="what">Personality as data <span class="ref">L1075–1102</span></div>
+        <p><code>LINES</code> keys every piece of voice copy by tone. Nothing is hardcoded in a render function. The salty variants are genuinely funny and never aimed at you — "You filtered so hard you filtered out your own life" is the correct register for this product.</p>
+      </div>
+    </div>
+    <div class="keep-row">
+      <span class="mark">06</span>
+      <div>
+        <div class="what">Escaping discipline <span class="ref">L1189–1193</span></div>
+        <p><code>esc()</code> is applied at every single interpolation into <code>innerHTML</code>. I checked all of them. Given the page renders user notes and Claude-authored catalog text into markup, this is what stops a stray apostrophe or angle bracket from breaking the ledger.</p>
+      </div>
+    </div>
+    <div class="keep-row">
+      <span class="mark">07</span>
+      <div>
+        <div class="what">Motion restraint <span class="ref">L507–509, L1913</span></div>
+        <p><code>prefers-reduced-motion</code> is honoured in CSS <em>and</em> the spin reel checks <code>matchMedia</code> and skips straight to the result instead of animating a 2.5s transform. That second check is the one people forget.</p>
+      </div>
+    </div>
+    <div class="keep-row">
+      <span class="mark">08</span>
+      <div>
+        <div class="what">The empty states <span class="ref">L1511–1515</span></div>
+        <p>Two distinct empties — nothing logged yet vs. nothing matches your filters — each tone-aware, each offering the right next action. Most products ship one generic "No results." Keep both.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 2 ===================== -->
+<section>
+  <p class="snum">§ 02</p>
+  <h2>Current product model and primary journeys</h2>
+
+  <p><strong>The model.</strong> One self-contained HTML document. All state lives in a single JSON block (<code>#entry-data</code>, L515–1002) inside the page itself. Every mutation rewrites the entire document and publishes a new artifact version, so version history <em>is</em> the undo stack — except nothing in the UI exposes it. Claude is a co-equal editor through the same URL. Four categories (<code>food</code>, <code>screen</code>, <code>live</code>, <code>place</code>), three statuses (<code>logged</code>, <code>watching</code>, <code>wishlist</code>), free-text tags, one comma-separated home-base string that drives "Away" marking, and an 18-item Discovery catalog that Claude stocks by hand because the page is sandboxed from the network.</p>
+
+  <p><strong>The entry shape</strong> is <code>{id, category, status, title, date, fields, with, tags, note}</code>. Note what is absent: no rating, no created/updated timestamp, no cost, no photo, no revisit count. <code>date</code> is the date of the <em>event</em>, not of the record — a distinction that causes three separate findings below.</p>
+
+  <div class="journeys">
+    <div class="journey">
+      <span class="jid">J1</span>
+      <div>
+        <div class="jname">Capture</div>
+        <div class="jpath">Add entry → pick category → pick status → title → date → 3–5 fields → tags → note → Add to ledger → republish</div>
+        <p class="jnote">Roughly eight interactions and a full document publish for "I ate at Sonny's." This is the journey you run most and it is the slowest thing in the product.</p>
+      </div>
+    </div>
+    <div class="journey">
+      <span class="jid">J2</span>
+      <div>
+        <div class="jname">Retrieve</div>
+        <div class="jpath">sticky bar → search / category stat / status pill / tag chips → cards grouped by year → open detail</div>
+        <p class="jnote">Filters are session-only and produce no URL. You cannot bookmark or return to a view.</p>
+      </div>
+    </div>
+    <div class="journey">
+      <span class="jid">J3</span>
+      <div>
+        <div class="jname">Decide</div>
+        <div class="jpath">Spin it (random wishlist) · Suggest something (ranked + observations) · Order again (flagged dishes)</div>
+        <p class="jnote">Three separate tools for one question — "what should I do tonight?" — presented as three identical pills.</p>
+      </div>
+    </div>
+    <div class="journey">
+      <span class="jid">J4</span>
+      <div>
+        <div class="jname">Discover</div>
+        <div class="jpath">Discover → query → scope + Near → ranked catalog → Save to ledger → prefilled review form → republish</div>
+        <p class="jnote">The review-before-save step is the right design. The index behind it is 18 items and cannot grow without asking Claude.</p>
+      </div>
+    </div>
+    <div class="journey">
+      <span class="jid">J5</span>
+      <div>
+        <div class="jname">Reflect</div>
+        <div class="jpath">On This Day banner · Year in review → tiles, tag bars, people, months, first/last, cities</div>
+        <p class="jnote">The strongest part of the product conceptually, and the part most damaged by missing data (see F03, F19).</p>
+      </div>
+    </div>
+    <div class="journey">
+      <span class="jid">J6</span>
+      <div>
+        <div class="jname">Configure</div>
+        <div class="jpath">gear → voice (plain / dry / salty) + home base · theme segment in header</div>
+        <p class="jnote">Home base is a single free-text string with no validation. It is currently malformed (F06).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 3 ===================== -->
+<section>
+  <p class="snum">§ 03</p>
+  <h2>The most serious problems</h2>
+
+  <p>Twenty-three findings, ordered by severity. Impact/effort is scored 1–5. Everything cites the live source.</p>
+
+  <div class="reg">
+
+    <div class="find">
+      <span class="fid">F01</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">No rating. The ledger cannot record whether anything was good.</span>
+          <span class="sev sev-crit">Critical</span>
+          <span class="ie">I 5 · E 2</span>
+        </div>
+        <p><span class="ref">CATS L1026–1071 · recommend() L1329–1378</span> — Not one category has a quality field. You can record that you ate at Open Sesame; you cannot record that it was worth returning to. This is the single largest gap in a product whose stated job is memory.</p>
+        <p>It cascades: <code>recommend()</code> scores wishlist items on tag overlap, city repetition, cuisine repetition and category recency — every signal except whether you <em>liked</em> the comparable things. "You keep ending up around Hollywood" is offered as a reason to go somewhere, with no idea whether Hollywood has been good to you.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Add an optional <code>rating</code> (1–5) plus a boolean <code>again</code> ("would repeat") to the entry root, not to <code>fields</code> — it is cross-category. Render as a five-dot control in the form and a compact glyph on the card. Weight <code>recommend()</code> by it. Leave it null for existing entries and never infer a value.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F02</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Delete is immediate, permanent, and one click from the entry you were reading.</span>
+          <span class="sev sev-crit">Critical</span>
+          <span class="ie">I 5 · E 2</span>
+        </div>
+        <p><span class="ref">L1761–1764</span> — <code>delete-confirm</code> filters the entry out of <code>state.entries</code> and calls <code>persist()</code> in the same tick. There is a two-step confirm, which helps, but no trash, no undo and no in-product path back. Recovery means asking Claude to dig through artifact version history and hand-restore JSON.</p>
+        <p>For a ledger meant to accumulate for years, an irreversible delete on a mis-tap is the highest-consequence failure in the product.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Soft delete. Move to a <code>trash</code> array with <code>deletedAt</code>; show "Deleted — Undo" for 10s in a live region; add a Trash view in Settings that restores or purges. Purge is the only place a hard delete lives, behind its own confirm.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F03</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">"Newest" files just-added entries at the very bottom, under "Someday".</span>
+          <span class="sev sev-crit">Critical</span>
+          <span class="ie">I 5 · E 2</span>
+        </div>
+        <p><span class="ref">compare() L1424–1432 · yearOf() L1208</span> — Sorting is by event date. Undated entries return <code>1</code> from <code>compare()</code>, so they sink below everything, and <code>yearOf()</code> buckets them into a group literally titled "Someday" at the end of the page.</p>
+        <p>Add a film you want to watch and it does not appear at the top under "Newest" — it appears last, past every dated entry, below the fold. Three of your nine live entries are there right now: <em>Dune: Part Two</em>, <em>Anora</em>, <em>The Meg</em>. This is why the ledger feels like it swallows things.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Depends on F04. Once entries carry <code>createdAt</code>, "Newest" sorts on <code>date || createdAt</code>. Separately, promote undated wishlist items to a pinned "Someday" group at the <em>top</em> when the status filter is Want-to, and rename the sort options to "Recent", "Oldest", "A–Z" so the label stops overpromising.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F04</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">No entry has a creation or modification timestamp.</span>
+          <span class="sev sev-crit">Critical</span>
+          <span class="ie">I 5 · E 2</span>
+        </div>
+        <p><span class="ref">entry shape L833+ · newId() L1181</span> — The record knows when the <em>event</em> happened and nothing about when you wrote it down. So: no "recently added" sort, no "you edited this three times" signal, no way to detect a bad bulk edit, and no ordering at all for the entries you never dated.</p>
+        <p><code>newId()</code> embeds <code>Date.now().toString(36)</code>, so creation time is technically recoverable from the id for entries created in-app — but not for the two seeded ones (<code>s4</code>, <code>s6</code>), and nothing reads it.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Add <code>createdAt</code> and <code>updatedAt</code> ISO strings, set on write. Backfill <code>createdAt</code> from the <code>newId()</code> timestamp where parseable, leave null otherwise, and never fabricate one. This is the dependency for F03 and for any history view.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F05</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Your home base string is malformed and permanently mislabels two neighborhoods.</span>
+          <span class="sev sev-crit">Critical</span>
+          <span class="ie">I 4 · E 1</span>
+        </div>
+        <p><span class="ref">L519 · homeTerms() L1231–1233 · isAway() L1235–1243</span> — The stored value ends <code>…Larchmont, Melrose Century City</code>. Two neighborhood names, no comma between them, so they parse as the single term <code>melrose century city</code>. <code>isAway()</code> tests <code>hay.indexOf(term)</code> against the entry's city — no city string will ever contain that phrase.</p>
+        <p><strong>Result: anything you log in Melrose or Century City is flagged "Away" forever</strong>, and the Away tile in Year in Review counts it as travel. There is also a stray double comma after <code>Beverly Hills</code>; that one is harmless because the empty term is filtered out, but it is the same missing validation.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Two parts. Data: repair the string to <code>…, Larchmont, Melrose, Century City</code>. Product: make home base a chip editor rather than raw text — comma-splits on entry, shows each term as a removable chip, and warns on a term over ~24 characters. That is what would have caught this.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F06</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">A fabricated street address is shipping in the Discovery catalog.</span>
+          <span class="sev sev-crit">Critical</span>
+          <span class="ie">I 4 · E 1</span>
+        </div>
+        <p><span class="ref">L746</span> — Granville Studio City carries <code>"address": "12345 Ventura Blvd, Studio City, CA"</code>. That is placeholder digits, not a real address, and it feeds a live Google Maps link that will route you to the wrong block. The Broad (L799) and Getty Center (L817) ship <code>address: ""</code>, which is at least honest.</p>
+        <p>This violates the feature's own documented contract — the how-to panel at L2414 states "Use only facts that are actually in the source; leave a field out rather than guessing." The one place that rule was broken is the one place it does visible damage.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Blank the fabricated address now; the card already degrades correctly to "No street address in this source." Then add a <code>verifiedAt</code> per catalog item and surface unverified ones with a quiet marker, so the index cannot silently drift from its sources again.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F07</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Secondary text fails WCAG AA everywhere it appears.</span>
+          <span class="sev sev-high">High</span>
+          <span class="ie">I 4 · E 1</span>
+        </div>
+        <p><span class="ref">--ink-3 L24 / L55</span> — Light theme <code>#8B8B94</code> on white measures <strong>3.38:1</strong>. AA requires 4.5:1 for text under 18.66px bold / 24px regular, and every use is 12–13px. Dark theme <code>#757680</code> on <code>#17181C</code> is ≈4.0:1 and also fails.</p>
+        <p>That token carries the entire metadata layer: card meta and dates, fact labels, form labels, mini tags, Discovery meta and source attribution, review tile captions, bar values, section counts. Separately, <code>.chip-cat</code> (L266) renders category color on a 13% tint of itself — <code>#D2600B</code> on near-white is ≈<strong>3.88:1</strong> at 11px bold.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Darken <code>--ink-3</code> to ≥4.5:1 in both themes (light ≈<code>#6B717A</code>, dark ≈<code>#8E959F</code>) and raise <code>--tint</code> or darken the category hues until chip text clears 4.5:1. One token change, entire app fixed. Verify with a contrast check, not by eye.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F08</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Save status is invisible to screen readers and parked in the tag bar.</span>
+          <span class="sev sev-high">High</span>
+          <span class="ie">I 4 · E 1</span>
+        </div>
+        <p><span class="ref">L1584–1587</span> — <code>save.text</code> renders as a plain <code>&lt;span class="head"&gt;</code> with no <code>role="status"</code> and no <code>aria-live</code>. Saving is the critical path of the entire product, and a screen reader user gets no announcement that a save started, succeeded, or failed.</p>
+        <p>Visually it is also in the wrong place — bottom-right of the filter bar, same 12px grey as the word "Tags", so a failed save reads as chrome. And "Saved" never clears; it sits there until something else re-renders.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Move to a dedicated status region with <code>role="status" aria-live="polite"</code> (<code>assertive</code> for failures). Give the three states distinct form, not just color: in-flight spinner, transient success that self-clears after ~2s, persistent error with a Retry button.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F09</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Switching category in the form leaves orphaned data that search can still match.</span>
+          <span class="sev sev-high">High</span>
+          <span class="ie">I 3 · E 2</span>
+        </div>
+        <p><span class="ref">L1845–1849 · collect() L1834–1842 · haystack() L1269–1273</span> — Changing category calls <code>collect()</code> first, which writes the <em>old</em> category's field keys into <code>draft.fields</code>. Those keys are never pruned. Live evidence: Pampas Grill (food) carries <code>kind</code>, <code>venue</code> and <code>support</code>; The Meg (screen) carries <code>city</code>, <code>cuisine</code>, <code>address</code> and <code>dish</code>.</p>
+        <p>Today they are all empty strings, so it is invisible. Fill a restaurant's cuisine, switch it to Movies, save — the cuisine persists in the record, is displayed nowhere, and <code>haystack()</code> still indexes it. The entry matches a search term that appears nowhere on the card or in the detail view.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>On category change, keep keys the new category declares plus any shared key (<code>city</code>, <code>address</code>), and drop the rest — after asking once if a dropped key has a non-empty value. Never discard typed content silently.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F10</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Every keystroke in search rebuilds the entire page.</span>
+          <span class="sev sev-high">High</span>
+          <span class="ie">I 3 · E 3</span>
+        </div>
+        <p><span class="ref">wire() L1620–1633 · render() L1467–1527 · tagCounts() L1443–1452</span> — The input handler sets <code>ui.q</code> and calls <code>render()</code>, which replaces <code>app.innerHTML</code> wholesale, then re-finds the input, refocuses it and restores the caret with <code>setSelectionRange</code>. That restoration dance exists because the architecture destroys the field the user is typing into.</p>
+        <p>Each keystroke also re-runs <code>tagCounts()</code>, which walks every entry × every tag. At nine entries this is imperceptible. At several hundred — which is the point of a ledger — it will lag visibly, and the caret restoration will start dropping characters on slower devices.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Keep the controls bar out of the re-rendered subtree and repaint only the results region; debounce the filter at ~120ms. Delete the focus/caret restoration once the input is no longer destroyed — it becomes dead code.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F11</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Toggling category or status in the form throws focus back to the title field.</span>
+          <span class="sev sev-high">High</span>
+          <span class="ie">I 3 · E 2</span>
+        </div>
+        <p><span class="ref">paint() L1779–1820 · L1818–1819 · handlers L1845, L1850</span> — Every category and status toggle rebuilds <code>dlg.innerHTML</code> and then unconditionally focuses the title input. Values survive because <code>collect()</code> runs first, but keyboard position does not.</p>
+        <p>Tab to Status, press a status, and you are teleported to the top of the form. There is no way to complete this form on a keyboard without repeatedly re-traversing it. <code>&lt;dialog&gt;</code> gives correct focus trapping and Esc handling for free — the bug is entirely self-inflicted by the repaint.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Focus the title only on first paint. On subsequent repaints, restore focus to the control that triggered it via its <code>data-x</code>/<code>data-cat</code> identity. Better: mutate the affected segment in place rather than rebuilding the dialog.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F12</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">No export. There is no way to get your data out.</span>
+          <span class="sev sev-high">High</span>
+          <span class="ie">I 4 · E 2</span>
+        </div>
+        <p><span class="ref">whole app</span> — Years of personal history live in one artifact version with no download, no JSON copy, no CSV, no print view. If the artifact is lost, corrupted by a bad publish, or the capability is revoked, there is no local copy and no migration path anywhere else.</p>
+        <p>Note the sandbox constraint: viewers cannot start a download — <code>&lt;a download&gt;</code> and script-driven saves are inert. So the honest options are a copy-to-clipboard of the full JSON, or the <code>downloads</code> runtime capability if it is available to this account.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Ship "Copy ledger JSON" in Settings immediately — one button, works today, zero dependencies. Then investigate the <code>downloads</code> capability for a real <code>.json</code> and <code>.csv</code> file. Add a matching paste-to-import behind a confirm that shows what will change.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F13</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Discovery search requires every word to match.</span>
+          <span class="sev sev-high">High</span>
+          <span class="ie">I 3 · E 2</span>
+        </div>
+        <p><span class="ref">discSearch() L2073–2096</span> — The term loop returns early if any single word is missing from the haystack. So "batman" works, "batman nolan" works, and "good batman movie" returns nothing at all — falling through to the "Nothing indexed" panel even though ten Batman films are sitting in the index.</p>
+        <p>On an 18-item catalog, strict AND semantics means most natural phrasing dead-ends. The empty state is well designed, which makes it worse: it confidently tells you nothing is indexed when plenty is.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Require at least one term, score by how many match, and rank multi-term matches above single. Keep the exact-title bonus. Show "Nothing indexed" only when zero terms hit anything.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F14</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">The sticky control bar consumes most of a phone screen.</span>
+          <span class="sev sev-high">High</span>
+          <span class="ie">I 3 · E 2</span>
+        </div>
+        <p><span class="ref">.controls L189–193 · breakpoint L501–506</span> — The bar is <code>position: sticky</code> and holds search, up to three status pills, a sort select, the Add button and the entire tag bar. At 390px that wraps to four or five rows and stays pinned, leaving a narrow slot for actual entries.</p>
+        <p>There is one breakpoint in the stylesheet, at 46rem. Tablet gets no treatment: <code>.grid</code> at <code>minmax(18.5rem, 1fr)</code> yields two columns on a 768px viewport with a lot of dead gutter.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Below 46rem, keep only search plus a filter button in the sticky bar and move status, sort and tags into a sheet that opens from it, with a count badge when filters are active. Add a 48–64rem tier so tablet gets three columns.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F15</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Discovery's "Near" is a flat bonus with no notion of distance.</span>
+          <span class="sev sev-med">Medium</span>
+          <span class="ie">I 3 · E 3</span>
+        </div>
+        <p><span class="ref">nearScore() L2060–2071</span> — Returns a flat <code>8</code> on a substring hit, <code>0</code> otherwise. It only expands to your full home-term list when the Near box exactly equals the home label; type anything else and it matches that literal string alone. "Santa Monica" matches only text containing "santa monica"; "westside" and "the valley" match nothing.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Add a small alias map (westside → Santa Monica, Venice, Brentwood…; valley → Studio City, Sherman Oaks…) and grade the bonus: exact neighborhood 8, alias-group 5, same city 2.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F16</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Year in Review ignores every undated entry, silently.</span>
+          <span class="sev sev-med">Medium</span>
+          <span class="ie">I 3 · E 2</span>
+        </div>
+        <p><span class="ref">reviewFor() L1305–1325 · L1308–1309</span> — The loop skips anything without a date. Three of nine entries never appear in any year's review, and nothing tells you they were excluded. Combined with F03, undated entries are second-class in every surface: sorted last, grouped under "Someday", and absent from reflection.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Once <code>createdAt</code> exists (F04), fall back to it for year bucketing and mark those entries as approximate. Add an "undated" count to the review header with a link that filters to them, so they can be fixed.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F17</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">"Away" is structurally undercounted — a blank city counts as home.</span>
+          <span class="sev sev-med">Medium</span>
+          <span class="ie">I 2 · E 1</span>
+        </div>
+        <p><span class="ref">isAway() L1236–1237</span> — <code>if (!city) return false</code>. Five of your nine entries have a blank or absent city, so they are all treated as home. Kings Road Cafe has neither city nor address. The Away tile in Year in Review is therefore a floor, not a count, and it is presented as a fact.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Return a third state — home / away / unknown — and render the tile as "3 away · 5 unknown" rather than implying certainty. Where an address exists but a city does not, parse the city from the address before giving up.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F18</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Voice setting does not reach Discovery blurbs.</span>
+          <span class="sev sev-med">Medium</span>
+          <span class="ie">I 2 · E 2</span>
+        </div>
+        <p><span class="ref">LINES L1075–1102 vs catalog blurbs L529, L580, L613</span> — <code>LINES</code> is tone-keyed, but catalog <code>blurb</code> strings are frozen at authoring time. Switch the voice to Plain and Discovery still says "more full of shit than the middle film" and "weirder, hornier and meaner." The setting promises a global register it does not control.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Either scope the setting honestly — relabel it "Ledger voice" and note that Discovery copy is written when the item is indexed — or store <code>blurb</code> as <code>{plain, dry, salty}</code> and have Claude author all three. The first is one line; the second is the right answer if voice matters to you.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F19</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Filters die on tab close and cannot be linked.</span>
+          <span class="sev sev-med">Medium</span>
+          <span class="ie">I 2 · E 2</span>
+        </div>
+        <p><span class="ref">readUi() L1165–1178 · stashUi() L1180</span> — UI state lives in <code>sessionStorage</code> and never touches the URL. Close the tab and your filters are gone; there is no way to save "want-to, food, near home" as a view or return to it tomorrow.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Mirror filter state into the URL hash so views are linkable and survive reload, and move the store to <code>localStorage</code> so the last view persists. Then a "Saved views" list is nearly free.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F20</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Source attribution is invisible in the form that exists to review it.</span>
+          <span class="sev sev-med">Medium</span>
+          <span class="ie">I 2 · E 1</span>
+        </div>
+        <p><span class="ref">draftFrom() L2104–2120 · paint() L1779–1820 · detail L1737–1738</span> — Saving from Discovery attaches <code>source</code> and <code>sourceUrl</code>. They survive the save because <code>collect()</code> mutates rather than rebuilds. But the review form renders neither, so the one screen whose entire purpose is "check this before it enters your ledger" hides two of the fields being added — and there is no way to edit or clear them afterwards. The detail view does show them, which makes the omission look like a bug rather than a choice.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Render source as a read-only row in the form with a "Remove source" control, and show a "From Discovery · Wikipedia" chip at the top of the dialog so the provenance of the prefill is explicit.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F21</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">No offline handling; an edit made offline is lost on reload.</span>
+          <span class="sev sev-med">Medium</span>
+          <span class="ie">I 3 · E 3</span>
+        </div>
+        <p><span class="ref">persist() L2444–2468</span> — There is no <code>navigator.onLine</code> check and no write queue. Offline, the publish rejects and you get "Could not save — try again" while the edit exists only in memory. Reload and it is gone. On a phone — the most likely place to log a restaurant as you leave it — this is the realistic failure.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Mirror <code>state</code> to <code>localStorage</code> on every mutation as a crash/offline buffer, detect offline explicitly, hold the write and retry on reconnect. On load, if the buffer is newer than the published JSON, offer to restore rather than restoring silently.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F22</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">The "From Claude" suggestion slot has never been filled.</span>
+          <span class="sev sev-med">Medium</span>
+          <span class="ie">I 2 · E 1</span>
+        </div>
+        <p><span class="ref">recs: null L520 · openSuggest() L1994–2004</span> — <code>state.recs</code> is null, so the block never renders, leaving a bare "From your ledger" label distinguishing itself from a section that does not exist. The feature is built, documented in the how-to, and empty.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Either populate it — the schema is already specified at L2410 — or hide the "From your ledger" label when there is nothing to contrast it with. Do not ship a label for an absent counterpart.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="find">
+      <span class="fid">F23</span>
+      <div>
+        <div class="fhead">
+          <span class="ftitle">Five tools of wildly different weight are presented as five identical pills.</span>
+          <span class="sev sev-med">Medium</span>
+          <span class="ie">I 2 · E 2</span>
+        </div>
+        <p><span class="ref">toolsRow() L1539–1553</span> — Discover (a search product over an indexed catalog) sits in the same visual register as Order again (a list of four dish strings). Spin it, Suggest something and Order again all answer one question — "what now?" — from three different doors, and Year in review answers a different one entirely.</p>
+        <div class="fix">
+          <b>Fix</b>
+          <p>Group by intent: one primary <strong>Decide</strong> action opening a single sheet with Spin / Suggest / Order again as tabs; keep <strong>Discover</strong> as its own primary; demote <strong>Year in review</strong> next to the gear as reflection. Three doors, not five.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== 4 ===================== -->
+<section>
+  <p class="snum">§ 04</p>
+  <h2>Personalization and memory retrieval</h2>
+
+  <p>These exploit data you already have, or data F01/F04 would add. Each one earns its place by answering a question the current ledger cannot.</p>
+
+  <h3>Ratings turn a log into a memory</h3>
+  <p>Once F01 lands, four things become possible that are impossible today: a "best of 2026" block in the review, "you rated three Middle Eastern places 4+" as a real recommendation reason, an "Order again" list ranked by rating instead of by whether you happened to fill a text field, and honest negative memory — the place you never need to try again.</p>
+
+  <h3>Companion memory</h3>
+  <p><code>observations()</code> at L1380–1406 already computes days-since-last-outing per person and surfaces the stalest. That is the most human thing in the product and it is buried three clicks deep inside Suggest something. Trish appears on four of your nine entries. Promote it: a "You and Trish" view showing everything you did together, the streak, the gap, and what is on the shared want-to list.</p>
+
+  <h3>Rediscovery beyond On This Day</h3>
+  <p>The On This Day banner only fires on an exact month-day match in a prior year — with a ledger this young it will almost never appear. Add adjacent triggers that work now: a random buried entry ("you logged this eight months ago and never went back"), season matching ("last September you were doing this"), and the neighborhood you have not visited in longest.</p>
+
+  <h3>Capture speed</h3>
+  <p>J1 is eight interactions for a restaurant. Add a quick-capture path: title plus category only, everything else deferred, with the entry marked incomplete and surfaced later in a "finish these" list. The friction of full capture is what stops a ledger getting used.</p>
+</section>
+
+<!-- ===================== 5 ===================== -->
+<section>
+  <p class="snum">§ 05</p>
+  <h2>Discovery, recommendation and reflection</h2>
+
+  <h3>Make the catalog's limits legible</h3>
+  <p>The index is 18 items and the page cannot grow it — a real architectural constraint, honestly explained in the ask-Claude panel. But that panel only appears on zero results. Show the index size and <code>catalogAt</code> date persistently in the Discovery header, and put "Ask Claude to index more" next to <em>every</em> result set, not only empty ones.</p>
+
+  <h3>Give recommendations a quality signal</h3>
+  <p><code>recommend()</code> is a decent engine wired to weak inputs. With ratings it can say something true: "you rated two Villeneuve films 5 and this is the third." Add an explicit negative signal too — a way to dismiss a suggestion so it stops resurfacing, stored as <code>dismissedAt</code> rather than by deleting the entry.</p>
+
+  <h3>Reflection beyond the calendar year</h3>
+  <p>Year in Review is annual and calendar-bound, so for most of the year it reports a partial. Add a rolling "last 90 days" view and a lifetime view — total entries, longest streak, most-repeated place, the thing you have returned to most. Those read well at any moment; a year in review only reads well in December.</p>
+
+  <h3>Close the loop on want-to</h3>
+  <p>Nothing tracks whether Spin or Suggest ever led anywhere. Record which wishlist entries were surfaced and which later flipped to logged, then report it: "Spin has sent you somewhere 6 times." It makes the decide tools accountable and it is a genuinely satisfying number.</p>
+</section>
+
+<!-- ===================== 6 ===================== -->
+<section>
+  <p class="snum">§ 06</p>
+  <h2>Visual and interaction changes</h2>
+
+  <p>The current surface is calm, well-spaced and consistent. It is also anonymous — it could be any well-made list app. These changes make it specific without redecorating.</p>
+
+  <ul>
+    <li><strong>Fix the contrast first (F07).</strong> Nothing else on this list matters if the metadata layer is unreadable. One token.</li>
+    <li><strong>Let ratings carry visual weight.</strong> A five-dot glyph in the card's top-right, filled in the category color. It becomes the strongest scanning signal on the grid and it is the one thing only your ledger knows.</li>
+    <li><strong>Differentiate the card by category.</strong> All four render identically today. A restaurant card should lead with cuisine and neighborhood; a film with year and director; a place with the map. Same frame, different emphasis — the <code>summary</code> array in <code>CATS</code> already declares the intent, the card just does not use it expressively.</li>
+    <li><strong>Give the save indicator a real home (F08).</strong> Out of the tag bar, into a fixed corner toast with distinct in-flight, success and error forms.</li>
+    <li><strong>Keyboard shortcuts.</strong> <code>/</code> focuses search, <code>n</code> opens new entry, <code>Cmd/Ctrl+Enter</code> saves the form, <code>Esc</code> closes. There are currently none, and this product is used repetitively enough to deserve them.</li>
+    <li><strong>Density control.</strong> A comfortable/compact toggle. At 200+ entries the 11rem minimum card height means a lot of scrolling; a compact row view would make the archive browsable.</li>
+    <li><strong>Retire the "Someday" group as a bottom bucket (F03).</strong> Undated wishlist items are intentions, not leftovers. They belong at the top of the want-to view, not in a basement.</li>
+  </ul>
+</section>
+
+<!-- ===================== 7 ===================== -->
+<section>
+  <p class="snum">§ 07</p>
+  <h2>Privacy, persistence, portability, safety</h2>
+
+  <h3>What is actually true today</h3>
+  <p>Entries live inside the artifact document, published to your Claude account. The artifact is private by default; the share link is currently pinned to an earlier version, so viewers see a pre-Discovery page rather than your live entries. Every save is a new version, so version history is a real backup — but it is only reachable by asking Claude, and nothing in the product says so.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Risk</th><th>Today</th><th>Recommendation</th></tr></thead>
+      <tbody>
+        <tr><td>Accidental delete</td><td>Permanent, one confirm</td><td>Soft delete + undo (F02)</td></tr>
+        <tr><td>No local copy</td><td>None</td><td>Copy JSON now, download later (F12)</td></tr>
+        <tr><td>Offline edit lost</td><td>Silent loss on reload</td><td>localStorage buffer + retry (F21)</td></tr>
+        <tr><td>Bad bulk edit</td><td>No diff, no timestamps</td><td><code>updatedAt</code> + confirm on multi-change (F04)</td></tr>
+        <tr><td>Over-sharing</td><td>Link shares all notes</td><td>Private-note flag excluded from shared view</td></tr>
+        <tr><td>Stale share pin</td><td>Viewers see old version</td><td>Decide deliberately — see Q5</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>On the runtime capabilities</h3>
+  <p><strong>artifact-save is already in use</strong> and working — this was the right call and needs no change. <strong>assets</strong> would let you attach a photo per entry, which is the single biggest emotional upgrade available to a memory ledger; the cost is document size and a real privacy decision, since photos travel with any share. <strong>The Claude runtime</strong> could write blurbs and suggestions on demand, but it would send your notes to a model on every call — for a private journal that is a meaningful change in posture and should be opt-in, per-action, never ambient. <strong>External APIs are impossible</strong>: the CSP blocks all outbound fetch, which is exactly why the Claude-fed catalog exists. Do not plan around them.</p>
+</section>
+
+<!-- ===================== 8 ===================== -->
+<section>
+  <p class="snum">§ 08</p>
+  <h2>Quick wins</h2>
+  <p>High impact, low effort, no dependencies. All of these could ship in one pass.</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th>ID</th><th>Change</th><th class="n">Impact</th><th class="n">Effort</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td class="id">F05</td><td>Repair home base string</td><td class="n">4</td><td class="n">1</td><td>Data fix; ends false Away flags</td></tr>
+        <tr><td class="id">F06</td><td>Blank fabricated address</td><td class="n">4</td><td class="n">1</td><td>Card already degrades correctly</td></tr>
+        <tr><td class="id">F07</td><td>Darken <code>--ink-3</code>, fix chip contrast</td><td class="n">4</td><td class="n">1</td><td>One token, whole app</td></tr>
+        <tr><td class="id">F08</td><td>Live region for save status</td><td class="n">4</td><td class="n">1</td><td>Critical path a11y</td></tr>
+        <tr><td class="id">F12</td><td>Copy ledger JSON button</td><td class="n">4</td><td class="n">2</td><td>First backup that has ever existed</td></tr>
+        <tr><td class="id">F11</td><td>Stop stealing form focus</td><td class="n">3</td><td class="n">2</td><td>Unblocks keyboard capture</td></tr>
+        <tr><td class="id">F13</td><td>OR-scored Discovery search</td><td class="n">3</td><td class="n">2</td><td>Contained to one function</td></tr>
+        <tr><td class="id">F20</td><td>Show source in review form</td><td class="n">2</td><td class="n">1</td><td>Closes the provenance gap</td></tr>
+        <tr><td class="id">F22</td><td>Hide orphan "From your ledger" label</td><td class="n">2</td><td class="n">1</td><td>Or fill the slot</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== 9 ===================== -->
+<section>
+  <p class="snum">§ 09</p>
+  <h2>Larger upgrades</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th>ID</th><th>Upgrade</th><th class="n">Impact</th><th class="n">Effort</th><th>Depends on</th><th>Risk</th></tr></thead>
+      <tbody>
+        <tr><td class="id">F01</td><td>Ratings + "would repeat"</td><td class="n">5</td><td class="n">2</td><td>—</td><td>Low · additive field</td></tr>
+        <tr><td class="id">F04</td><td><code>createdAt</code> / <code>updatedAt</code></td><td class="n">5</td><td class="n">2</td><td>—</td><td>Low · backfill must not fabricate</td></tr>
+        <tr><td class="id">F02</td><td>Soft delete, trash, undo</td><td class="n">5</td><td class="n">2</td><td>F04</td><td>Med · touches delete path</td></tr>
+        <tr><td class="id">F03</td><td>Sort + grouping rework</td><td class="n">5</td><td class="n">3</td><td>F04</td><td>Med · changes default view</td></tr>
+        <tr><td class="id">F12</td><td>Full export / import</td><td class="n">4</td><td class="n">3</td><td>—</td><td>Med · import can overwrite</td></tr>
+        <tr><td class="id">F21</td><td>Offline buffer + retry</td><td class="n">3</td><td class="n">3</td><td>F04</td><td>Med · restore-conflict UX</td></tr>
+        <tr><td class="id">F10</td><td>Partial render + debounce</td><td class="n">3</td><td class="n">3</td><td>—</td><td>Med · touches render core</td></tr>
+        <tr><td class="id">F14</td><td>Mobile filter sheet + tablet tier</td><td class="n">3</td><td class="n">3</td><td>—</td><td>Low</td></tr>
+        <tr><td class="id">F23</td><td>Regroup tools by intent</td><td class="n">2</td><td class="n">3</td><td>—</td><td>Med · relearning cost</td></tr>
+        <tr><td class="id">—</td><td>Photos via <code>assets</code></td><td class="n">4</td><td class="n">4</td><td>capability</td><td>High · size + privacy</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== 10 ===================== -->
+<section>
+  <p class="snum">§ 10</p>
+  <h2>Phased roadmap</h2>
+
+  <div class="phase">
+    <div class="ph"><span class="pnum">Phase 0</span><h3>Map and confirm</h3><span class="gate">Gate: answers to §11</span></div>
+    <ul>
+      <li>Re-read the live artifact; confirm no drift since version <code>1788304833-dea8</code>.</li>
+      <li>Document the current data model and every field in use across all 9 entries.</li>
+      <li>Report conflicts between this plan and the live code. Change nothing.</li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="ph"><span class="pnum">Phase 1</span><h3>Correctness and safety</h3><span class="gate">No schema change</span></div>
+    <ul>
+      <li>F05 home base · F06 fabricated address · F07 contrast · F08 live region</li>
+      <li>F12 copy-JSON backup — <em>ship before any phase that writes to entries</em></li>
+      <li>F20 source in form · F22 orphan label</li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="ph"><span class="pnum">Phase 2</span><h3>Data model</h3><span class="gate">Gate: backup verified</span></div>
+    <ul>
+      <li>F04 timestamps with non-fabricating backfill · F01 rating + repeat</li>
+      <li>F09 orphaned field pruning with confirm</li>
+      <li>Migration must be idempotent and additive. No existing value is rewritten.</li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="ph"><span class="pnum">Phase 3</span><h3>Retrieval and recovery</h3><span class="gate">Depends: Phase 2</span></div>
+    <ul>
+      <li>F02 soft delete + undo · F03 sort and grouping · F16 undated in review</li>
+      <li>F17 three-state Away · F19 URL + persistent filters</li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="ph"><span class="pnum">Phase 4</span><h3>Interaction and reach</h3><span class="gate">Independent</span></div>
+    <ul>
+      <li>F10 partial render · F11 focus retention · F14 mobile sheet + tablet tier</li>
+      <li>Keyboard shortcuts · density toggle</li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="ph"><span class="pnum">Phase 5</span><h3>Discovery and reflection</h3><span class="gate">Gate: Q2, Q4</span></div>
+    <ul>
+      <li>F13 OR search · F15 near aliases · F18 voice scope · F21 offline buffer</li>
+      <li>Companion view · rolling and lifetime review · rating-weighted recommendations</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== 11 ===================== -->
+<section>
+  <p class="snum">§ 11</p>
+  <h2>Questions that must be answered first</h2>
+
+  <div class="q">
+    <span class="qid">Q1</span>
+    <div>
+      <div class="qt">Rating scale — five dots, or thumbs?</div>
+      <p>Five gives the review and recommender real resolution but invites fiddling over 3 vs 4. A binary "would repeat" is faster to capture and matches how you actually decide. F01 is specified as both; if you only want one, say which. <em>My recommendation: five dots plus repeat, dots optional.</em></p>
+    </div>
+  </div>
+  <div class="q">
+    <span class="qid">Q2</span>
+    <div>
+      <div class="qt">Is "Someday" a bucket you like, or an accident you tolerate?</div>
+      <p>F03 assumes undated entries are being lost at the bottom of the page. If you deliberately use "Someday" as a parking lot and are happy with it living at the end, the fix is only the sort label, not the grouping.</p>
+    </div>
+  </div>
+  <div class="q">
+    <span class="qid">Q3</span>
+    <div>
+      <div class="qt">Trash retention — 30 days, or forever until purged?</div>
+      <p>Forever is safest and costs document size on a ledger you intend to keep for years. 30 days needs a purge job that runs on load, which is one more thing that can go wrong.</p>
+    </div>
+  </div>
+  <div class="q">
+    <span class="qid">Q4</span>
+    <div>
+      <div class="qt">Does the voice setting need to control Discovery blurbs?</div>
+      <p>F18 has a one-line fix (relabel the setting) and a real fix (store three variants per blurb, and every future catalog item costs 3× the writing). Only worth it if switching to Plain and still seeing profanity actually bothers you.</p>
+    </div>
+  </div>
+  <div class="q">
+    <span class="qid">Q5</span>
+    <div>
+      <div class="qt">What should the share link show?</div>
+      <p>It is currently pinned to a pre-Discovery version, so anyone you shared it with sees a stale page. Options: move the pin to current, keep it pinned deliberately as a curated snapshot, or unshare. This is the one item in the audit with an audience beyond you, and it needs a decision either way.</p>
+    </div>
+  </div>
+  <div class="q">
+    <span class="qid">Q6</span>
+    <div>
+      <div class="qt">Photos — worth the privacy and size cost?</div>
+      <p>The <code>assets</code> capability would let entries carry an image, which is the biggest emotional upgrade available here. But photos travel with any share link and inflate the document. Not scheduled in the roadmap until you say yes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 12 ===================== -->
+<section>
+  <p class="snum">§ 12</p>
+  <h2>Six things that would make it genuinely yours</h2>
+
+  <p>Everything above makes the ledger correct. This section is about making it <em>specific</em> — the difference between a well-built list app and something nobody else could have.</p>
+
+  <div class="big">
+    <div class="bigitem">
+      <p class="why">01 · Uses data you already have</p>
+      <h3>The Trish View</h3>
+      <p>Four of nine entries name her. <code>observations()</code> already computes the gap since you last did something with someone, then buries it. Surface a per-person page: everything you did together on a timeline, the current gap, the shared want-to list, and one line — "you and Trish have been to 3 restaurants and watched 4 things." That is a memory ledger doing the one thing a spreadsheet cannot.</p>
+    </div>
+    <div class="bigitem">
+      <p class="why">02 · Needs F01 only</p>
+      <h3>The Second-Chance list</h3>
+      <p>Places you rated 3 — not bad enough to write off, not good enough to return to. That is the most useful and least-served list in anyone's life, and no product surfaces it because no product asks. Pair it with the opposite: the 5s you have not been back to in six months.</p>
+    </div>
+    <div class="bigitem">
+      <p class="why">03 · Zero new data</p>
+      <h3>Neighborhood pressure map</h3>
+      <p>You have eleven home-base terms and every entry carries a city. Show which of your own neighborhoods you actually go to and which you have never logged once. "You have never eaten in Larchmont" is a genuinely useful provocation, and it comes free from data already in the file.</p>
+    </div>
+    <div class="bigitem">
+      <p class="why">04 · Fixes the weakest recommendation</p>
+      <h3>Make Spin argue for itself</h3>
+      <p>The reel is charming and the result is a bare title. Give the landing a sentence built from the entry's own record — "you added this in March and have not moved on it," "this is the only Brazilian place on your list," "you rated the last two things Trish picked a 5." The animation is already the best interaction in the product; the payoff should not be the emptiest.</p>
+    </div>
+    <div class="bigitem">
+      <p class="why">05 · Needs Q6</p>
+      <h3>One photo per entry</h3>
+      <p>Via the <code>assets</code> capability. A ledger of restaurants with no pictures of the food is a spreadsheet with opinions. This is the highest emotional return of anything in this document and the only item gated on a privacy call you have not made.</p>
+    </div>
+    <div class="bigitem">
+      <p class="why">06 · Pure personality</p>
+      <h3>Let the ledger keep score of you</h3>
+      <p>Salty voice with real numbers behind it: "Nine entries. Two of them are movies you have not watched." "You have logged Trish four times and yourself alone five." A lifetime tile block that is honest rather than congratulatory. The voice system is already the most distinctive thing here — give it facts to work with instead of only empty states.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STAGE 2 ===================== -->
+<section>
+  <p class="snum">Stage 02</p>
+  <h2>Execution prompt for the coding agent</h2>
+  <p>Hand this to the agent verbatim once §11 is answered. It is written to prevent independent product or design decisions.</p>
+
+  <div class="specwrap">
+    <div class="spechead">
+      <span class="st">Agent brief</span>
+      <span class="sp"></span>
+      <button class="copybtn" id="copy">Copy prompt</button>
+    </div>
+<pre id="spec">You are modifying a live, in-use personal memory ledger published as a Claude
+Artifact. It contains real, irreplaceable personal data. Read this entire brief
+before touching anything.
+
+TARGET
+  Artifact: https://claude.ai/code/artifact/7b605c39-2263-438a-b9bc-d10ed7c6a127
+  Local mirror: personal-log/ledger.html (may lag the live version — the live
+  artifact is always the source of truth)
+  Audit reference: findings F01–F23 in the Ledger Audit Register
+
+ABSOLUTE RULES
+  1. Do not delete, overwrite, reword or restructure any existing entry, note,
+     tag, date, companion, category, status or setting value. Migrations are
+     ADDITIVE ONLY.
+  2. Do not modify persist() (L2444–2468), buildDocument() (L2422–2440), the
+     theme system (L17–88, L1111–1144) or esc() (L1189–1193) except where a
+     phase below explicitly names them. These are load-bearing.
+  3. STOP and ask before anything destructive, irreversible, ambiguous,
+     privacy-affecting, or outside the named phase scope. Do not resolve an
+     ambiguity by picking the option you prefer.
+  4. Implement only phases that have been explicitly approved. Do not run ahead.
+  5. Never fabricate data. If a backfill cannot derive a real value, leave the
+     field null. F06 exists because this rule was broken once already.
+
+PHASE 0 — MAP AND REPORT (no edits)
+  Read the live artifact in full via the Artifact tool.
+  Produce a written report covering:
+    - Every field in use across all entries, including keys not declared in CATS
+    - Which entries lack a date, a city, or both
+    - Any drift from audit version 1788304833-dea8
+    - Duplicate logic: every place category/status/field defaults are derived
+    - Any conflict between this brief and the live code
+  Then STOP and wait for approval. Change nothing in Phase 0.
+
+PHASE 1 — CORRECTNESS AND SAFETY (no schema change)
+  F05  Repair state.home to:
+       "West Hollywood, WeHo, Hollywood, Beverly Hills, The Grove, Grove,
+        Fairfax, Miracle Mile, Mid-Wilshire, Larchmont, Melrose, Century City"
+       Convert the Settings home-base input to a chip editor: comma-splits on
+       entry, each term removable, warn on any term over 24 characters.
+  F06  Set the Granville Studio City catalog address (L746) to "". Do not
+       substitute a researched address in this phase — blanking is the fix.
+       Add "verifiedAt" to the catalog item schema, documented in the how-to.
+  F07  Raise --ink-3 to >= 4.5:1 against --surface in BOTH themes
+       (light ~#6B717A, dark ~#8E959F). Raise --tint or darken the four
+       category hues until .chip-cat text clears 4.5:1 at 11px bold.
+       Verify numerically. Do not eyeball it.
+  F08  Move save status out of .tagbar into a fixed-position region with
+       role="status" aria-live="polite" (assertive on failure). Three visually
+       distinct states: in-flight, success (self-clears ~2s), error (persists,
+       with Retry). Retry re-invokes persist().
+  F12  Add "Copy ledger JSON" to Settings. Serialises the full state object to
+       the clipboard using the existing copyText() helper (L2234–2254).
+       This ships in Phase 1 because it is the only backup before Phase 2.
+  F20  Render source/sourceUrl as a read-only row in openForm() with a
+       "Remove source" control, plus a provenance chip in the dialog head.
+  F22  Hide the "From your ledger" label in openSuggest() when state.recs is
+       empty. Do not invent recommendation content.
+
+  ACCEPTANCE
+    - All 9 entries load unchanged; diff the JSON before and after and confirm
+      only state.home and the one catalog address differ
+    - Contrast verified numerically for --ink-3 and .chip-cat, both themes
+    - Screen reader announces save start, success and failure
+    - Copy JSON round-trips: paste into a validator, parse succeeds, entry
+      count matches
+    - Melrose and Century City entries no longer flag Away
+
+PHASE 2 — DATA MODEL (gated on verified Phase 1 backup)
+  F04  Add createdAt and updatedAt (ISO 8601) to the entry root.
+       Backfill createdAt ONLY where the id matches /^e[0-9a-z]{8,}/ and the
+       embedded base-36 timestamp parses to a plausible date. Leave null for
+       s4, s6 and any id that does not parse. Never fabricate.
+       Set updatedAt on every write from this point.
+  F01  Add rating (integer 1–5 or null) and again (boolean or null) to the
+       entry root — NOT to fields, they are cross-category.
+       Render a five-dot control in openForm() and a compact glyph on the card.
+       Weight recommend() by rating. Null must never read as zero.
+  F09  On category change in openForm(), retain keys declared by the new
+       category plus shared keys (city, address); drop the rest — but if a
+       dropped key holds a non-empty value, ask before discarding.
+
+  MIGRATION REQUIREMENTS
+    - Idempotent: running twice produces the same result
+    - Additive: no existing key is renamed, retyped or removed
+    - Entries written by an older version must still render — treat every new
+      field as optional at read time
+    - Claude-authored edits through the same URL must not break: update the
+      how-to panel (L2394–2418) to document the new fields
+
+  ACCEPTANCE
+    - Entry count unchanged; every pre-existing key present with its old value
+    - createdAt null on s4/s6, populated and plausible on the 7 app-created
+    - An entry with rating null renders identically to before
+    - Re-running the migration changes nothing
+
+PHASE 3 — RETRIEVAL AND RECOVERY (depends on Phase 2)
+  F02  Soft delete: move to a trash array with deletedAt. "Deleted — Undo" for
+       10s in the live region. Trash view in Settings with restore and purge.
+       Hard delete exists ONLY behind purge, with its own confirm.
+       Retention per Q3 — do not choose it yourself.
+  F03  "Newest" sorts on (date || createdAt). Rename sorts to Recent / Oldest /
+       A–Z. Undated wishlist grouping per Q2 — do not choose it yourself.
+  F16  reviewFor() falls back to createdAt for year bucketing, marks those
+       entries approximate, and shows an undated count linking to a filter.
+  F17  isAway() returns home | away | unknown. Review tile reads
+       "3 away · 5 unknown". Parse city from address before returning unknown.
+  F19  Mirror filter state to the URL hash; move ui store to localStorage.
+
+  ACCEPTANCE
+    - Delete then Undo restores the entry byte-identical
+    - Purge is the only path that permanently removes data
+    - Reload preserves filters; the hash reproduces a view in a fresh tab
+    - Away tile never overstates certainty
+
+PHASE 4 — INTERACTION AND REACH
+  F10  Keep .controls outside the re-rendered subtree; repaint only results.
+       Debounce filtering ~120ms. Delete the now-dead focus/caret restoration.
+  F11  Focus title only on first paint of openForm(). On repaint, restore focus
+       to the triggering control by its data-x identity.
+  F14  Below 46rem: sticky bar holds search + a filter button only; status,
+       sort and tags move into a sheet with an active-filter count badge.
+       Add a 48–64rem tier for three columns.
+  Keyboard: "/" focuses search, "n" opens new entry, Cmd/Ctrl+Enter saves the
+       form, Esc closes. Do not bind keys while a text field has focus.
+  Density: comfortable / compact toggle persisted with the theme preference.
+
+  ACCEPTANCE
+    - Full keyboard capture of a new entry with zero unexpected focus jumps
+    - Typing in search does not rebuild the controls bar (verify in devtools)
+    - 390px: entry cards occupy the majority of the viewport
+    - 768px: three columns, no dead gutter
+
+PHASE 5 — DISCOVERY AND REFLECTION (gated on Q2, Q4)
+  F13  discSearch(): require >= 1 term, score by match count, rank multi-term
+       above single, keep the exact-title bonus. Empty state only at zero hits.
+  F15  Alias map for Near (westside, valley, eastside, beach). Graded bonus:
+       exact 8, alias 5, same city 2.
+  F18  Per Q4 — relabel the setting, or store blurb as {plain, dry, salty}.
+  F21  Mirror state to localStorage on every mutation. Detect offline, hold the
+       write, retry on reconnect. On load, if the buffer is newer than the
+       published JSON, OFFER to restore. Never restore silently.
+  Companion view, rolling/lifetime review, rating-weighted recommendations.
+
+DESIGN SYSTEM (binding — do not introduce new values)
+  Type      Instrument Sans (body/UI), JetBrains Mono (data). No new families.
+  Scale     .6875 / .75 / .8125 / .875 / .9375 / 1 / 1.0625 / 1.375 rem. Stay on it.
+  Color     Only existing tokens. New colors must be added as tokens defined in
+            bare :root first, then redefined in BOTH the prefers-color-scheme
+            block and the [data-theme="dark"] block. Never define a color only
+            inside a media or [data-theme] block.
+  Spacing   Existing rem rhythm. Layout with flex/grid + gap, not margins.
+  Radius    --r-sm / --r / --r-lg / --r-pill only.
+  Motion    Existing --ease and --spring. Every animation must be disabled
+            under prefers-reduced-motion in CSS *and* short-circuited in JS,
+            matching the pattern at L1913.
+  States    Every interactive element needs rest, hover, active, focus-visible
+            and disabled. Semantic color (success/warning/error) is separate
+            from the four category hues and never reuses them.
+  Responsive Breakpoints at 46rem (existing) and a new 48–64rem tier.
+            No horizontal body scroll at any width from 320px up.
+
+ACCESSIBILITY (binding)
+  - All text >= 4.5:1 against its actual background, both themes, verified
+    numerically
+  - Every control reachable and operable by keyboard in visual order
+  - Visible focus on every interactive element; never remove the outline
+    without an equivalent replacement
+  - Every input has a programmatic label; aria-pressed only on real toggles
+  - Errors are announced, name what failed, and say what to do next
+  - Dialogs keep native <dialog> focus trapping and Esc
+
+VALIDATION (run every phase)
+  Desktop 1440  Full capture, edit, delete, undo, search, filter, Discovery
+                save, Year in review. Both themes.
+  Tablet   768  Column count, sticky bar height, dialog fit, tap targets.
+  Mobile   390  Full capture on-screen keyboard, filter sheet, no horizontal
+                scroll, save toast not obscured.
+  Data          Export JSON, confirm entry count and that every pre-existing
+                key survived with its original value.
+  Regression    All 9 entries render; tags filter; map links resolve; theme
+                switching survives a republish.
+
+COMPLETION REPORT (required at the end of every phase)
+  1. Files changed, with a one-line reason each
+  2. Migrations performed, entries touched, and fields backfilled vs left null
+  3. Features implemented, mapped to finding IDs
+  4. Tests run, with results — state failures plainly, do not summarise them away
+  5. Unresolved issues and anything deliberately skipped, with the reason
+  6. Recommended next steps
+  7. Confirmation that entry count and all pre-existing field values are intact
+
+WORKFLOW
+  Inspect and map the live implementation -> document the data model and
+  persistence behavior -> compare against this brief -> flag every conflict and
+  uncertainty -> WAIT for confirmation -> implement only confirmed changes, one
+  phase at a time -> test that phase -> report -> wait again.
+
+  Do not implement anything during Phase 0. Do not begin a phase that has not
+  been approved. When in doubt, ask.
+</pre>
+  </div>
+</section>
+
+</div>
+
+<script>
+document.getElementById('copy').addEventListener('click', function () {
+  var btn = this;
+  var text = document.getElementById('spec').textContent;
+  function ok() {
+    btn.textContent = 'Copied';
+    setTimeout(function () { btn.textContent = 'Copy prompt'; }, 1800);
+  }
+  function fallback() {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); ok(); }
+    catch (e) { btn.textContent = 'Select the text below'; }
+    ta.remove();
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(ok, fallback);
+  } else { fallback(); }
+});
+</script>
