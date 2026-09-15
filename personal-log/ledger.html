@@ -3149,6 +3149,16 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     }).join('');
   }
 
+  function draftFromRepeat(entry) {
+    var cat = catOf(entry);
+    return {
+      id: newId(), category: cat, status: 'logged', title: entry.title, date: today(),
+      fields: JSON.parse(JSON.stringify(entry.fields || {})),
+      'with': '', tags: tagsOf(entry).slice(), note: '', again: null,
+      _fromRepeatOf: entry.id
+    };
+  }
+
   function openDetail(entry) {
     if (!entry) return;
     var dlg = modal('cat-' + catOf(entry));
@@ -3204,6 +3214,8 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         + '</div>'
         + (readOnly ? '' : '<div class="dlg-foot">'
             + '<button type="button" class="btn" data-x="edit">Edit</button>'
+            + (statusOf(entry) === 'logged'
+                ? '<button type="button" class="btn btn-quiet" data-x="log-again">Log again</button>' : '')
             + '<button type="button" class="btn btn-quiet" data-x="delete">Delete</button>'
             + '<span class="spacer"></span>'
             + '<button type="button" class="btn btn-quiet" data-x="close">Close</button></div>');
@@ -3217,6 +3229,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         if (next) { dlg.close(); openDetail(next); }
       }
       else if (what === 'edit') { dlg.close(); openForm(entry); }
+      else if (what === 'log-again') { var draft = draftFromRepeat(entry); dlg.close(); openForm(null, draft); }
       else if (what === 'delete') {
         state.entries = state.entries.filter(function (e) { return e.id !== entry.id; });
         var trashed = JSON.parse(JSON.stringify(entry));
@@ -3245,6 +3258,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     var pendingCatSwitch = null, pendingDropped = null;
     var painted = false;
     var dupWarned = null;
+    var repeatOk = draft._fromRepeatOf ? find(draft._fromRepeatOf) : null;
 
     function duplicateOf(d) {
       var t = String(d.title || '').trim().toLowerCase();
@@ -3295,10 +3309,11 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       }
 
       var out = '<div class="dlg-head"><div>'
-        + (draft.sourceUrl || draft.aiDraft
+        + (draft.sourceUrl || draft.aiDraft || repeatOk
             ? '<div class="dlg-chips">'
               + (draft.sourceUrl ? '<span class="chip chip-soft">via ' + esc(draft.source || 'source') + '</span>' : '')
               + (draft.aiDraft ? '<span class="chip chip-soft">Claude filled this in — check it</span>' : '')
+              + (repeatOk ? '<span class="chip chip-soft">Logging another visit</span>' : '')
               + '</div>'
             : '')
         + '<h2>' + esc(editing ? 'Edit entry' : 'New entry') + '</h2></div>'
@@ -3430,12 +3445,14 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         collect();
         if (!draft.title) { var t = dlg.querySelector('[data-f="title"]'); if (t) t.focus(); return; }
         var clash = duplicateOf(draft);
-        if (clash && (!dupWarned || dupWarned.id !== clash.id)) {
+        var bypassed = !!(repeatOk && clash && repeatOk.id === clash.id);
+        if (clash && !bypassed && (!dupWarned || dupWarned.id !== clash.id)) {
           dupWarned = clash; paint('[data-x="save"]'); return;
         }
         if (!clash) dupWarned = null;
         delete draft.sample;
         delete draft.aiDraft;
+        delete draft._fromRepeatOf;
         var nowIso = new Date().toISOString();
         if (!editing) draft.createdAt = nowIso;
         draft.updatedAt = nowIso;

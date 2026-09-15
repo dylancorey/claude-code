@@ -85,9 +85,13 @@ form flagged "Claude filled this in — check it." Without Claude, the same line
 opens the form with the title filled. Nothing saves without the review step, and
 the parser is told never to invent an address, year, director, or cuisine.
 
-**Add entry** — the full form. **Discover** — search the catalog, save a result
-prefilled. **Or tell Claude** in a project (the exact instructions are in the
-page under How this works).
+**Add entry** — the full form. **Log again** — on any done entry's detail view,
+opens a new entry prefilled with that place's city, cuisine, address and so on;
+only the date (today), who with, and the note are left blank for you to fill in.
+No duplicate warning — saying "log again" is already telling the ledger it's a
+repeat. **Discover** — search the catalog, save a result prefilled. **Or tell
+Claude** in a project (the exact instructions are in the page under How this
+works).
 
 ## Finding things
 
