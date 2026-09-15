@@ -94,7 +94,10 @@ page under How this works).
 Search across every field. Category from the stat row. Been-there / Watching
 toggles, sort (Recent / Oldest / A–Z), stacking tag chips with live counts, and a
 per-person filter — tap a name in any entry. Filters persist in `localStorage`
-and mirror into the URL hash, so a filtered view can be bookmarked.
+and mirror into the URL hash, so a filtered view can be bookmarked. Filtering by
+a person shows a summary line above the results — outings together, days since
+the last one, anything shared on the want-to list — with a link to switch tabs
+and see it.
 
 **Want to** is its own tab: everything with status `wishlist`, sorted by when it
 was added. The main list is only things that happened.
@@ -117,7 +120,8 @@ Filters button that opens a sheet, and a "+" for a new entry. Between 48 and
 | **Suggest something** | Ranks the want-to list against your history — tag overlap, repeated cuisines, neighborhoods you return to, category gaps, and now whether comparable things were marked "again" — and says why. **Sharpen with Claude** rewrites the three reasons from the actual entries in one quick call. |
 | **Spin it** | Random pick off the want-to list, respecting the category filter. |
 | **Order again** | Every `dish` you flagged, in one list. |
-| **Year in review** | Per-year counts, top tags, companions, first/last, cities, home/away/unknown. Entries with no date fall back to the year they were added and are marked approximate. **Recap** writes four to six sentences about the month or the year in the ledger's voice, from the entries only, with Stop and Write-it-again. |
+| **Year in review** | Per-year counts, top tags, companions, first/last, cities, home/away/unknown. Entries with no date fall back to the year they were added and are marked approximate. Two extra scopes sit alongside the calendar years: **All time** (lifetime totals, a most-repeated title, a longest-weeks-in-a-row streak, and which home neighborhoods have never been logged) and **Last 90 days** (the same shape, rolling). **Recap** writes four to six sentences about the month or a specific year in the ledger's voice, from the entries only, with Stop and Write-it-again — it only appears on a real year, not the two lifetime scopes. |
+| **Said I'd go back** | Every entry marked "would go again" that was never revisited, oldest first. An entry counts as revisited if a later entry with the same title and category exists. |
 | **This week** | A strip above the grid counting entries this week. On this day takes precedence when a prior year matches. |
 | **Voice** | `tone` is `plain`, `dry`, or `salty`. It rewrites the empty states, spin captions, and the recap's register. Discovery blurbs keep whatever voice they were indexed in. |
 | **Appearance** | Auto / Light / Dark, plus Comfortable / Compact density. Both remembered per browser, not in the ledger. |
