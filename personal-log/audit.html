@@ -361,6 +361,64 @@ pre {
   </ul>
 </div>
 
+<section id="build">
+  <p class="snum">Build · 2026-09-15</p>
+  <h2>What shipped</h2>
+
+  <p>Two publishes to the live ledger. Every publish was verified against the 13 entries before and after: byte-identical, twice. Nothing was renamed, rewritten, or removed.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Version</th><th>Commit</th><th>What changed</th></tr></thead>
+      <tbody>
+        <tr><td class="id">—</td><td class="id">5b07f08</td><td>Captured the unversioned live build (findings F01–F22 minus F13/F23, implemented by another session) into git. Verbatim.</td></tr>
+        <tr><td class="id">v22</td><td class="id">1da0823 · 2d43b16</td><td>Real file backups via <code>downloads</code> · Discovery OR-search with stopwords (F13) · Live events scope, venue/when/date on catalog items · 18 sourced catalog items (4 StubHub, 3 places, 4 restaurants, 7 films) · "Would I go again?" hidden on want-to · mobile bottom tab bar + You sheet · "+" kept on the search row at 390px</td></tr>
+        <tr><td class="id">v23</td><td class="id">17c7100</td><td>One-line capture parsed by Claude · month/year recap in the ledger's voice · Claude-sharpened suggestion reasons · plain-English "How this works" · runtime contract upgraded 0.2.29 → 0.2.49 (deliberate — the <code>sample</code> API was read from 0.2.49; the <code>artifact.publish</code> error codes are unchanged, so the save path is unaffected)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Capabilities now declared</h3>
+  <p><code>artifact</code> (self-publish, unchanged) · <code>downloads</code> (backup file and CSV; falls back to clipboard and says so) · <code>sample</code> (three tap-only features; the viewer pays on their own account and is asked once; a decline hides the buttons). No <code>mcp</code>, no <code>assets</code> — both would have ended the public share link (D5, D6).</p>
+
+  <h3>Tests performed</h3>
+  <ul>
+    <li>JSON round-trip on every build: entries parsed, re-serialised, compared — 13 unchanged, both publishes.</li>
+    <li>Script parsed with <code>new Function</code> after each edit; all new functions asserted present.</li>
+    <li>Rendered at a true 390px viewport in headless Chromium: no horizontal overflow, stats wrap, search + Filters + "+" on one row, tab bar present in the DOM.</li>
+    <li>Catalog: 36 items, unique ids, four kinds, <code>catalogAt</code> bumped.</li>
+  </ul>
+
+  <h3>Not tested — and why</h3>
+  <ul>
+    <li><strong>The Claude and download calls have not been exercised live.</strong> They need a viewer's consent tap, which cannot happen from this session. They are verified against the typed contract (0.2.49) and every rejection code is handled; the first real tap is the real test. If "Log it" ever misreads a line, the review form is still in the way — nothing saves without it.</li>
+    <li>Dark theme and tablet widths were not re-rendered this session; no token changed, so the earlier verification stands.</li>
+  </ul>
+
+  <h3>Compromises made, on the record</h3>
+  <ul>
+    <li><strong>Restaurant addresses.</strong> The Infatuation and Time Out pages are blocked by this sandbox's network proxy, and after F06 no address goes in that was not seen on a source. The four restaurants ship without one and map by name. Landmark venues (Dolby, the Ebell, SoFi, NHM, Runyon) carry addresses I am certain of.</li>
+    <li><strong>Uber Eats skipped.</strong> Its connector requires a delivery address and skews to delivery. Web search was the better source for places you go.</li>
+    <li><strong>Only four restaurants, not nine.</strong> Five names came back from search with nothing but a name. A name is not a recommendation.</li>
+    <li><strong>Desktop tool row unchanged (F23).</strong> The five pills were regrouped on mobile only, into the You sheet. On a laptop they still sit in one row.</li>
+  </ul>
+
+  <h3>Unresolved</h3>
+  <ul>
+    <li>The share link is still pinned to a pre-redesign version. Owner action: share menu → point at current. No tool can do it.</li>
+    <li>From §12, not yet built: the broken-promises list, the neighborhood pressure map, lifetime and rolling-90-day stats. All pure page logic, no capability needed, roughly a session each.</li>
+    <li>The Trish view exists as a filter (tap a name in any entry) but not as a page with a timeline and shared want-to list.</li>
+  </ul>
+
+  <h3>Recommended next</h3>
+  <ol>
+    <li>Open the ledger on your phone, tap <strong>Log it</strong> with a real line, accept the one-time prompt, and read what it filled in. That tap is the test I could not run.</li>
+    <li>Settings → <strong>Save backup file</strong>. Keep the file somewhere that is not this page.</li>
+    <li>Repoint the share link, or leave it and tell me — it is the one open decision only you can close.</li>
+    <li>Say "stock Discovery with ___" whenever the index is thin. I fetch, check, attribute, publish.</li>
+  </ol>
+</section>
+
 <!-- ===================== 1 ===================== -->
 <section>
   <p class="snum">§ 01</p>

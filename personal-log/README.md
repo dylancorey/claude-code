@@ -1,35 +1,58 @@
 # The Ledger
 
-A personal log of restaurants and bars, movies and TV, and concerts and live events.
-Notes rather than ratings — the note is the part worth rereading.
+A personal log of restaurants and bars, movies and TV, concerts and live events,
+and places. Notes rather than ratings — the note is the part worth rereading —
+plus one yes/no: would I go again.
 
 **Live page:** https://claude.ai/code/artifact/7b605c39-2263-438a-b9bc-d10ed7c6a127
+**Audit and build log:** https://claude.ai/code/artifact/b8e5c334-e5de-402f-a3cd-0eb8666acd48
 
-`ledger.html` is the source. The published page is self-saving: it declares the
-`artifact` capability, so adding or editing an entry on the page publishes a new
-version of itself to that same URL. There is no separate database file.
+`ledger.html` is the whole app: styles, data, and script in one file. The
+published page saves itself — every add, edit, or delete publishes a new version
+of the page to the same URL through the `artifact` capability. There is no
+separate database. Version history is the undo stack for anything the in-page
+trash does not cover.
 
-Navigation: search across every field, category filter (the big number row),
-been-there / want-to toggles, sort, and a tag filter bar. Tags stack — selecting
-two narrows to entries carrying both — and each chip shows how many entries it
-would leave, so combinations that lead nowhere are visible before you click.
-Tags are stored lowercase.
+## What it runs on
+
+Three runtime capabilities, declared at publish time, contract 0.2.49:
+
+| Capability | Used for | If unavailable |
+| --- | --- | --- |
+| `artifact` | Saving. Each change republishes the page. | Page goes read-only and says so. |
+| `downloads` | Settings → Save backup file (`.json`) and Save as spreadsheet (`.csv`). | Same button copies to the clipboard and says so. |
+| `sample` | Log it, Recap, Sharpen — see below. Runs only on a tap, on the viewer's own Claude account, asks once. | The buttons hide. Everything else works. |
+
+Not declared, on purpose: `mcp` and `assets` both end the public share link.
+Real restaurant and event data comes in through Claude in a session instead —
+verified, attributed, then published into the catalog.
+
+The page cannot reach the internet itself: published artifacts run under a CSP
+that blocks every outbound request.
 
 ## Data shape
 
-Entries live in the `<script id="entry-data" type="application/json">` block:
+Everything lives in the `<script id="entry-data" type="application/json">` block:
+`tone`, `home`, `recs`, `catalog`, `catalogAt`, `entries`, `trash`.
+
+An entry:
 
 ```json
 {
-  "id": "e1",
-  "category": "food",          // food | screen | live
-  "status": "logged",          // logged | wishlist
-  "title": "Lucali",
-  "date": "2026-05-02",        // YYYY-MM-DD, or "" for something not done yet
-  "fields": { "city": "", "cuisine": "", "dish": "" },
-  "with": "Ari and Jess",
-  "tags": ["pizza", "brooklyn"],
-  "note": "Free text — the part that matters."
+  "id": "emtqclwwzqcly",
+  "category": "food",                 // food | screen | live | place
+  "status": "logged",                 // logged | watching (screen only) | wishlist
+  "title": "Formosa Cafe",
+  "date": "2026-09-05",               // event date, YYYY-MM-DD, or "" if not done yet
+  "fields": { "city": "WeHo", "cuisine": "Chinese", "address": "", "dish": "Beef" },
+  "with": "Melissa, Trish",
+  "tags": [],
+  "note": "",
+  "again": true,                      // true | false | null — null is "not answered", never false
+  "createdAt": "2026-09-06T21:54:07.314Z",
+  "updatedAt": "2026-09-06T21:54:07.314Z",
+  "source": "Wikipedia",              // only on entries saved from Discovery
+  "sourceUrl": "https://..."
 }
 ```
 
@@ -37,101 +60,108 @@ Per-category `fields`:
 
 | category | fields | statuses |
 | --- | --- | --- |
-| `place` | `kind`, `city`, `address` | `logged` (Been there), `wishlist` (Want to go) |
-| `food` | `city`, `cuisine`, `address`, `dish` | `logged` (Been there), `wishlist` (Want to go) |
-| `screen` | `kind`, `year`, `by`, `where` | `logged` (Watched), `watching` (Watching), `wishlist` (Want to watch) |
-| `live` | `kind`, `venue`, `city`, `address`, `support` | `logged` (Went), `wishlist` (Want to go) |
+| `food` | `city`, `cuisine`, `address`, `dish` | Been there · Want to go |
+| `screen` | `kind`, `year`, `by`, `where` | Watched · Watching · Want to watch |
+| `live` | `kind`, `venue`, `city`, `address`, `support` | Went · Want to go |
+| `place` | `kind`, `city`, `address` | Been there · Want to go |
 
-Status keys are shared across categories but their labels are per-category, and
-`watching` is only offered on `screen`. An `address` (or failing that, title +
-venue + city) becomes a Google Maps link on the card and in the detail view.
+`createdAt` is set on save and back-filled from the id's embedded timestamp
+where that parses; the two seeded entries keep `null`. Switching category in the
+form prunes fields the new category does not declare, after asking if any hold
+text. `city` and `address` survive any switch.
 
-Adding a category means adding one object to `CATS` in the page script — the form,
-the filter tabs, and the metadata line all read from it.
+Deleted entries move to `trash` with a `deletedAt`; a ten-second Undo appears,
+and Settings → Trash restores or purges. Nothing purges on a timer.
+
+Adding a category is one object in `CATS` — the form, the stat row, the summary
+line, and the CSV export all read from it.
+
+## Getting things in
+
+**Log it** — one line at the top of the Ledger tab: *"Sonny's pizza with Trish,
+get the margherita."* With Claude available, the line is parsed on the quick tier
+into category, title, who, dish, date, tags, and note, then opened in the normal
+form flagged "Claude filled this in — check it." Without Claude, the same line
+opens the form with the title filled. Nothing saves without the review step, and
+the parser is told never to invent an address, year, director, or cuisine.
+
+**Add entry** — the full form. **Discover** — search the catalog, save a result
+prefilled. **Or tell Claude** in a project (the exact instructions are in the
+page under How this works).
+
+## Finding things
+
+Search across every field. Category from the stat row. Been-there / Watching
+toggles, sort (Recent / Oldest / A–Z), stacking tag chips with live counts, and a
+per-person filter — tap a name in any entry. Filters persist in `localStorage`
+and mirror into the URL hash, so a filtered view can be bookmarked.
+
+**Want to** is its own tab: everything with status `wishlist`, sorted by when it
+was added. The main list is only things that happened.
+
+Keyboard: `/` search, `n` new entry, `?` this list, `Cmd/Ctrl+Enter` saves the
+open form, `Esc` closes.
+
+## On a phone
+
+Below 46rem a fixed bottom bar replaces the header tools: **Ledger · Want to ·
+Discover · You**. *You* is a bottom sheet with Suggest, Spin, Order again, Year in
+review, Settings, and the theme switch. The sticky top bar keeps search, a
+Filters button that opens a sheet, and a "+" for a new entry. Between 48 and
+64rem the grid is three columns.
 
 ## The extras
 
 | Feature | What it does |
 | --- | --- |
-| **Spin it** | Picks at random off the want-to list. Respects the active category filter, so "Food" + Spin only offers restaurants. |
-| **Order again** | Every `dish` you flagged on a food entry, in one list. Tap the place name to open the entry. |
-| **Year in review** | Per-year counts, top tags, who you were with most, first and last outing, cities, nights away. Year picker flips between years. |
-| **Suggest something** | Ranks your want-to list against your own history — tag overlap, repeated cuisines and kinds, neighborhoods you return to, and how long it has been since you logged that category — and shows why. Below it, observations: a companion you have not seen lately, your most-repeated tag, a dish past-you flagged. Runs entirely in the page. |
-| **Voice** | `tone` is `plain`, `dry`, or `salty`. It rewrites the empty states, the spin captions, and the suggestion intro. Salty swears at the situation. Set it in Settings. |
-| **Appearance** | Auto / Light / Dark in the header. Auto follows the Claude viewer theme; an explicit choice wins over it and is remembered per browser in `localStorage`, not in the ledger. |
-| **On this day** | A strip above the grid when today's month and day match an entry from an earlier year. Absent otherwise. |
-| **Away markers** | Any entry whose `city` isn't home gets an Away chip and counts toward the away tally. Screen entries have no city, so they never count. |
-
-`home` sits alongside `hasSamples` and `entries` at the top of the JSON block. It
-is a **comma-separated list**, not one city: the first item is the display name,
-the rest are neighborhoods that still count as home. Seeded for Los Angeles
-(90069) with WeHo, Silver Lake, Santa Monica and the other usual names, and
-editable from Year in review.
-
-Matching is whole-word on a punctuation-stripped, lowercased form of both sides,
-so `LA` matches "Downtown LA" but not Atlanta, Dallas, Portland, or Oakland.
-
-## Telling Claude to update it
-
-Paste this into a Claude project's instructions:
-
-> My activity ledger lives at https://claude.ai/code/artifact/7b605c39-2263-438a-b9bc-d10ed7c6a127
->
-> When I mention a restaurant, bar, movie, show, concert, or live event I went to
-> or want to go to, update the ledger: read it with the Artifact tool, add or edit
-> the entry in the JSON block with id "entry-data", and publish back to the same
-> URL. Categories are food, screen, and live. Status is "logged" or "wishlist".
-> Tags are lowercase. Keep my wording in the note. Put street addresses in
-> fields.address on food and live entries so map links work.
->
-> If I say what to order at a restaurant, put it in the food entry's "dish"
-> field — it feeds the Order this again list. "home" at the top level is my
-> home base city; anything logged in a different city is marked Away.
-
-Then: "Add Lucali to my ledger — went last night with Ari, get the calzone."
-
-## Claude-written suggestions
-
-The page cannot call Claude at runtime — the account's artifact runtime serves
-`artifact`, `downloads`, `mcp` and `self`, with no text-generation capability —
-so the in-page suggestions are computed, not generated. To add written ones,
-Claude sets the top-level `recs`:
-
-```json
-{ "at": "2026-08-29", "items": [ { "category": "food", "title": "...", "body": "..." } ] }
-```
-
-They render above the computed picks under a "From Claude" heading. Ask for them
-in the project and they are written into the ledger like any other edit.
+| **Suggest something** | Ranks the want-to list against your history — tag overlap, repeated cuisines, neighborhoods you return to, category gaps, and now whether comparable things were marked "again" — and says why. **Sharpen with Claude** rewrites the three reasons from the actual entries in one quick call. |
+| **Spin it** | Random pick off the want-to list, respecting the category filter. |
+| **Order again** | Every `dish` you flagged, in one list. |
+| **Year in review** | Per-year counts, top tags, companions, first/last, cities, home/away/unknown. Entries with no date fall back to the year they were added and are marked approximate. **Recap** writes four to six sentences about the month or the year in the ledger's voice, from the entries only, with Stop and Write-it-again. |
+| **This week** | A strip above the grid counting entries this week. On this day takes precedence when a prior year matches. |
+| **Voice** | `tone` is `plain`, `dry`, or `salty`. It rewrites the empty states, spin captions, and the recap's register. Discovery blurbs keep whatever voice they were indexed in. |
+| **Appearance** | Auto / Light / Dark, plus Comfortable / Compact density. Both remembered per browser, not in the ledger. |
+| **Away** | `home` is a comma-separated list — display name first, then neighborhoods that still count as home — edited as chips in Settings. Anything logged elsewhere is Away; no city at all is Unknown, and the review tile says so rather than guessing. |
+| **Offline** | Every change is mirrored to `localStorage` before publishing. Offline, the save waits and retries on reconnect. On load, unsaved changes newer than the page are offered back, never restored silently. |
 
 ## Discovery
 
-`Discover` in the header searches a catalog of real, sourced items across movies
-and TV, restaurants, and things to do. Results carry artwork tiles, year and
-director or address and neighborhood, a candid blurb, a link back to the source,
-and a map link. Two actions per result: open the source, or save — which opens
-the normal entry form prefilled with title, category, status, year, creator,
-cuisine, address, city, tags, description, source and sourceUrl, so you review
-and edit before confirming.
+A catalog of real, sourced items across movies and TV, restaurants, live events,
+and things to do. Each result shows the useful facts, a candid blurb, a link back
+to the source, and a map link; **Save to ledger** opens the normal form prefilled.
+Titles already in the ledger show "In your ledger" instead.
 
-Restaurants and places matching your home base rank first; the Near box lets you
-search another city. Titles already in the ledger show "In your ledger" and offer
-Open entry instead of Save.
+Search matches any word (stopwords dropped), ranks multi-word matches and exact
+titles higher, and boosts restaurants and places near the Near box — which
+understands *westside*, *valley*, *eastside*, and *beach* as well as neighborhood
+names. Live events get their own scope.
 
-**The page cannot call an API.** Published artifacts run under a CSP that blocks
-fetch, XHR and WebSocket to every external host, and this account's artifact
-runtime serves only `artifact`, `downloads`, `mcp` and `self` — there is no
-network capability to declare. So the index is Claude-fed: ask for a search and
-Claude appends to the top-level `catalog` array. A query with no match shows a
-copy-ready prompt that does exactly that. Item shape:
+Item shape:
 
 ```json
 { "id": "unique", "kind": "screen | food | place | live", "title": "...",
-  "year": "2022", "by": "director or creator", "form": "Film | Museum | ...",
-  "cuisine": "...", "city": "...", "address": "street address",
+  "year": "2022", "by": "director or creator", "form": "Film | Museum | Comedy | ...",
+  "cuisine": "...", "city": "...", "address": "street address or empty",
+  "venue": "live only", "when": "Oct 3, Sat · 8:30 PM", "date": "2026-10-03",
   "tags": ["lowercase"], "w": 1, "q": "extra search words",
-  "blurb": "candid overview", "source": "Wikipedia", "sourceUrl": "https://..." }
+  "blurb": "what it is, why bother, the drawback",
+  "source": "StubHub", "sourceUrl": "https://...",
+  "verifiedAt": "2026-09-15" }
 ```
 
-`w` is 1–5 editorial prominence and drives ranking. Use only facts present in the
-source; omit a field rather than guess — the card says when an address is missing.
+`w` is 1–5 prominence. `verifiedAt` is the date the details were checked against
+a live source, or `null` if they were not — never a guess. Use only facts present
+in the source and leave a field out rather than invent one; the card says when an
+address is missing and maps by name instead.
+
+Stocking it is a request in a session: *"stock Discovery with Thai places near
+WeHo and comedy shows this month."* Sources so far: Wikipedia, StubHub, Time Out,
+LA Weekly, Fodor's, Yelp, Tripadvisor, Beverly Press, Visit California, Discover
+Los Angeles.
+
+## Privacy, plainly
+
+The ledger lives in the owner's Claude account. Anyone with the share link sees
+every entry, note, and name; there is no per-entry privacy on a shared page. The
+Claude features send only the entries they need, only when tapped, and Claude
+keeps nothing between taps. No API key or credential is in the page.
