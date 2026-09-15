@@ -2249,6 +2249,126 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     return r;
   }
 
+  function reviewWindow(days) {
+    var since = Date.now() - days * 86400000;
+    var r = { total: 0, cat: { food: 0, screen: 0, live: 0, place: 0 }, tags: {}, people: {},
+              cities: {}, away: 0, unknown: 0, first: null, last: null };
+    state.entries.forEach(function (e) {
+      if (statusOf(e) === 'wishlist' || !e.date) return;
+      var t = Date.parse(e.date + 'T12:00:00');
+      if (isNaN(t) || t < since) return;
+      r.total++;
+      r.cat[catOf(e)]++;
+      tagsOf(e).forEach(function (tg) { r.tags[tg] = (r.tags[tg] || 0) + 1; });
+      peopleOf(e).forEach(function (who) { r.people[who] = (r.people[who] || 0) + 1; });
+      var c = cityOf(e).trim();
+      if (c) r.cities[c] = (r.cities[c] || 0) + 1;
+      var awayState = isAway(e);
+      if (awayState === 'away') r.away++;
+      else if (awayState === 'unknown') r.unknown++;
+      if (!r.first || e.date < r.first.date) r.first = e;
+      if (!r.last || e.date > r.last.date) r.last = e;
+    });
+    return r;
+  }
+
+  function reviewAll() {
+    var r = { total: 0, cat: { food: 0, screen: 0, live: 0, place: 0 }, tags: {}, people: {},
+              cities: {}, titles: {}, away: 0, unknown: 0, first: null, last: null };
+    state.entries.forEach(function (e) {
+      if (statusOf(e) === 'wishlist') return;
+      r.total++;
+      r.cat[catOf(e)]++;
+      tagsOf(e).forEach(function (tg) { r.tags[tg] = (r.tags[tg] || 0) + 1; });
+      peopleOf(e).forEach(function (who) { r.people[who] = (r.people[who] || 0) + 1; });
+      var c = cityOf(e).trim();
+      if (c) r.cities[c] = (r.cities[c] || 0) + 1;
+      var tkey = catOf(e) + '|' + norm(e.title);
+      if (!r.titles[tkey]) r.titles[tkey] = { title: e.title, cat: catOf(e), n: 0 };
+      r.titles[tkey].n++;
+      var awayState = isAway(e);
+      if (awayState === 'away') r.away++;
+      else if (awayState === 'unknown') r.unknown++;
+      if (e.date) {
+        if (!r.first || e.date < r.first.date) r.first = e;
+        if (!r.last || e.date > r.last.date) r.last = e;
+      }
+    });
+    return r;
+  }
+
+  function longestWeekStreak() {
+    var WEEK = 7 * 86400000;
+    var weeks = {};
+    state.entries.forEach(function (e) {
+      if (statusOf(e) === 'wishlist' || !e.date) return;
+      var t = Date.parse(e.date + 'T12:00:00');
+      if (isNaN(t)) return;
+      weeks[Math.floor(t / WEEK)] = true;
+    });
+    var idx = Object.keys(weeks).map(Number).sort(function (a, b) { return a - b; });
+    if (!idx.length) return 0;
+    var best = 1, run = 1;
+    for (var i = 1; i < idx.length; i++) {
+      if (idx[i] === idx[i - 1] + 1) { run++; if (run > best) best = run; }
+      else run = 1;
+    }
+    return best;
+  }
+
+  function neighborhoodCoverage() {
+    var terms = String(state.home || '').split(',').map(function (t) { return t.trim(); }).filter(Boolean);
+    return terms.map(function (t) {
+      var hay = norm(t);
+      var n = 0;
+      state.entries.forEach(function (e) {
+        if (statusOf(e) === 'wishlist') return;
+        var city = cityOf(e).trim();
+        if (!city) return;
+        if (norm(city).indexOf(hay) !== -1) n++;
+      });
+      return { term: t, n: n };
+    });
+  }
+
+  function neighborhoodBlock() {
+    var cov = neighborhoodCoverage();
+    if (cov.length < 2) return '';
+    var never = cov.filter(function (c) { return c.n === 0; });
+    var seen = cov.filter(function (c) { return c.n > 0; }).sort(function (a, b) { return b.n - a.n; });
+    return '<div class="block"><h3>Your neighborhoods</h3>'
+      + (seen.length ? '<div class="detail-tags">' + seen.map(function (c) {
+          return '<span class="tagchip" style="cursor:default">' + esc(c.term) + '<span class="n">' + c.n + '</span></span>';
+        }).join('') + '</div>' : '<p class="none">Nothing logged in any home neighborhood yet.</p>')
+      + (never.length ? '<p class="disc-hint" style="margin-top:.625rem">Never logged: ' + never.map(function (c) { return esc(c.term); }).join(', ') + '.</p>' : '')
+      + '</div>';
+  }
+
+  function brokenPromises() {
+    var latest = {};
+    state.entries.forEach(function (e) {
+      if (statusOf(e) === 'wishlist') return;
+      var key = catOf(e) + '|' + norm(e.title);
+      var when = e.date || (e.createdAt ? e.createdAt.slice(0, 10) : '');
+      if (when && (!latest[key] || when > latest[key])) latest[key] = when;
+    });
+    var out = [];
+    state.entries.forEach(function (e) {
+      if (statusOf(e) === 'wishlist' || e.again !== true) return;
+      var key = catOf(e) + '|' + norm(e.title);
+      var when = e.date || (e.createdAt ? e.createdAt.slice(0, 10) : '');
+      if (when && latest[key] && latest[key] > when) return;
+      out.push({ entry: e, days: daysSince(e.date || (e.createdAt ? e.createdAt.slice(0, 10) : '')) });
+    });
+    out.sort(function (a, b) {
+      if (a.days === null && b.days === null) return a.entry.title.localeCompare(b.entry.title);
+      if (a.days === null) return 1;
+      if (b.days === null) return -1;
+      return b.days - a.days;
+    });
+    return out;
+  }
+
   /* ---------------- recommendations ---------------- */
 
   function recommend() {
@@ -2388,6 +2508,38 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
 
   function peopleOf(entry) {
     return String(entry['with'] || '').split(/,| and /).map(function (p) { return p.trim(); }).filter(Boolean);
+  }
+
+  function companionStrip() {
+    if (!ui.who) return '';
+    var who = ui.who;
+    var withPerson = state.entries.filter(function (e) {
+      return peopleOf(e).some(function (p) { return p.toLowerCase() === who.toLowerCase(); });
+    });
+    if (!withPerson.length) return '';
+    var display = who;
+    for (var i = 0; i < withPerson.length; i++) {
+      var m = peopleOf(withPerson[i]).filter(function (p) { return p.toLowerCase() === who.toLowerCase(); })[0];
+      if (m) { display = m; break; }
+    }
+    var done = withPerson.filter(function (e) { return statusOf(e) !== 'wishlist'; });
+    var want = withPerson.filter(function (e) { return statusOf(e) === 'wishlist'; });
+    var lastGap = null;
+    done.forEach(function (e) {
+      var d = daysSince(e.date);
+      if (d !== null && (lastGap === null || d < lastGap)) lastGap = d;
+    });
+    var bits = [done.length + ' ' + (done.length === 1 ? 'outing' : 'outings') + ' together'];
+    if (lastGap !== null) bits.push(lastGap === 0 ? 'last one today' : 'last one ' + lastGap + ' day' + (lastGap === 1 ? '' : 's') + ' ago');
+    if (want.length) bits.push(want.length + ' on the want-to list');
+    var otherTab = ui.tab === 'wantto' ? 'main' : 'wantto';
+    var switchLabel = ui.tab === 'wantto' ? 'See what we\u2019ve done' : 'See our want-to list';
+    var canSwitch = ui.tab === 'wantto' ? done.length > 0 : want.length > 0;
+    return '<div class="notice">'
+      + '<p><strong>' + esc(display) + '</strong> \u00b7 ' + esc(bits.join(' \u00b7 ')) + '</p>'
+      + '<span class="spacer"></span>'
+      + (canSwitch ? '<button type="button" class="linkish" data-act="tab" data-tab="' + otherTab + '">' + esc(switchLabel) + '</button>' : '')
+      + '</div>';
   }
   function passesWho(entry) {
     if (!ui.who) return true;
@@ -2536,6 +2688,8 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       }
     }
 
+    out += companionStrip();
+
     var fCount = activeFilterCount();
     out += '<div class="controls glass"><div class="row" id="controlsRow">'
       + '<input class="search" id="q" type="search" placeholder="Search titles, notes, people, places" value="' + esc(ui.q) + '" aria-label="Search the ledger">'
@@ -2604,12 +2758,13 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   }
 
   function toolsRow() {
-    var w = wishlist().length, d = dishes().length, years = yearsWithEntries();
+    var w = wishlist().length, d = dishes().length, p = brokenPromises().length, years = yearsWithEntries();
     return '<div class="tools">'
       + '<button class="tool" data-act="discover">' + svg('find') + 'Discover</button>'
       + '<button class="tool" data-act="suggest">' + svg('spark') + 'Suggest something</button>'
       + '<button class="tool" data-act="spin">Spin it<span class="c">' + w + '</span></button>'
       + '<button class="tool" data-act="dishes">Order again<span class="c">' + d + '</span></button>'
+      + '<button class="tool" data-act="promises">Said I\u2019d go back<span class="c">' + p + '</span></button>'
       + (years.length ? '<button class="tool" data-act="review">' + esc(years[0]) + ' in review</button>' : '')
       + '<span class="spacer"></span>'
       + '<div class="seg3" role="group" aria-label="Appearance">'
@@ -2821,6 +2976,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     else if (act === 'new') openForm(null, newEntryPrefill());
     else if (act === 'spin') openSpin();
     else if (act === 'dishes') openDishes();
+    else if (act === 'promises') openPromises();
     else if (act === 'review') openReview(yearsWithEntries()[0]);
     else if (act === 'discover') openDiscover();
     else if (act === 'suggest') openSuggest();
@@ -2901,12 +3057,13 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   function openYou() {
     var dlg = modal('sheet');
     function paint() {
-      var w = wishlist().length, d = dishes().length, years = yearsWithEntries();
+      var w = wishlist().length, d = dishes().length, p = brokenPromises().length, years = yearsWithEntries();
       dlg.innerHTML = dlgHead('You')
         + '<div class="dlg-body"><div class="youlist">'
         + '<button type="button" class="yourow" data-x="suggest">' + svg('spark') + '<span>Suggest something</span></button>'
         + '<button type="button" class="yourow" data-x="spin">' + svg('auto') + '<span>Spin it</span><span class="c">' + w + '</span></button>'
         + '<button type="button" class="yourow" data-x="dishes">' + svg('check') + '<span>Order again</span><span class="c">' + d + '</span></button>'
+        + '<button type="button" class="yourow" data-x="promises">' + svg('check') + '<span>Said I\u2019d go back</span><span class="c">' + p + '</span></button>'
         + (years.length ? '<button type="button" class="yourow" data-x="review">' + svg('book') + '<span>' + esc(years[0]) + ' in review, recap</span></button>' : '')
         + '<button type="button" class="yourow" data-x="settings">' + svg('gear') + '<span>Settings</span></button>'
         + '</div>'
@@ -2923,6 +3080,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       if (what === 'suggest') { dlg.close(); openSuggest(); }
       else if (what === 'spin') { dlg.close(); openSpin(); }
       else if (what === 'dishes') { dlg.close(); openDishes(); }
+      else if (what === 'promises') { dlg.close(); openPromises(); }
       else if (what === 'review') { dlg.close(); openReview(yearsWithEntries()[0]); }
       else if (what === 'settings') { dlg.close(); openSettings(); }
       else if (what === 'theme') { setTheme(el.getAttribute('data-theme')); paint(); }
@@ -3395,6 +3553,28 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
                 + '</p></div></div>';
             }).join('')
           : '<p class="none">' + esc(say('dishEmpty')) + '</p>')
+      + '</div>' + dlgFoot();
+    onClose(dlg, function (what, el) {
+      if (what === 'open') { var e = find(el.getAttribute('data-id')); dlg.close(); openDetail(e); }
+    });
+    dlg.showModal();
+  }
+
+  function openPromises() {
+    var list = brokenPromises();
+    var dlg = modal('');
+    dlg.innerHTML = dlgHead('Said I\u2019d go back')
+      + '<div class="dlg-body">'
+      + (list.length
+          ? '<p class="byline">Marked \u201cwould go again\u201d and never went back \u2014 oldest first.</p>'
+            + list.map(function (p) {
+                var e = p.entry;
+                var days = p.days === null ? '' : (p.days === 0 ? 'today' : p.days + ' day' + (p.days === 1 ? '' : 's') + ' ago');
+                return '<div class="rec cat-' + catOf(e) + '"><div class="body">'
+                  + '<div class="t"><button data-x="open" data-id="' + esc(e.id) + '">' + esc(e.title) + '</button></div>'
+                  + '<p class="why">' + esc(CATS[catOf(e)].short) + (days ? ' \u00b7 ' + days : '') + '</p></div></div>';
+              }).join('')
+          : '<p class="none">Nothing yet \u2014 mark something \u201cwould go again\u201d and never go back, and it turns up here.</p>')
       + '</div>' + dlgFoot();
     onClose(dlg, function (what, el) {
       if (what === 'open') { var e = find(el.getAttribute('data-id')); dlg.close(); openDetail(e); }
@@ -3950,68 +4130,145 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         + '<button type="button" data-x="open" data-id="' + esc(entry.id) + '">' + esc(entry.title) + '</button>'
         + '<span class="when">' + esc(dayLabel(entry.date)) + '</span></div>';
     }
+    function tagsBlock(map, emptyLabel) {
+      var tags = topOf(map, 6), maxTag = tags.length ? tags[0].n : 1;
+      return '<div class="block"><h3>Most-used tags</h3>'
+        + (tags.length ? '<div class="bars">' + tags.map(function (t) {
+            return '<div class="bar"><span class="lbl">' + esc(t.key) + '</span>'
+              + '<span class="track"><span class="fill" style="width:' + Math.round(t.n / maxTag * 100) + '%"></span></span>'
+              + '<span class="val">' + t.n + '</span></div>';
+          }).join('') + '</div>' : '<p class="none">' + esc(emptyLabel) + '</p>')
+        + '</div>';
+    }
+    function peopleBlock(map) {
+      var people = topOf(map, 5);
+      return '<div class="block"><h3>Who you were with</h3>'
+        + (people.length ? '<div class="detail-tags">' + people.map(function (pp) {
+            return '<span class="tagchip" style="cursor:default">' + esc(pp.key) + '<span class="n">' + pp.n + '</span></span>';
+          }).join('') + '</div>' : '<p class="none">All of them alone. No judgement.</p>')
+        + '</div>';
+    }
+    function citiesBlock(map) {
+      var cities = topOf(map, 6);
+      if (!cities.length) return '';
+      return '<div class="block"><h3>Cities</h3><div class="detail-tags">'
+        + cities.map(function (c) {
+            return '<span class="tagchip" style="cursor:default">' + esc(c.key) + '<span class="n">' + c.n + '</span></span>';
+          }).join('') + '</div></div>';
+    }
+    function reviewTitle() {
+      return cur === 'all' ? 'All time' : cur === '90d' ? 'Last 90 days' : cur + ' in review';
+    }
 
     function paint() {
-      var r = reviewFor(cur);
-      var tags = topOf(r.tags, 6), people = topOf(r.people, 5), cities = topOf(r.cities, 6);
-      var maxTag = tags.length ? tags[0].n : 1;
       var undated = trulyUndated();
 
-      var body = '<div class="yearpick">' + years.map(function (y) {
-        return '<button type="button" class="tagchip" data-x="year" data-year="' + esc(y) + '" aria-pressed="'
-          + (y === cur) + '">' + esc(y) + '</button>';
-      }).join('') + '</div>';
+      var body = '<div class="yearpick">'
+        + '<button type="button" class="tagchip" data-x="year" data-year="90d" aria-pressed="' + (cur === '90d') + '">Last 90 days</button>'
+        + '<button type="button" class="tagchip" data-x="year" data-year="all" aria-pressed="' + (cur === 'all') + '">All time</button>'
+        + years.map(function (y) {
+            return '<button type="button" class="tagchip" data-x="year" data-year="' + esc(y) + '" aria-pressed="'
+              + (y === cur) + '">' + esc(y) + '</button>';
+          }).join('') + '</div>';
 
-      body += recapHtml();
+      if (cur === 'all') {
+        var ra = reviewAll();
+        if (!ra.total) {
+          body += '<p class="none">Nothing logged yet.</p>';
+        } else {
+          var mostRepeated = null;
+          Object.keys(ra.titles).forEach(function (k) {
+            var t = ra.titles[k];
+            if (t.n > 1 && (!mostRepeated || t.n > mostRepeated.n)) mostRepeated = t;
+          });
+          var streak = longestWeekStreak();
 
-      if (!r.total) {
-        body += '<p class="none">Nothing logged in ' + esc(cur) + '.</p>';
-      } else {
-        body += '<div class="tiles">'
-          + tile(r.total, r.total === 1 ? 'Outing' : 'Outings', '')
-          + tile(r.cat.food, 'Food', 'food')
-          + tile(r.cat.screen, 'Screen', 'screen')
-          + tile(r.cat.live, 'Live', 'live')
-          + tile(r.cat.place, 'Do', 'place')
-          + (state.home ? tile(r.away + ' away \u00b7 ' + r.unknown + ' unknown', 'Where', 'small') : '')
-          + '</div>';
+          body += '<div class="tiles">'
+            + tile(ra.total, ra.total === 1 ? 'Outing' : 'Outings', '')
+            + tile(ra.cat.food, 'Food', 'food')
+            + tile(ra.cat.screen, 'Screen', 'screen')
+            + tile(ra.cat.live, 'Live', 'live')
+            + tile(ra.cat.place, 'Do', 'place')
+            + (state.home ? tile(ra.away + ' away \u00b7 ' + ra.unknown + ' unknown', 'Where', 'small') : '')
+            + '</div>';
 
-        if (r.approx) {
-          body += '<p class="disc-hint">' + r.approx + ' of these have no logged date \u2014 the year is based on when they were added.</p>';
+          body += '<div class="tiles">'
+            + tile(streak, streak === 1 ? 'Week logged' : 'Weeks in a row, best run', 'small')
+            + (mostRepeated
+                ? tile(mostRepeated.n + '\u00d7', mostRepeated.title, mostRepeated.cat + ' small')
+                : tile('\u2014', 'Nothing repeated yet', 'small'))
+            + '</div>';
+
+          body += tagsBlock(ra.tags, 'No tags yet.');
+          body += peopleBlock(ra.people);
+          body += neighborhoodBlock();
+          body += citiesBlock(ra.cities);
+
+          if (ra.first || ra.last) {
+            body += '<div class="block"><h3>Bookends</h3>' + bookend('First', ra.first)
+              + (ra.last && ra.first && ra.last.id !== ra.first.id ? bookend('Last', ra.last) : '') + '</div>';
+          }
         }
+      } else if (cur === '90d') {
+        var rw = reviewWindow(90);
+        if (!rw.total) {
+          body += '<p class="none">Nothing dated in the last 90 days.</p>';
+        } else {
+          body += '<div class="tiles">'
+            + tile(rw.total, rw.total === 1 ? 'Outing' : 'Outings', '')
+            + tile(rw.cat.food, 'Food', 'food')
+            + tile(rw.cat.screen, 'Screen', 'screen')
+            + tile(rw.cat.live, 'Live', 'live')
+            + tile(rw.cat.place, 'Do', 'place')
+            + (state.home ? tile(rw.away + ' away \u00b7 ' + rw.unknown + ' unknown', 'Where', 'small') : '')
+            + '</div>';
 
-        body += '<div class="block"><h3>Most-used tags</h3>'
-          + (tags.length ? '<div class="bars">' + tags.map(function (t) {
-              return '<div class="bar"><span class="lbl">' + esc(t.key) + '</span>'
-                + '<span class="track"><span class="fill" style="width:' + Math.round(t.n / maxTag * 100) + '%"></span></span>'
-                + '<span class="val">' + t.n + '</span></div>';
-            }).join('') + '</div>' : '<p class="none">No tags this year.</p>')
-          + '</div>';
+          body += tagsBlock(rw.tags, 'No tags in this window.');
+          body += peopleBlock(rw.people);
+          body += citiesBlock(rw.cities);
 
-        body += '<div class="block"><h3>Who you were with</h3>'
-          + (people.length ? '<div class="detail-tags">' + people.map(function (pp) {
-              return '<span class="tagchip" style="cursor:default">' + esc(pp.key) + '<span class="n">' + pp.n + '</span></span>';
-            }).join('') + '</div>' : '<p class="none">All of them alone. No judgement.</p>')
-          + '</div>';
+          if (rw.first || rw.last) {
+            body += '<div class="block"><h3>Bookends</h3>' + bookend('First', rw.first)
+              + (rw.last && rw.first && rw.last.id !== rw.first.id ? bookend('Last', rw.last) : '') + '</div>';
+          }
+        }
+      } else {
+        body += recapHtml();
+        var r = reviewFor(cur);
 
-        var busiest = topOf(r.months, 1)[0];
-        var monthCount = Object.keys(r.months).length;
-        body += '<div class="block"><h3>The shape of it</h3>'
-          + (busiest && busiest.n > 1
-              ? '<div class="bookend"><span class="k">Busiest</span><span>' + MONTHS[parseInt(busiest.key, 10) - 1] + ' \u2014 ' + busiest.n + '</span></div>'
-              : monthCount
-                ? '<div class="bookend"><span class="k">Pace</span><span>Never twice in a month. ' + monthCount + ' month'
-                  + (monthCount === 1 ? '' : 's') + ' with anything in them.</span></div>'
-                : '<p class="none">No dated entries this year to chart a shape from.</p>')
-          + bookend('First', r.first)
-          + (r.last && r.first && r.last.id !== r.first.id ? bookend('Last', r.last) : '')
-          + '</div>';
+        if (!r.total) {
+          body += '<p class="none">Nothing logged in ' + esc(cur) + '.</p>';
+        } else {
+          body += '<div class="tiles">'
+            + tile(r.total, r.total === 1 ? 'Outing' : 'Outings', '')
+            + tile(r.cat.food, 'Food', 'food')
+            + tile(r.cat.screen, 'Screen', 'screen')
+            + tile(r.cat.live, 'Live', 'live')
+            + tile(r.cat.place, 'Do', 'place')
+            + (state.home ? tile(r.away + ' away \u00b7 ' + r.unknown + ' unknown', 'Where', 'small') : '')
+            + '</div>';
 
-        if (cities.length) {
-          body += '<div class="block"><h3>Cities</h3><div class="detail-tags">'
-            + cities.map(function (c) {
-                return '<span class="tagchip" style="cursor:default">' + esc(c.key) + '<span class="n">' + c.n + '</span></span>';
-              }).join('') + '</div></div>';
+          if (r.approx) {
+            body += '<p class="disc-hint">' + r.approx + ' of these have no logged date \u2014 the year is based on when they were added.</p>';
+          }
+
+          body += tagsBlock(r.tags, 'No tags this year.');
+          body += peopleBlock(r.people);
+
+          var busiest = topOf(r.months, 1)[0];
+          var monthCount = Object.keys(r.months).length;
+          body += '<div class="block"><h3>The shape of it</h3>'
+            + (busiest && busiest.n > 1
+                ? '<div class="bookend"><span class="k">Busiest</span><span>' + MONTHS[parseInt(busiest.key, 10) - 1] + ' \u2014 ' + busiest.n + '</span></div>'
+                : monthCount
+                  ? '<div class="bookend"><span class="k">Pace</span><span>Never twice in a month. ' + monthCount + ' month'
+                    + (monthCount === 1 ? '' : 's') + ' with anything in them.</span></div>'
+                  : '<p class="none">No dated entries this year to chart a shape from.</p>')
+            + bookend('First', r.first)
+            + (r.last && r.first && r.last.id !== r.first.id ? bookend('Last', r.last) : '')
+            + '</div>';
+
+          body += citiesBlock(r.cities);
         }
       }
 
@@ -4021,7 +4278,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
           + '<button type="button" class="linkish" data-x="show-undated">show them in the ledger</button>.</p>';
       }
 
-      dlg.innerHTML = dlgHead(cur + ' in review') + '<div class="dlg-body">' + body + '</div>' + dlgFoot();
+      dlg.innerHTML = dlgHead(reviewTitle()) + '<div class="dlg-body">' + body + '</div>' + dlgFoot();
     }
 
     onClose(dlg, function (what, el) {
