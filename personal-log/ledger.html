@@ -1329,6 +1329,24 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     }
   ],
   "catalogAt": "2026-09-15",
+  "weather": {
+    "at": "2026-09-15",
+    "location": "Hollywood, CA",
+    "locationKey": "2625135",
+    "current": { "temp": 68, "condition": "Cloudy", "aqi": "Poor" },
+    "daily": [
+      { "date": "2026-09-14", "hi": 81, "lo": 67, "condition": "Clouds yielding to sun", "precip": 25 },
+      { "date": "2026-09-15", "hi": 82, "lo": 66, "condition": "Areas of low clouds, then sun", "precip": 0 },
+      { "date": "2026-09-16", "hi": 80, "lo": 65, "condition": "Areas of low clouds, then sun", "precip": 0 },
+      { "date": "2026-09-17", "hi": 79, "lo": 65, "condition": "Mostly sunny and pleasant", "precip": 1 },
+      { "date": "2026-09-18", "hi": 81, "lo": 66, "condition": "Sunny", "precip": 1 },
+      { "date": "2026-09-19", "hi": 84, "lo": 68, "condition": "Sunshine", "precip": 0 },
+      { "date": "2026-09-20", "hi": 82, "lo": 67, "condition": "Mostly sunny", "precip": 1 },
+      { "date": "2026-09-21", "hi": 82, "lo": 66, "condition": "Mostly sunny", "precip": 1 },
+      { "date": "2026-09-22", "hi": 81, "lo": 67, "condition": "Sunny", "precip": 2 },
+      { "date": "2026-09-23", "hi": 81, "lo": 68, "condition": "Sun and areas of low clouds", "precip": 21 }
+    ]
+  },
   "entries": [
     {
       "id": "s4",
@@ -2014,7 +2032,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   }
 
   function readState() {
-    var base = { hasSamples: false, tone: 'dry', home: '', recs: null, catalog: [], catalogAt: '', entries: [], trash: [] };
+    var base = { hasSamples: false, tone: 'dry', home: '', recs: null, catalog: [], catalogAt: '', entries: [], trash: [], weather: null };
     try {
       var parsed = JSON.parse(document.getElementById('entry-data').textContent);
       if (!parsed || !Array.isArray(parsed.entries)) throw new Error('shape');
@@ -2026,7 +2044,8 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         catalog: Array.isArray(parsed.catalog) ? parsed.catalog : [],
         catalogAt: typeof parsed.catalogAt === 'string' ? parsed.catalogAt : '',
         entries: parsed.entries.map(migrateEntry),
-        trash: Array.isArray(parsed.trash) ? parsed.trash : []
+        trash: Array.isArray(parsed.trash) ? parsed.trash : [],
+        weather: (parsed.weather && typeof parsed.weather === 'object' && Array.isArray(parsed.weather.daily)) ? parsed.weather : null
       };
     } catch (err) { return base; }
   }
@@ -2388,6 +2407,43 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     return out;
   }
 
+  /* ---------------- weather ---------------- */
+
+  var OUTDOOR_KINDS = { Hike: 1, Beach: 1, Viewpoint: 1, Park: 1 };
+
+  function weatherFor(dateStr) {
+    if (!state.weather || !dateStr) return null;
+    for (var i = 0; i < state.weather.daily.length; i++) {
+      if (state.weather.daily[i].date === dateStr) return state.weather.daily[i];
+    }
+    return null;
+  }
+
+  function weatherTag(day) {
+    return Math.round(day.hi) + '°/' + Math.round(day.lo) + '° · ' + day.condition
+      + (day.precip >= 20 ? ' · ' + day.precip + '% chance of rain' : '');
+  }
+
+  function outdoorLooksClear() {
+    if (!state.weather || !state.weather.daily.length) return false;
+    var soon = state.weather.daily.slice(0, 3);
+    return soon.every(function (d) { return d.precip < 30; });
+  }
+
+  function weatherNotice() {
+    var w = state.weather;
+    if (!w || !w.current) return '';
+    var today = w.daily[0];
+    return '<div class="notice">'
+      + '<p><strong>' + esc(w.current.temp) + '°, ' + esc(w.current.condition) + '</strong> in ' + esc(w.location)
+      + (today ? ' right now <span class="ago">· today ' + esc(Math.round(today.hi)) + '°/' + esc(Math.round(today.lo)) + '°</span>' : '')
+      + (w.current.aqi && w.current.aqi !== 'Good'
+          ? '<span class="ago"> · air quality ' + esc(w.current.aqi.toLowerCase()) + '</span>' : '')
+      + '</p><span class="spacer"></span>'
+      + '<span class="ago">checked ' + esc(dayLabel(w.at)) + '</span>'
+      + '</div>';
+  }
+
   /* ---------------- recommendations ---------------- */
 
   function recommend() {
@@ -2452,6 +2508,10 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       else if (gap > 45) {
         score += Math.min(gap / 20, 5);
         why.push('it has been ' + gap + ' days since your last ' + CATS[cat].short.toLowerCase() + ' entry');
+      }
+      if (cat === 'place' && OUTDOOR_KINDS[f.kind] && outdoorLooksClear()) {
+        score += 2;
+        why.push('clear weather the next few days');
       }
       if (!why.length) why.push('still sitting on the want-to list');
       return { entry: e, score: score, why: why.slice(0, 2).join(' \u00b7 ') };
@@ -2707,6 +2767,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       }
     }
 
+    out += weatherNotice();
     out += companionStrip();
 
     var fCount = activeFilterCount();
@@ -3189,6 +3250,8 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       }
       if (entry.createdAt) facts += '<div class="fact"><dt>Added</dt><dd>' + esc(dayLabel(entry.createdAt.slice(0, 10))) + '</dd></div>';
       if (entry.updatedAt) facts += '<div class="fact"><dt>Edited</dt><dd>' + esc(dayLabel(entry.updatedAt.slice(0, 10))) + '</dd></div>';
+      var forecast = weatherFor(entry.date);
+      if (forecast) facts += '<div class="fact"><dt>Forecast that day</dt><dd>' + esc(weatherTag(forecast)) + '</dd></div>';
       var url = mapUrl(entry);
 
       dlg.innerHTML = '<div class="dlg-head"><div>'
@@ -3930,6 +3993,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
           : [item.form || item.cuisine, loc].filter(Boolean).join(' \u00b7 ');
       var missing = (cat !== 'screen' && !item.address)
         ? 'No street address in this source \u2014 the map link searches by name.' : '';
+      var wx = weatherFor(item.date);
 
       return '<div class="dcard cat-' + cat + '">'
         + '<div class="dart ' + (cat === 'screen' ? 'poster' : 'square') + '">'
@@ -3938,6 +4002,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         + '</div><div class="dbody">'
         + '<div class="dtitle">' + esc(item.title) + '</div>'
         + (meta ? '<p class="dmeta">' + esc(meta) + '</p>' : '')
+        + (wx ? '<p class="dmeta">Forecast: ' + esc(weatherTag(wx)) + '</p>' : '')
         + (missing ? '<p class="dmeta dmissing">' + esc(missing) + '</p>' : '')
         + (item.blurb ? '<p class="dblurb">' + esc(item.blurb) + '</p>' : '')
         + '<div class="dfoot">'
@@ -4493,6 +4558,10 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       + '<code class="snippet">' + esc('{ "id": "unique", "kind": "screen" | "food" | "place" | "live", "title": "...",\n  "year": "2022", "by": "director or creator", "form": "Film | Series | Museum | Landmark | Comedy | Concert",\n  "cuisine": "...", "city": "...", "address": "street address",\n  "venue": "live only", "when": "Oct 3, Sat · 8:30 PM", "date": "2026-10-03",\n  "tags": ["lowercase"], "w": 1-5 how notable, "q": "extra search words",\n  "blurb": "candid overview: what it is, why bother, the drawback",\n  "source": "Wikipedia", "sourceUrl": "https://...",\n  "verifiedAt": "2026-09-15" | null }') + '</code>'
       + '<p>Use only facts that are actually in the source; leave a field out rather than guessing, and the card will say an address is missing. Bump catalogAt to the date. '
       + 'Set verifiedAt to the date you actually confirmed the details against a live source — leave it null if you did not check. Never guess a date just to fill it in.</p>'
+      + '<h3>Weather</h3>'
+      + '<p>The strip near the top of the Ledger tab, the forecast line on an entry with a date, and the forecast on Discovery cards all come from a top-level "weather" object that Claude fills in from AccuWeather, the same way it fills in Discovery. It goes stale the moment it is checked, so ask Claude to refresh it every so often — "check the weather" is enough:</p>'
+      + '<code class="snippet">' + esc('{ "at": "2026-09-15", "location": "Hollywood, CA", "locationKey": "2625135",\n  "current": { "temp": 68, "condition": "Cloudy", "aqi": "Poor" },\n  "daily": [ { "date": "2026-09-15", "hi": 82, "lo": 66, "condition": "Sunny", "precip": 0 }, ... up to 10 days ] }') + '</code>'
+      + '<p>Look up the location key for my home base with a location search, pull current conditions and the daily forecast, and replace the whole object — never guess a number. Entries and Discovery items only pick up a forecast line when their date falls inside "daily".</p>'
       + '</div>' + dlgFoot();
     onClose(dlg);
     dlg.showModal();

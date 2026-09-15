@@ -33,7 +33,7 @@ that blocks every outbound request.
 ## Data shape
 
 Everything lives in the `<script id="entry-data" type="application/json">` block:
-`tone`, `home`, `recs`, `catalog`, `catalogAt`, `entries`, `trash`.
+`tone`, `home`, `recs`, `catalog`, `catalogAt`, `entries`, `trash`, `weather`.
 
 An entry:
 
@@ -166,6 +166,31 @@ Stocking it is a request in a session: *"stock Discovery with Thai places near
 WeHo and comedy shows this month."* Sources so far: Wikipedia, StubHub, Time Out,
 LA Weekly, Fodor's, Yelp, Tripadvisor, Beverly Press, Visit California, Discover
 Los Angeles.
+
+## Weather
+
+A strip at the top of the Ledger tab shows the current conditions and today's
+high/low for home, plus air quality when it isn't "Good" — sourced from
+AccuWeather. Any entry or Discovery item whose `date` falls within the stored
+10-day forecast gets a "Forecast that day" line instead of a guess. **Suggest
+something** also gives a small boost to want-to places tagged Hike, Beach,
+Viewpoint, or Park when the next few days look clear.
+
+Shape, top-level `weather`:
+
+```json
+{ "at": "2026-09-15", "location": "Hollywood, CA", "locationKey": "2625135",
+  "current": { "temp": 68, "condition": "Cloudy", "aqi": "Poor" },
+  "daily": [
+    { "date": "2026-09-15", "hi": 82, "lo": 66, "condition": "Sunny", "precip": 0 }
+    // ... up to 10 days
+  ] }
+```
+
+It is a snapshot, not a live feed — the page cannot reach the internet, so it
+goes stale the moment Claude checks it. Refresh it the same way as Discovery:
+*"check the weather."* No forecast line appears for a date outside `daily`
+rather than showing anything stale or invented.
 
 ## Privacy, plainly
 
