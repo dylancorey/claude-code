@@ -552,6 +552,20 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
 .homechips { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .625rem; }
 .homechip.long { color: var(--c-live); border-color: var(--c-live); }
 
+/* ---------- mobile tab bar + You sheet ---------- */
+.tabbar { display: none; }
+.youlist { display: flex; flex-direction: column; gap: .375rem; }
+.yourow {
+  display: flex; align-items: center; gap: .75rem; width: 100%; text-align: left;
+  background: var(--bg); border: 1px solid transparent; border-radius: var(--r);
+  padding: .8rem .9rem; cursor: pointer; color: var(--ink); font-weight: 500; font-size: .9375rem;
+  transition: border-color .16s var(--ease);
+}
+.yourow:hover { border-color: var(--line-2); }
+.yourow svg { width: 16px; height: 16px; color: var(--ink-3); flex: none; }
+.yourow .c { margin-left: auto; color: var(--ink-3); font-size: .8125rem; font-variant-numeric: tabular-nums; }
+.btn .short { display: none; }
+
 /* ---------- density ---------- */
 :root[data-density="compact"] .mast { padding-top: 2rem; }
 :root[data-density="compact"] .grid { gap: .5rem; }
@@ -570,6 +584,38 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     margin-top: .5rem; padding-top: .5rem; border-top: 1px solid var(--line);
   }
   #tagBarArea.filter-sheet.open { display: block; }
+
+  .mast { padding-top: 2rem; }
+  .mast > .seg3, .tools { display: none; }
+  .wrap { padding-bottom: 5.75rem; }
+  .toast-stack { bottom: 4.9rem; }
+  .btn .full { display: none; }
+  .btn .short { display: inline; font-size: 1.05rem; line-height: 1; }
+  .controls .btn[data-act="new"] { padding: .45rem .75rem; }
+  .tabbar {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: .125rem;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    background: var(--glass); -webkit-backdrop-filter: blur(22px) saturate(180%); backdrop-filter: blur(22px) saturate(180%);
+    border-top: 1px solid var(--line);
+    padding: .3rem .375rem calc(.3rem + env(safe-area-inset-bottom, 0px));
+  }
+  .tabbar button {
+    position: relative; background: none; border: 0; border-radius: var(--r); padding: .35rem .25rem .25rem;
+    display: flex; flex-direction: column; align-items: center; gap: .15rem;
+    color: var(--ink-3); font-size: .6875rem; font-weight: 500; cursor: pointer;
+  }
+  .tabbar button svg { width: 20px; height: 20px; }
+  .tabbar button[aria-current="page"] { color: var(--accent); }
+  .tabbar .n {
+    position: absolute; top: .05rem; right: calc(50% - 1.35rem);
+    min-width: 1rem; height: 1rem; border-radius: var(--r-pill); background: var(--accent); color: #fff;
+    font-size: .625rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; padding: 0 .25rem;
+  }
+  dialog.sheet {
+    inset: auto 0 0 0; margin: 0; width: 100%; max-width: 100%;
+    border-radius: var(--r-lg) var(--r-lg) 0 0; border-bottom: 0; max-height: 82vh;
+  }
+  dialog.sheet .dlg-body { max-height: calc(82vh - 8rem); }
 }
 @media (min-width: 48rem) and (max-width: 64rem) {
   .grid { grid-template-columns: repeat(3, 1fr); }
@@ -914,9 +960,360 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       "q": "getty museum art",
       "w": 4,
       "verifiedAt": null
+    },
+    {
+      "id": "cmaxamini",
+      "kind": "live",
+      "form": "Comedy",
+      "title": "Max Amini",
+      "venue": "Dolby Theatre",
+      "city": "Hollywood",
+      "address": "6801 Hollywood Blvd, Hollywood, CA 90028",
+      "when": "Oct 3, Sat · 4:30 & 8:30 PM",
+      "date": "2026-10-03",
+      "blurb": "Stand-up at the Dolby, two shows in one Saturday. The Dolby is the Oscars room, so this is a seat in a proper theatre, not a club with a two-drink minimum. Early show from $68 on StubHub when this was indexed; the late one runs higher. Prices move.",
+      "tags": [
+        "comedy",
+        "hollywood"
+      ],
+      "source": "StubHub",
+      "sourceUrl": "https://www.stubhub.com/search?q=Max+Amini",
+      "q": "comedy standup stand-up dolby",
+      "w": 3,
+      "verifiedAt": "2026-09-15"
+    },
+    {
+      "id": "ckattwilliams",
+      "kind": "live",
+      "form": "Comedy",
+      "title": "Katt Williams",
+      "venue": "Wilshire Ebell Theatre",
+      "city": "Mid-Wilshire",
+      "address": "4401 W 8th St, Los Angeles, CA 90005",
+      "when": "Oct 14, Wed · 8:00 PM",
+      "date": "2026-10-14",
+      "blurb": "One night, midweek, at the Ebell — a 1920s theatre on 8th Street small enough that there is not really a bad seat. From $110 on StubHub when indexed, so not a cheap Wednesday, but it is a fifteen-minute drive from home.",
+      "tags": [
+        "comedy"
+      ],
+      "source": "StubHub",
+      "sourceUrl": "https://www.stubhub.com/search?q=Katt+Williams",
+      "q": "comedy standup stand-up ebell",
+      "w": 4,
+      "verifiedAt": "2026-09-15"
+    },
+    {
+      "id": "cbrunomars",
+      "kind": "live",
+      "form": "Concert",
+      "title": "Bruno Mars",
+      "venue": "SoFi Stadium",
+      "city": "Inglewood",
+      "address": "1001 Stadium Dr, Inglewood, CA 90301",
+      "when": "Sep 30, Wed & Oct 2, Fri · 7:00 PM",
+      "date": "2026-09-30",
+      "blurb": "Two nights at SoFi. It is a stadium show, which means a production, a drive to Inglewood, and a parking situation you plan around like a flight. Cheapest seat was $151 on StubHub when indexed. Prices move.",
+      "tags": [
+        "concert",
+        "stadium"
+      ],
+      "source": "StubHub",
+      "sourceUrl": "https://www.stubhub.com/search?q=Bruno+Mars",
+      "q": "concert music sofi",
+      "w": 4,
+      "verifiedAt": "2026-09-15"
+    },
+    {
+      "id": "cusherchrisbrown",
+      "kind": "live",
+      "form": "Concert",
+      "title": "Usher and Chris Brown",
+      "venue": "SoFi Stadium",
+      "city": "Inglewood",
+      "address": "1001 Stadium Dr, Inglewood, CA 90301",
+      "when": "Sep 25, Fri & Sep 26, Sat · 7:00 PM",
+      "date": "2026-09-25",
+      "blurb": "Double bill, two nights, SoFi. From $90 on StubHub when indexed — the cheaper of the two big SoFi weekends this fall. Same stadium caveats: it is Inglewood, it is enormous, and you leave early or you sit in it.",
+      "tags": [
+        "concert",
+        "stadium"
+      ],
+      "source": "StubHub",
+      "sourceUrl": "https://www.stubhub.com/search?q=Usher+and+Chris+Brown",
+      "q": "concert music sofi r&b",
+      "w": 3,
+      "verifiedAt": "2026-09-15"
+    },
+    {
+      "id": "cnhm",
+      "kind": "place",
+      "form": "Museum",
+      "title": "Natural History Museum",
+      "city": "Exposition Park",
+      "address": "900 W Exposition Blvd, Los Angeles, CA 90007",
+      "blurb": "One of the largest natural history museums in the country: T. rex skull, the African mammal dioramas, a whole California history wing, and the Nature Gardens out back. The Spider Pavilion runs in fall — a walk-through outdoor enclosure with hundreds of live orb-weavers. That is the reason to go now, if you can stomach it.",
+      "tags": [
+        "museum",
+        "seasonal",
+        "fall"
+      ],
+      "source": "Time Out",
+      "sourceUrl": "https://www.timeout.com/los-angeles/things-to-do/best-things-to-do-in-los-angeles",
+      "q": "nhm dinosaurs spider pavilion exposition",
+      "w": 4,
+      "verifiedAt": null
+    },
+    {
+      "id": "crunyon",
+      "kind": "place",
+      "form": "Hike",
+      "title": "Runyon Canyon",
+      "city": "Hollywood Hills",
+      "address": "2000 N Fuller Ave, Los Angeles, CA 90046",
+      "blurb": "160 acres of open hillside above Hollywood, and the single most crowded hike in the city because of it. The views are real. The solitude is not. Early morning or do not bother; it is ten minutes from home so there is no excuse for showing up at noon.",
+      "tags": [
+        "hike",
+        "view",
+        "free"
+      ],
+      "source": "Time Out",
+      "sourceUrl": "https://www.timeout.com/los-angeles/things-to-do/best-things-to-do-in-los-angeles",
+      "q": "hike trail hollywood hills",
+      "w": 4,
+      "verifiedAt": null
+    },
+    {
+      "id": "cbrushcanyon",
+      "kind": "place",
+      "form": "Hike",
+      "title": "Brush Canyon Trail to the Hollywood Sign",
+      "city": "Griffith Park",
+      "address": "",
+      "blurb": "The Bronson Canyon route to the back of the Hollywood Sign: 5.5 miles round trip, about 1,000 feet of climb. Fall is the window — same trail in July is a genuinely bad idea, and the crowds thin out once summer ends. Bring more water than you think.",
+      "tags": [
+        "hike",
+        "view",
+        "free",
+        "fall"
+      ],
+      "source": "Time Out",
+      "sourceUrl": "https://www.timeout.com/los-angeles/things-to-do/best-things-to-do-in-los-angeles",
+      "q": "hike hollywood sign griffith bronson",
+      "w": 3,
+      "verifiedAt": null
+    },
+    {
+      "id": "cjar",
+      "kind": "food",
+      "form": "",
+      "title": "Jar",
+      "cuisine": "",
+      "city": "Beverly Grove",
+      "address": "",
+      "blurb": "On Melrose in Beverly Grove: midcentury room, clubby bar, martinis, the whole old-Los-Angeles-glamour thing done without irony. LA Weekly's pick for the neighborhood. Dress like you meant to go.",
+      "tags": [
+        "date night",
+        "bar",
+        "melrose"
+      ],
+      "source": "LA Weekly",
+      "sourceUrl": "https://www.laweekly.com/10-best-restaurants-in-west-hollywood-and-beverly-grove/",
+      "q": "steak martini melrose beverly grove",
+      "w": 4,
+      "verifiedAt": null
+    },
+    {
+      "id": "ckatana",
+      "kind": "food",
+      "form": "",
+      "title": "Katana",
+      "cuisine": "Japanese",
+      "city": "West Hollywood",
+      "address": "",
+      "blurb": "High-end robatayaki with a terrace above Sunset — skewers grilled over bincho charcoal, and the terrace is the reason to book. It is the Strip, so it is a scene and it is priced like one. LA Weekly's WeHo pick.",
+      "tags": [
+        "date night",
+        "sunset strip",
+        "weho"
+      ],
+      "source": "LA Weekly",
+      "sourceUrl": "https://www.laweekly.com/10-best-restaurants-in-west-hollywood-and-beverly-grove/",
+      "q": "robata skewers sunset strip",
+      "w": 3,
+      "verifiedAt": null
+    },
+    {
+      "id": "cjoans",
+      "kind": "food",
+      "form": "",
+      "title": "Joan's on Third",
+      "cuisine": "French café",
+      "city": "Beverly Grove",
+      "address": "",
+      "blurb": "French-style café, bakery and market with a deli and salad counter that changes daily. The move is the outdoor patio, an omelet or a tuna melt, and watching Third Street go by. Daytime place. Fodor's has it on the WeHo list.",
+      "tags": [
+        "breakfast",
+        "lunch",
+        "patio",
+        "third street"
+      ],
+      "source": "Fodor's",
+      "sourceUrl": "https://www.fodors.com/world/north-america/usa/california/los-angeles/neighborhoods/beverly-hills-west-hollywood-and-the-westside/west-hollywood/restaurants",
+      "q": "brunch bakery cafe deli third",
+      "w": 4,
+      "verifiedAt": null
+    },
+    {
+      "id": "ckoi",
+      "kind": "food",
+      "form": "",
+      "title": "Koi",
+      "cuisine": "Japanese",
+      "city": "West Hollywood",
+      "address": "",
+      "blurb": "Open since 2002 and still trading on atmosphere and celebrity sightings, per LA Weekly. The crispy rice and the miso bronzed cod are the orders. It is a 2000s scene spot and knows it — fine if that is the night you want.",
+      "tags": [
+        "sushi",
+        "scene",
+        "weho"
+      ],
+      "source": "LA Weekly",
+      "sourceUrl": "https://www.laweekly.com/10-best-restaurants-in-west-hollywood-and-beverly-grove/",
+      "q": "sushi crispy rice miso cod la cienega",
+      "w": 2,
+      "verifiedAt": null
+    },
+    {
+      "id": "carrival2016",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Arrival",
+      "year": "2016",
+      "by": "Denis Villeneuve",
+      "blurb": "Villeneuve before Dune, and arguably better: a linguist, twelve ships, and a film that is actually about grief wearing a sci-fi coat. Quiet, slow, and it gets you at the end. Watch it before anyone tells you the twist.",
+      "tags": [
+        "sci-fi",
+        "villeneuve"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Arrival_(film)",
+      "q": "villeneuve dune director alien",
+      "w": 5,
+      "verifiedAt": null
+    },
+    {
+      "id": "csicario2015",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Sicario",
+      "year": "2015",
+      "by": "Denis Villeneuve",
+      "blurb": "Cartel thriller where the good guys are barely distinguishable from the bad ones. Deakins shoots it, Jóhannsson scores it, and the border-crossing sequence is one of the most tense things ever put on a screen. Bleak as hell, on purpose.",
+      "tags": [
+        "crime",
+        "thriller",
+        "villeneuve"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Sicario_(2015_film)",
+      "q": "villeneuve dune director cartel",
+      "w": 5,
+      "verifiedAt": null
+    },
+    {
+      "id": "cbladerunner2049",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Blade Runner 2049",
+      "year": "2017",
+      "by": "Denis Villeneuve",
+      "blurb": "The sequel nobody asked for that turned out to be the real thing. Slow, enormous, gorgeous, nearly three hours. Same director as Dune, same appetite for scale. Not a have-it-on-in-the-background movie.",
+      "tags": [
+        "sci-fi",
+        "villeneuve"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Blade_Runner_2049",
+      "q": "villeneuve dune director replicant",
+      "w": 4,
+      "verifiedAt": null
+    },
+    {
+      "id": "cprisoners2013",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Prisoners",
+      "year": "2013",
+      "by": "Denis Villeneuve",
+      "blurb": "Two girls go missing, Jackman goes feral, Gyllenhaal blinks a lot. A grim, rain-soaked procedural that earns every one of its 153 minutes. Villeneuve's first American film and already completely himself.",
+      "tags": [
+        "crime",
+        "thriller",
+        "villeneuve"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Prisoners_(2013_film)",
+      "q": "villeneuve dune director kidnapping",
+      "w": 4,
+      "verifiedAt": null
+    },
+    {
+      "id": "cfloridaproject2017",
+      "kind": "screen",
+      "form": "Film",
+      "title": "The Florida Project",
+      "year": "2017",
+      "by": "Sean Baker",
+      "blurb": "Same director as Anora, seven years earlier: a six-year-old running wild in a budget motel in the shadow of Disney World. Funny, then devastating. Willem Dafoe as the manager is the performance. Do not expect it to go easy on you.",
+      "tags": [
+        "indie",
+        "sean baker"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/The_Florida_Project",
+      "q": "sean baker anora director",
+      "w": 5,
+      "verifiedAt": null
+    },
+    {
+      "id": "credrocket2021",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Red Rocket",
+      "year": "2021",
+      "by": "Sean Baker",
+      "blurb": "Baker between Florida Project and Anora. A washed-up porn actor slinks home to Texas and lies to everyone he meets. Simon Rex is genuinely great and the character is genuinely a piece of shit. That is the point.",
+      "tags": [
+        "indie",
+        "sean baker"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Red_Rocket_(film)",
+      "q": "sean baker anora director texas",
+      "w": 3,
+      "verifiedAt": null
+    },
+    {
+      "id": "ctangerine2015",
+      "kind": "screen",
+      "form": "Film",
+      "title": "Tangerine",
+      "year": "2015",
+      "by": "Sean Baker",
+      "blurb": "The one Baker shot on iPhones. Two trans sex workers tear across Hollywood on Christmas Eve hunting a cheating boyfriend. Loud, fast, eighty-eight minutes, and set about two miles from your front door.",
+      "tags": [
+        "indie",
+        "sean baker",
+        "hollywood"
+      ],
+      "source": "Wikipedia",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Tangerine_(film)",
+      "q": "sean baker anora director hollywood",
+      "w": 4,
+      "verifiedAt": null
     }
   ],
-  "catalogAt": "2026-08-29",
+  "catalogAt": "2026-09-15",
   "entries": [
     {
       "id": "s4",
@@ -1217,7 +1614,10 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     spark: '<path d="M8 .9 9.5 5 13.6 6.5 9.5 8 8 12.1 6.5 8 2.4 6.5 6.5 5Zm4.6 7.5.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7Z"/>',
     find: '<circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.6 10.6 14.4 14.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>',
     ext: '<path d="M6.4 2.4h7.2v7.2h-1.6V5.1l-6 6L4.9 10l6-6H6.4Z"/><path d="M2.4 4.8h3.2v1.6H4v7.2h7.2v-1.6h1.6v3.2H2.4Z"/>',
-    check: '<path d="M3 8.6 6.2 12 13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+    check: '<path d="M3 8.6 6.2 12 13 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+    book: '<path d="M2.2 2h5.2v12H2.2Zm6.4 0h5.2v12H8.6Z"/>',
+    bookmark: '<path d="M4 1.6h8a.9.9 0 0 1 .9.9v11.9L8 11.3l-4.9 3.1V2.5a.9.9 0 0 1 .9-.9Z"/>',
+    user: '<circle cx="8" cy="5.4" r="3.1"/><path d="M2.4 14.4a5.6 5.6 0 0 1 11.2 0Z"/>'
   };
   function svg(name) { return '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">' + ICON[name] + '</svg>'; }
 
@@ -2061,15 +2461,28 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
           + opt('new', 'Recent', ui.sort) + opt('old', 'Oldest', ui.sort) + opt('az', 'A \u2013 Z', ui.sort)
           + '</select>')
       + '</div>'
-      + (readOnly ? '' : '<button class="btn" data-act="new">Add entry</button>')
+      + (readOnly ? '' : '<button class="btn" data-act="new" aria-label="Add entry"><span class="full">Add entry</span><span class="short" aria-hidden="true">+</span></button>')
       + '</div><div id="activeFilters">' + activeFilterBar() + '</div>'
       + '<div id="tagBarArea" class="filter-sheet' + (filterSheetOpen ? ' open' : '') + '">' + tagBar() + '</div></div>';
 
     out += '<div id="resultsArea">' + resultsHtml() + '</div>';
 
     out += '</div>';
+    out += tabBar();
     app.innerHTML = out;
     wire();
+  }
+
+  function tabBar() {
+    var onWantTo = ui.tab === 'wantto';
+    var n = wantToEntries().length;
+    return '<nav class="tabbar" aria-label="Sections">'
+      + '<button type="button" data-act="tab" data-tab="main"' + (onWantTo ? '' : ' aria-current="page"') + '>' + svg('book') + '<span>Ledger</span></button>'
+      + '<button type="button" data-act="tab" data-tab="wantto"' + (onWantTo ? ' aria-current="page"' : '') + '>' + svg('bookmark') + '<span>Want to</span>'
+      + (n ? '<span class="n">' + n + '</span>' : '') + '</button>'
+      + '<button type="button" data-act="discover">' + svg('find') + '<span>Discover</span></button>'
+      + '<button type="button" data-act="you">' + svg('user') + '<span>You</span></button>'
+      + '</nav>';
   }
 
   function stat(cat, n, label) {
@@ -2249,6 +2662,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     else if (act === 'suggest') openSuggest();
     else if (act === 'settings') openSettings();
     else if (act === 'shortcuts') openShortcuts();
+    else if (act === 'you') openYou();
     else if (act === 'howto') openHowto();
     else if (act === 'clear-samples') {
       state.entries = state.entries.filter(function (e) { return !e.sample; });
@@ -2315,6 +2729,41 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       + '</dl><p class="disc-hint">Shortcuts are off while you are typing in a field.</p></div>'
       + dlgFoot();
     onClose(dlg);
+    dlg.showModal();
+  }
+
+  /* ---------------- you (mobile sheet) ---------------- */
+
+  function openYou() {
+    var dlg = modal('sheet');
+    function paint() {
+      var w = wishlist().length, d = dishes().length, years = yearsWithEntries();
+      dlg.innerHTML = dlgHead('You')
+        + '<div class="dlg-body"><div class="youlist">'
+        + '<button type="button" class="yourow" data-x="suggest">' + svg('spark') + '<span>Suggest something</span></button>'
+        + '<button type="button" class="yourow" data-x="spin">' + svg('auto') + '<span>Spin it</span><span class="c">' + w + '</span></button>'
+        + '<button type="button" class="yourow" data-x="dishes">' + svg('check') + '<span>Order again</span><span class="c">' + d + '</span></button>'
+        + (years.length ? '<button type="button" class="yourow" data-x="review">' + svg('book') + '<span>' + esc(years[0]) + ' in review</span></button>' : '')
+        + '<button type="button" class="yourow" data-x="settings">' + svg('gear') + '<span>Settings</span></button>'
+        + '</div>'
+        + '<div class="fieldset" style="margin:1.125rem 0 0"><span class="flabel">Appearance</span>'
+        + '<div class="seg3" role="group" aria-label="Appearance">'
+        + ['auto', 'light', 'dark'].map(function (k) {
+            var lbl = k === 'auto' ? 'Auto' : k === 'light' ? 'Light' : 'Dark';
+            return '<button type="button" data-x="theme" data-theme="' + k + '" aria-pressed="' + (themePref === k) + '" aria-label="' + lbl + '">'
+              + svg(k === 'auto' ? 'auto' : k === 'light' ? 'sun' : 'moon') + '<span class="c">' + lbl + '</span></button>';
+          }).join('')
+        + '</div></div></div>' + dlgFoot();
+    }
+    onClose(dlg, function (what, el) {
+      if (what === 'suggest') { dlg.close(); openSuggest(); }
+      else if (what === 'spin') { dlg.close(); openSpin(); }
+      else if (what === 'dishes') { dlg.close(); openDishes(); }
+      else if (what === 'review') { dlg.close(); openReview(yearsWithEntries()[0]); }
+      else if (what === 'settings') { dlg.close(); openSettings(); }
+      else if (what === 'theme') { setTheme(el.getAttribute('data-theme')); paint(); }
+    });
+    paint();
     dlg.showModal();
   }
 
@@ -2523,11 +2972,13 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
               + (statusOf(draft) === pair[0]) + '">' + esc(pair[1]) + '</button>';
           }).join('') + '</div></div>';
 
-      var againLabel = catOf(draft) === 'screen' ? 'Watch again?' : 'Would I go again?';
-      out += '<div class="fieldset"><span class="flabel">' + esc(againLabel) + '</span><div class="seg plain">'
-        + '<button type="button" data-x="again" data-again="true" aria-pressed="' + (draft.again === true) + '">Yes</button>'
-        + '<button type="button" data-x="again" data-again="false" aria-pressed="' + (draft.again === false) + '">No</button>'
-        + '</div></div>';
+      if (statusOf(draft) !== 'wishlist') {
+        var againLabel = catOf(draft) === 'screen' ? 'Watch again?' : 'Would I go again?';
+        out += '<div class="fieldset"><span class="flabel">' + esc(againLabel) + '</span><div class="seg plain">'
+          + '<button type="button" data-x="again" data-again="true" aria-pressed="' + (draft.again === true) + '">Yes</button>'
+          + '<button type="button" data-x="again" data-again="false" aria-pressed="' + (draft.again === false) + '">No</button>'
+          + '</div></div>';
+      }
 
       out += '<label class="field"><span class="flabel">' + esc(conf.titleLabel) + '</span>'
         + '<input data-f="title" value="' + esc(draft.title) + '"></label>';
@@ -2911,7 +3362,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   }
 
   function discHay(item) {
-    return [item.title, item.by, item.city, item.address, item.year, item.form, item.cuisine,
+    return [item.title, item.by, item.city, item.address, item.year, item.form, item.cuisine, item.venue, item.when,
             (item.tags || []).join(' '), item.q || ''].join(' ').toLowerCase();
   }
 
@@ -2972,7 +3423,10 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   }
 
   function discSearch(q, scope, near) {
+    var STOP = { the: 1, a: 1, an: 1, of: 1, in: 1, at: 1, and: 1, near: 1, to: 1, for: 1, on: 1, some: 1, good: 1 };
     var terms = String(q || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
+    var meaningful = terms.filter(function (t) { return !STOP[t]; });
+    if (meaningful.length) terms = meaningful;
     if (!terms.length) return [];
     var out = [];
     catalog().forEach(function (item) {
@@ -2981,10 +3435,11 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       var titleLc = String(item.title || '').toLowerCase();
       var matchCount = 0;
       for (var i = 0; i < terms.length; i++) {
-        if (hay.indexOf(terms[i]) === -1) return;
+        if (hay.indexOf(terms[i]) === -1) continue;
         matchCount++;
         if (titleLc.indexOf(terms[i]) !== -1) matchCount++;
       }
+      if (!matchCount) return;
       var title = titleLc.replace(/^(the|a|an)\s+/, '');
       var whole = q.trim().toLowerCase().replace(/^(the|a|an)\s+/, '');
       var score = matchCount * 3;
@@ -3017,10 +3472,11 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     } else if (cat === 'place') {
       f.kind = item.form || ''; f.city = item.city || ''; f.address = item.address || '';
     } else {
-      f.kind = item.form || ''; f.venue = ''; f.city = item.city || ''; f.address = item.address || ''; f.support = '';
+      f.kind = item.form || ''; f.venue = item.venue || ''; f.city = item.city || ''; f.address = item.address || ''; f.support = '';
     }
     return {
-      id: newId(), category: cat, status: 'wishlist', title: item.title || '', date: '',
+      id: newId(), category: cat, status: 'wishlist', title: item.title || '',
+      date: (cat === 'live' && /^\d{4}-\d{2}-\d{2}$/.test(item.date || '')) ? item.date : '',
       fields: f, 'with': '', tags: (item.tags || []).slice(), note: item.blurb || '', again: null,
       source: item.source || '', sourceUrl: item.sourceUrl || ''
     };
@@ -3029,7 +3485,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   function openDiscover() {
     var dlg = modal('');
     var q = '', scope = 'all', near = homeLabel();
-    var SCOPES = [['all', 'Everything'], ['screen', 'Movies & TV'], ['food', 'Restaurants'], ['place', 'Things to do']];
+    var SCOPES = [['all', 'Everything'], ['screen', 'Movies & TV'], ['food', 'Restaurants'], ['live', 'Live events'], ['place', 'Things to do']];
     var here = ARTIFACT_URL || (window.location && window.location.href) || '';
 
     dlg.innerHTML = dlgHead('Discovery')
@@ -3056,7 +3512,9 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       var loc = item.address || item.city || '';
       var meta = cat === 'screen'
         ? [item.form, item.year, item.by].filter(Boolean).join(' \u00b7 ')
-        : [item.form || item.cuisine, loc].filter(Boolean).join(' \u00b7 ');
+        : cat === 'live'
+          ? [item.when, item.venue, item.city].filter(Boolean).join(' \u00b7 ')
+          : [item.form || item.cuisine, loc].filter(Boolean).join(' \u00b7 ');
       var missing = (cat !== 'screen' && !item.address)
         ? 'No street address in this source \u2014 the map link searches by name.' : '';
 
@@ -3095,7 +3553,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     function idle() {
       var n = catalog().length;
       return '<p class="disc-hint">Try one</p><div class="chipset">'
-        + ['Batman', 'Granville', 'Griffith', 'Dune'].map(function (t) {
+        + ['Batman', 'Comedy', 'Villeneuve', 'Runyon', 'Brunch'].map(function (t) {
             return '<button class="tagchip" data-x="try" data-q="' + esc(t) + '">' + esc(t) + '</button>';
           }).join('') + '</div>'
         + '<p class="disc-hint">' + n + ' item' + (n === 1 ? '' : 's') + ' indexed'
@@ -3160,6 +3618,32 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       rows.push(row.map(csvCell).join(','));
     });
     return rows.join('\r\n');
+  }
+
+  function saveFile(filename, data, btn, noteEl) {
+    var label = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Saving\u2026';
+    if (noteEl) noteEl.textContent = '';
+    function finish(t, ms) {
+      btn.textContent = t;
+      setTimeout(function () { btn.textContent = label; btn.disabled = false; }, ms || 1800);
+    }
+    function copyInstead() {
+      btn.textContent = label; btn.disabled = false;
+      copyText(data, btn);
+      if (noteEl) noteEl.textContent = 'Saving files is not available in this view, so it was copied to your clipboard instead. Paste it into a note or a file.';
+    }
+    var use = (window.claude && typeof window.claude.use === 'function') ? window.claude.use('downloads') : Promise.resolve(null);
+    use.then(function (dl) {
+      if (!dl) { copyInstead(); return; }
+      return dl.save({ filename: filename, data: data }).then(function () { finish('Saved'); });
+    }).catch(function (err) {
+      var code = err && err.code;
+      if (code === 'declined') finish('Cancelled', 1200);
+      else if (code === 'rate_limited') finish('Wait a moment, then try again', 2200);
+      else if (code === 'too_large') finish('Too large to save', 2000);
+      else copyInstead();
+    });
   }
 
   function copyText(text, btn) {
@@ -3342,11 +3826,11 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         + '<button type="button" data-x="density" data-density="compact" aria-pressed="' + (density === 'compact') + '">Compact</button>'
         + '</div></div>'
         + '<div class="fieldset"><span class="flabel">Backup</span>'
-        + '<p class="hint" style="color:var(--ink-3);font-size:.8125rem;margin:0 0 .5rem">JSON copies everything — entries, catalog, settings, trash — and is what you would restore from. CSV is one row per entry for a spreadsheet, and drops the catalog and settings.</p>'
+        + '<p class="hint" style="color:var(--ink-3);font-size:.8125rem;margin:0 0 .5rem">Save a copy you keep somewhere else. The backup file has everything — entries, catalog, settings, trash — and is what you would restore from. The spreadsheet is one row per entry.</p>'
         + '<div class="row">'
-        + '<button type="button" class="btn btn-quiet" data-x="copy-json">Copy ledger JSON</button>'
-        + '<button type="button" class="btn btn-quiet" data-x="copy-csv">Copy entries as CSV</button>'
-        + '</div></div>'
+        + '<button type="button" class="btn btn-quiet" data-x="dl-json">Save backup file</button>'
+        + '<button type="button" class="btn btn-quiet" data-x="dl-csv">Save as spreadsheet</button>'
+        + '</div><p class="hint dl-note" role="status" style="margin:.4rem 0 0"></p></div>'
         + '<div class="fieldset"><span class="flabel">Trash</span>'
         + '<p class="hint" style="color:var(--ink-3);font-size:.8125rem;margin:0 0 .5rem">Deleted entries sit here until you empty it yourself — nothing purges automatically.</p>'
         + '<button type="button" class="btn btn-quiet" data-x="trash">View trash (' + (state.trash || []).length + ')</button></div>'
@@ -3391,6 +3875,8 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       else if (what === 'howto') { dlg.close(); openHowto(); }
       else if (what === 'copy-json') { copyText(JSON.stringify(state, null, 2), el); }
       else if (what === 'copy-csv') { copyText(entriesCsv(), el); }
+      else if (what === 'dl-json') { saveFile('ledger-' + today() + '.json', JSON.stringify(state, null, 2), el, dlg.querySelector('.dl-note')); }
+      else if (what === 'dl-csv') { saveFile('ledger-entries-' + today() + '.csv', entriesCsv(), el, dlg.querySelector('.dl-note')); }
       else if (what === 'density') { setDensity(el.getAttribute('data-density')); paint(); }
       else if (what === 'trash') { dlg.close(); openTrash(); }
       else if (what === 'rm-home') {
@@ -3429,13 +3915,13 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       + '<h3>For the project instructions</h3>'
       + '<code class="snippet">' + esc('My activity ledger lives at ' + here + '\n\n'
         + 'When I mention a restaurant, bar, movie, show, concert, or live event, update the ledger: read it with the Artifact tool, edit the JSON in the script block with id "entry-data", and publish back to the same URL.\n\n'
-        + 'Categories: food, screen, live. Statuses: food and live use "logged" or "wishlist"; screen also allows "watching". Tags are lowercase. Put street addresses in fields.address on food and live entries so the map links work, and what to order in fields.dish. Keep my wording in the note.\n\n'
+        + 'Categories: food, screen, live, place. Statuses: food, live and place use "logged" or "wishlist"; screen also allows "watching". Tags are lowercase. Put street addresses in fields.address on food and live entries so the map links work, and what to order in fields.dish. Keep my wording in the note.\n\n'
         + 'Entries also carry createdAt and updatedAt (ISO 8601) and "again": true, false, or null. createdAt/updatedAt are set automatically when I save through the page — leave them alone, and never guess a timestamp. Only set "again" to true or false if I actually tell you whether I would go/watch again; otherwise leave it null. Null means not answered, never treat it as false.\n\n'
         + 'There is also a top-level "trash" array. Deleted entries move there with a deletedAt timestamp instead of disappearing. Never delete an entry by removing it outright — move it to trash the same way, and never empty or edit trash unless I explicitly ask.\n\n'
         + 'To write suggestions, set the top-level "recs" to {"at": "<today>", "items": [{"category": "food", "title": "...", "body": "..."}]}. Base them only on what is already in the ledger. Match the "tone" field: plain, dry, or salty.') + '</code>'
       + '<h3>Stocking Discovery</h3>'
       + '<p>The page is sandboxed and cannot call an API, so the Discovery index holds whatever Claude has put in it. Ask for a search and it appends to the top-level catalog array:</p>'
-      + '<code class="snippet">' + esc('{ "id": "unique", "kind": "screen" | "food" | "place" | "live", "title": "...",\n  "year": "2022", "by": "director or creator", "form": "Film | Series | Museum | Landmark",\n  "cuisine": "...", "city": "...", "address": "street address",\n  "tags": ["lowercase"], "w": 1-5 how notable, "q": "extra search words",\n  "blurb": "candid overview: what it is, why bother, the drawback",\n  "source": "Wikipedia", "sourceUrl": "https://...",\n  "verifiedAt": "2026-08-29" | null }') + '</code>'
+      + '<code class="snippet">' + esc('{ "id": "unique", "kind": "screen" | "food" | "place" | "live", "title": "...",\n  "year": "2022", "by": "director or creator", "form": "Film | Series | Museum | Landmark",\n  "cuisine": "...", "city": "...", "address": "street address",\n  "tags": ["lowercase"], "w": 1-5 how notable, "q": "extra search words",\n  "blurb": "candid overview: what it is, why bother, the drawback",\n  "source": "Wikipedia", "sourceUrl": "https://...",\n  "verifiedAt": "2026-08-29" | null,\n  "venue": "live only", "when": "Oct 3, Sat · 8:30 PM", "date": "2026-10-03" }') + '</code>'
       + '<p>Use only facts that are actually in the source; leave a field out rather than guessing, and the card will say an address is missing. Bump catalogAt to the date. '
       + 'Set verifiedAt to the date you actually confirmed the address/details against a live source — leave it null if you did not check. Never guess a date just to fill it in.</p>'
       + '</div>' + dlgFoot();
