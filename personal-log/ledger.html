@@ -552,6 +552,20 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
 .homechips { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .625rem; }
 .homechip.long { color: var(--c-live); border-color: var(--c-live); }
 
+/* ---------- quick capture + claude ---------- */
+.quick { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: 1rem; }
+.quick-in {
+  flex: 1 1 16rem; min-width: 0; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); border-radius: var(--r-pill); padding: .6rem 1rem; font-size: .9375rem;
+  box-shadow: var(--shadow-1); transition: border-color .16s var(--ease);
+}
+.quick-in:focus { border-color: var(--accent); outline: none; }
+.quick-in::placeholder { color: var(--ink-3); }
+.quick-in[disabled] { opacity: .6; }
+.quick-hint { flex-basis: 100%; margin: 0; color: var(--ink-3); font-size: .75rem; padding: 0 .25rem; min-height: 1.1em; }
+.recap-out { margin: .625rem 0 0; font-size: .9375rem; line-height: 1.6; max-width: 62ch; white-space: pre-wrap; min-height: 1.5em; }
+.why.is-ai::before { content: "✦ "; color: var(--accent); }
+
 /* ---------- mobile tab bar + You sheet ---------- */
 .tabbar { display: none; }
 .youlist { display: flex; flex-direction: column; gap: .375rem; }
@@ -1726,6 +1740,67 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   var save = { tone: 'idle', text: '' };
   var app = document.getElementById('app');
 
+  /* ---------------- claude (optional, on tap only) ---------------- */
+
+  var ai = null;
+  var aiDead = false;
+  function aiOff() { ai = null; aiDead = true; refreshAiHints(); }
+  function refreshAiHints() {
+    var on = !!ai && !aiDead;
+    document.querySelectorAll('[data-ai-hint]').forEach(function (el) {
+      el.textContent = on
+        ? 'Claude fills in the category, who you were with, and what to order. Uses your own Claude account and asks once.'
+        : 'Type a name; fill in the rest on the next screen.';
+    });
+    document.querySelectorAll('[data-ai-only]').forEach(function (el) { el.hidden = !on; });
+  }
+  if (window.claude && typeof window.claude.use === 'function') {
+    window.claude.use('sample').then(function (s) {
+      if (s && !aiDead) ai = s;
+      refreshAiHints();
+    }).catch(function () { refreshAiHints(); });
+  }
+  function aiError(err, fallback) {
+    var code = err && err.code;
+    if (code === 'not_granted' || code === 'sampling_disabled' || code === 'not_declared'
+      || code === 'capability_disabled' || code === 'capability_removed') { aiOff(); return 'Claude is not available in this view.'; }
+    if (code === 'cancelled') return '';
+    if (code === 'rate_limited') return 'Claude is busy. Try again in a minute.';
+    if (code === 'refused') return 'Claude declined that one. Try rewording it.';
+    if (code === 'invalid_json') return 'Could not read the answer. Try rewording it.';
+    if (code === 'prompt_too_large') return 'Too much to read at once. Try a shorter span.';
+    if (code === 'session_expired') return 'Sign in again to use Claude here.';
+    return fallback || 'Something went wrong. Try again.';
+  }
+  function peopleKnown() {
+    var seen = Object.create(null);
+    state.entries.forEach(function (e) { peopleOf(e).forEach(function (p) { seen[p] = 1; }); });
+    return Object.keys(seen);
+  }
+  function compactEntry(e) {
+    var f = e.fields || {};
+    var bits = [CATS[catOf(e)].short, e.title];
+    if (e.date) bits.push(e.date);
+    if (statusOf(e) === 'wishlist') bits.push('want-to');
+    if (f.city) bits.push(f.city);
+    if (f.cuisine) bits.push(f.cuisine);
+    if (f.kind) bits.push(f.kind);
+    if (f.venue) bits.push(f.venue);
+    if (e['with']) bits.push('with ' + e['with']);
+    if (f.dish) bits.push('order: ' + f.dish);
+    if (e.again === true) bits.push('would go again');
+    if (e.again === false) bits.push('would not go again');
+    if (tagsOf(e).length) bits.push('#' + tagsOf(e).join(' #'));
+    if (e.note) bits.push('note: ' + String(e.note).slice(0, 140));
+    return bits.join(' | ');
+  }
+  function voiceLine() {
+    var t = tone();
+    return t === 'salty' ? 'Voice: salty. Blunt and funny, swears at the situation, never at the reader.'
+      : t === 'plain' ? 'Voice: plain and neutral. No jokes.'
+      : 'Voice: dry. Understated, a little funny, no exclamation marks.';
+  }
+
   /* ---------------- toasts (fixed live regions) ---------------- */
 
   var toastStack = document.createElement('div');
@@ -1812,6 +1887,19 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       + '<button type="button" class="linkish" data-x="discard-buffer" style="color:inherit">Discard</button>';
   }
   paintRestoreBar();
+
+  var noteBar = document.createElement('div');
+  noteBar.className = 'savebar';
+  noteBar.setAttribute('role', 'status');
+  noteBar.setAttribute('aria-live', 'polite');
+  noteBar.hidden = true;
+  toastStack.appendChild(noteBar);
+  function notify(text, ms) {
+    clearTimeout(noteBar._t);
+    if (!text) { noteBar.hidden = true; noteBar.textContent = ''; return; }
+    noteBar.hidden = false; noteBar.textContent = text;
+    noteBar._t = setTimeout(function () { noteBar.hidden = true; noteBar.textContent = ''; }, ms || 4000);
+  }
 
   /* ---------------- theme ---------------- */
 
@@ -2466,6 +2554,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       + '</div><div id="activeFilters">' + activeFilterBar() + '</div>'
       + '<div id="tagBarArea" class="filter-sheet' + (filterSheetOpen ? ' open' : '') + '">' + tagBar() + '</div></div>';
 
+    if (!onWantTo && !readOnly) out += quickBar();
     out += '<div id="resultsArea">' + resultsHtml() + '</div>';
 
     out += '</div>';
@@ -2616,6 +2705,80 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     }
     var sort = document.getElementById('sort');
     if (sort) sort.addEventListener('change', function () { ui.sort = sort.value; stashUi(); render(); });
+    var qf = document.getElementById('quickForm');
+    if (qf) qf.addEventListener('submit', function (ev) { ev.preventDefault(); quickCapture(); });
+    refreshAiHints();
+  }
+
+  function quickBar() {
+    return '<form class="quick" id="quickForm" autocomplete="off">'
+      + '<input class="quick-in" id="quickIn" placeholder="Log something: “Sonny’s pizza with Trish, get the margherita”" aria-label="Log something in one line">'
+      + '<button type="submit" class="btn" id="quickGo">Log it</button>'
+      + '<p class="quick-hint" data-ai-hint></p>'
+      + '</form>';
+  }
+
+  function capturePrompt(text) {
+    var known = peopleKnown();
+    return [
+      'Turn one casual line into a ledger entry. Reply with ONLY a JSON object matching the shape at the end. No prose.',
+      'Line: ' + JSON.stringify(text),
+      'Today: ' + today() + '. Home neighborhoods: ' + (state.home || 'unknown') + '.',
+      known.length ? 'People logged before: ' + known.join(', ') + '.' : '',
+      'Categories: food = restaurants, bars, cafes, groceries. screen = films and TV. live = concerts, comedy, theater, sports. place = museums, hikes, parks, landmarks, activities.',
+      'Fields by category. food: city, cuisine, address, dish. screen: kind (Film|Series|Documentary|Short|Special), year, by, where. live: kind (Concert|Comedy|Theater|Sports|Festival|Talk), venue, city, address, support. place: kind (Museum|Landmark|Park|Hike|Gallery|Tour|Class|Market|Beach|Viewpoint), city, address.',
+      'Rules: title is only the name of the place, film, or event. "with X" goes in with. "get the X" or "order the X" goes in fields.dish. If the line says want to, should, or is about the future, status is "wishlist" and date is "". Otherwise status is "logged" and date is today, unless the line names a day (yesterday, last night, Tuesday) which you resolve to YYYY-MM-DD. Never invent an address, year, director, or cuisine the line does not imply; leave unknown fields as "". tags: up to 3 lowercase single words, only if obvious. note: leftover opinion or detail in the writer’s own words, or "".',
+      'Shape: {"category":"food","status":"logged","title":"","date":"' + today() + '","with":"","fields":{},"tags":[],"note":""}'
+    ].filter(Boolean).join('\n');
+  }
+
+  function draftFromAi(got, base) {
+    var d = JSON.parse(JSON.stringify(base));
+    if (!got || typeof got !== 'object' || Array.isArray(got)) return d;
+    var cat = CATS[got.category] ? got.category : d.category;
+    d.category = cat;
+    var st = String(got.status || '');
+    d.status = CATS[cat].statuses.some(function (p) { return p[0] === st; }) ? st : 'logged';
+    var title = String(got.title || '').trim();
+    if (title) d.title = title;
+    var date = String(got.date || '');
+    d.date = d.status === 'wishlist' ? '' : (/^\d{4}-\d{2}-\d{2}$/.test(date) ? date : d.date);
+    d['with'] = String(got['with'] || '').trim();
+    var keep = CATS[cat].fields.map(function (f) { return f.key; }).concat(SHARED_FIELD_KEYS);
+    var f = {};
+    if (got.fields && typeof got.fields === 'object') {
+      keep.forEach(function (k) {
+        if (got.fields[k] != null && String(got.fields[k]).trim()) f[k] = String(got.fields[k]).trim();
+      });
+    }
+    d.fields = f;
+    d.tags = Array.isArray(got.tags)
+      ? got.tags.map(function (t) { return String(t).trim().toLowerCase(); }).filter(Boolean).slice(0, 3) : [];
+    d.note = String(got.note || '').trim();
+    d.aiDraft = true;
+    return d;
+  }
+
+  function quickCapture() {
+    var input = document.getElementById('quickIn'), go = document.getElementById('quickGo');
+    var text = input ? input.value.trim() : '';
+    if (!text) { if (input) input.focus(); return; }
+    var base = { id: newId(), category: ui.cat === 'all' ? 'food' : ui.cat, status: 'logged', title: text,
+      date: today(), fields: {}, 'with': '', tags: [], note: '', again: null };
+    if (!ai) { openForm(null, base); return; }
+    go.disabled = true; go.textContent = 'Thinking…'; input.disabled = true;
+    var ctl = new AbortController();
+    ai.json(capturePrompt(text), { modelTier: 'quick', cache: false, signal: ctl.signal }).then(function (got) {
+      openForm(null, draftFromAi(got, base));
+    }).catch(function (err) {
+      var msg = aiError(err);
+      if (msg) notify(msg);
+      openForm(null, base);
+    }).then(function () {
+      var i2 = document.getElementById('quickIn'), g2 = document.getElementById('quickGo');
+      if (i2) { i2.disabled = false; i2.value = ''; }
+      if (g2) { g2.disabled = false; g2.textContent = 'Log it'; }
+    });
   }
 
   app.addEventListener('click', function (event) {
@@ -2744,7 +2907,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         + '<button type="button" class="yourow" data-x="suggest">' + svg('spark') + '<span>Suggest something</span></button>'
         + '<button type="button" class="yourow" data-x="spin">' + svg('auto') + '<span>Spin it</span><span class="c">' + w + '</span></button>'
         + '<button type="button" class="yourow" data-x="dishes">' + svg('check') + '<span>Order again</span><span class="c">' + d + '</span></button>'
-        + (years.length ? '<button type="button" class="yourow" data-x="review">' + svg('book') + '<span>' + esc(years[0]) + ' in review</span></button>' : '')
+        + (years.length ? '<button type="button" class="yourow" data-x="review">' + svg('book') + '<span>' + esc(years[0]) + ' in review, recap</span></button>' : '')
         + '<button type="button" class="yourow" data-x="settings">' + svg('gear') + '<span>Settings</span></button>'
         + '</div>'
         + '<div class="fieldset" style="margin:1.125rem 0 0"><span class="flabel">Appearance</span>'
@@ -2956,7 +3119,12 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       }
 
       var out = '<div class="dlg-head"><div>'
-        + (draft.sourceUrl ? '<div class="dlg-chips"><span class="chip chip-soft">via ' + esc(draft.source || 'source') + '</span></div>' : '')
+        + (draft.sourceUrl || draft.aiDraft
+            ? '<div class="dlg-chips">'
+              + (draft.sourceUrl ? '<span class="chip chip-soft">via ' + esc(draft.source || 'source') + '</span>' : '')
+              + (draft.aiDraft ? '<span class="chip chip-soft">Claude filled this in — check it</span>' : '')
+              + '</div>'
+            : '')
         + '<h2>' + esc(editing ? 'Edit entry' : 'New entry') + '</h2></div>'
         + '<span class="spacer"></span><button type="button" class="closex" data-x="close" aria-label="Close">×</button></div>'
         + '<div class="dlg-body">';
@@ -3091,6 +3259,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         }
         if (!clash) dupWarned = null;
         delete draft.sample;
+        delete draft.aiDraft;
         var nowIso = new Date().toISOString();
         if (!editing) draft.createdAt = nowIso;
         draft.updatedAt = nowIso;
@@ -3333,7 +3502,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         return '<div class="rec cat-' + catOf(p.entry) + '">'
           + '<span class="rank">' + (i + 1) + '</span><div class="body">'
           + '<div class="t"><button data-x="open" data-id="' + esc(p.entry.id) + '">' + esc(p.entry.title) + '</button></div>'
-          + '<p class="why">' + esc(p.why) + '</p></div></div>';
+          + '<p class="why" data-why>' + esc(p.why) + '</p></div></div>';
       }).join('');
     }
 
@@ -3343,10 +3512,37 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
       }).join('');
     }
 
+    function sharpen(btn) {
+      if (!ai || !r.picks.length) return;
+      btn.disabled = true; btn.textContent = 'Thinking…';
+      var done = state.entries.filter(function (e) { return statusOf(e) !== 'wishlist'; }).slice(-120);
+      var prompt = [
+        'For each want-to item below, write ONE sentence (max 22 words) on why it fits me, using ONLY the history. Second person. ' + voiceLine(),
+        'Reply with only a JSON array of strings, one per item, in the same order.',
+        'Want-to items:',
+        r.picks.map(function (p, i) { return (i + 1) + '. ' + compactEntry(p.entry); }).join('\n'),
+        'History:',
+        done.map(compactEntry).join('\n')
+      ].join('\n');
+      ai.json(prompt, { modelTier: 'quick' }).then(function (arr) {
+        if (!Array.isArray(arr)) throw { code: 'invalid_json' };
+        dlg.querySelectorAll('[data-why]').forEach(function (p, i) {
+          if (typeof arr[i] === 'string' && arr[i].trim()) { p.textContent = arr[i].trim(); p.classList.add('is-ai'); }
+        });
+        btn.textContent = 'Sharpened';
+      }).catch(function (err) {
+        var msg = aiError(err);
+        if (msg) notify(msg);
+        btn.disabled = false; btn.textContent = 'Sharpen with Claude';
+      });
+    }
+
     dlg.innerHTML = dlgHead('Suggest something') + '<div class="dlg-body">' + body + '</div>'
-      + dlgFoot('<button type="button" class="btn btn-quiet" data-x="howto">How Claude adds to this</button>');
+      + dlgFoot((r.picks.length ? '<button type="button" class="btn btn-quiet" data-x="sharpen" data-ai-only' + (ai ? '' : ' hidden') + '>Sharpen with Claude</button>' : '')
+        + '<button type="button" class="btn btn-quiet" data-x="howto">How this works</button>');
     onClose(dlg, function (what, el) {
       if (what === 'open') { var e = find(el.getAttribute('data-id')); dlg.close(); openDetail(e); }
+      else if (what === 'sharpen') { sharpen(el); }
       else if (what === 'howto') { dlg.close(); openHowto(); }
     });
     dlg.showModal();
@@ -3676,6 +3872,74 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     if (!years.length) return;
     var cur = years.indexOf(year) !== -1 ? year : years[0];
     var dlg = modal('');
+    var recapScope = 'month', recapText = '', recapCtl = null;
+
+    function recapLabel() {
+      var now = new Date();
+      return recapScope === 'month' ? MONTHS[now.getMonth()] + ' ' + now.getFullYear() : cur;
+    }
+    function recapEntries() {
+      var now = new Date();
+      var ym = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+      return state.entries.filter(function (e) {
+        if (statusOf(e) === 'wishlist') return false;
+        var d = e.date || (e.createdAt ? e.createdAt.slice(0, 10) : '');
+        if (!d) return false;
+        return recapScope === 'month' ? d.slice(0, 7) === ym : d.slice(0, 4) === cur;
+      }).sort(function (a, b) {
+        return (a.date || a.createdAt || '') < (b.date || b.createdAt || '') ? -1 : 1;
+      }).slice(-150);
+    }
+    function recapHtml() {
+      return '<div class="block" id="recapBlock" data-ai-only' + (ai ? '' : ' hidden') + '>'
+        + '<h3>Recap</h3>'
+        + '<div class="row">'
+        + '<button type="button" class="tagchip" data-x="recap-scope" data-scope="month" aria-pressed="' + (recapScope === 'month') + '">This month</button>'
+        + '<button type="button" class="tagchip" data-x="recap-scope" data-scope="year" aria-pressed="' + (recapScope === 'year') + '">' + esc(cur) + '</button>'
+        + '<span class="spacer"></span>'
+        + '<button type="button" class="btn btn-quiet" data-x="recap-go" id="recapGo">' + (recapText ? 'Write it again' : 'Write a recap') + '</button>'
+        + '<button type="button" class="btn btn-quiet" data-x="recap-stop" id="recapStop" hidden>Stop</button>'
+        + '</div>'
+        + '<p class="recap-out" id="recapOut">' + (recapText ? esc(recapText)
+            : '<span class="none">Four or five sentences about what you actually did, in your ledger’s voice. Uses your Claude account.</span>') + '</p>'
+        + '</div>';
+    }
+    function runRecap() {
+      if (!ai) return;
+      var out = dlg.querySelector('#recapOut'), go = dlg.querySelector('#recapGo'), stop = dlg.querySelector('#recapStop');
+      if (!out || !go) return;
+      var list = recapEntries();
+      if (!list.length) { out.innerHTML = '<span class="none">Nothing logged for ' + esc(recapLabel()) + ' yet.</span>'; return; }
+      var refresh = !!recapText;
+      recapCtl = new AbortController();
+      go.disabled = true; stop.hidden = false;
+      out.textContent = 'Thinking…';
+      var prompt = [
+        'Write a recap of my ' + (recapScope === 'month' ? 'month' : 'year') + ' (' + recapLabel() + ') from my personal ledger below. Second person, 4 to 6 sentences, one paragraph, no headings, no bullet points, no emoji.',
+        'Use only what is in the entries. Name specific places, films, and people. Notice repeats, who I went with most, anything I said I would go back to, and any category I ignored. Do not invent anything, do not give advice, do not describe the format.',
+        voiceLine(),
+        'Entries, one per line:',
+        list.map(compactEntry).join('\n')
+      ].join('\n');
+      ai(prompt, {
+        modelTier: 'default',
+        cache: refresh ? { gcTime: 86400000, refresh: true } : { gcTime: 86400000 },
+        signal: recapCtl.signal,
+        onText: function (u) { out.textContent = u.text; }
+      }).then(function (r) {
+        recapText = r.text; out.textContent = r.text;
+        if (r.truncated) notify('Cut short. Try the month instead of the year.');
+      }).catch(function (err) {
+        var msg = aiError(err);
+        out.textContent = err && err.text ? err.text : '';
+        if (!out.textContent) out.innerHTML = '<span class="none">' + esc(msg || 'Stopped.') + '</span>';
+        else if (msg) notify(msg);
+        if (aiDead) { var b = dlg.querySelector('#recapBlock'); if (b) b.hidden = true; }
+      }).then(function () {
+        go.disabled = false; go.textContent = recapText ? 'Write it again' : 'Write a recap';
+        stop.hidden = true; recapCtl = null;
+      });
+    }
 
     function tile(v, k, cls) {
       return '<div class="tile' + (cls ? ' ' + cls : '') + '"><div class="v">' + v + '</div><div class="k">' + esc(k) + '</div></div>';
@@ -3697,6 +3961,8 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         return '<button type="button" class="tagchip" data-x="year" data-year="' + esc(y) + '" aria-pressed="'
           + (y === cur) + '">' + esc(y) + '</button>';
       }).join('') + '</div>';
+
+      body += recapHtml();
 
       if (!r.total) {
         body += '<p class="none">Nothing logged in ' + esc(cur) + '.</p>';
@@ -3759,7 +4025,10 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
     }
 
     onClose(dlg, function (what, el) {
-      if (what === 'year') { cur = el.getAttribute('data-year'); paint(); }
+      if (what === 'year') { if (recapCtl) recapCtl.abort(); cur = el.getAttribute('data-year'); recapText = ''; paint(); }
+      else if (what === 'recap-scope') { if (recapCtl) recapCtl.abort(); recapScope = el.getAttribute('data-scope'); recapText = ''; paint(); }
+      else if (what === 'recap-go') { runRecap(); }
+      else if (what === 'recap-stop') { if (recapCtl) recapCtl.abort(); }
       else if (what === 'open') { var e = find(el.getAttribute('data-id')); dlg.close(); openDetail(e); }
       else if (what === 'show-undated') {
         ui.q = ''; ui.tags = []; ui.cat = 'all'; ui.status = 'all'; ui.tab = 'main';
@@ -3836,7 +4105,7 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
         + '<p class="hint" style="color:var(--ink-3);font-size:.8125rem;margin:0 0 .5rem">Deleted entries sit here until you empty it yourself — nothing purges automatically.</p>'
         + '<button type="button" class="btn btn-quiet" data-x="trash">View trash (' + (state.trash || []).length + ')</button></div>'
         + '</div><div class="dlg-foot">'
-        + '<button type="button" class="btn btn-quiet" data-x="howto">How to update this</button>'
+        + '<button type="button" class="btn btn-quiet" data-x="howto">How this works</button>'
         + '<span class="spacer"></span>'
         + '<button type="button" class="btn btn-quiet" data-x="close">Cancel</button>'
         + '<button type="button" class="btn" data-x="save">Save</button></div>';
@@ -3904,27 +4173,33 @@ dialog::backdrop { background: rgba(10,10,14,.42); -webkit-backdrop-filter: blur
   function openHowto() {
     var dlg = modal('');
     var here = ARTIFACT_URL || (window.location && window.location.href) || '';
-    dlg.innerHTML = dlgHead('Keeping this up to date') + '<div class="dlg-body howto">'
-      + '<h3>On the page</h3>'
-      + '<p>Add entry, then edit or delete from any entry\u2019s detail view. Every change publishes a new version of this page, so it is saved for good.</p>'
-      + '<h3>Or tell Claude</h3>'
+    dlg.innerHTML = dlgHead('How this works') + '<div class="dlg-body howto">'
+      + '<h3>Where your ledger lives</h3>'
+      + '<p>Everything you log is saved inside this page, in your Claude account. Every save makes a new version, so nothing is ever overwritten — an older version can always be brought back by asking Claude. Nobody else can edit it.</p>'
+      + '<h3>Backups</h3>'
+      + '<p>Settings → <strong>Save backup file</strong> gives you a copy to keep anywhere you like. That file is the whole ledger, and it is what you would hand back to Claude to restore. Save one now and then; it is two taps.</p>'
+      + '<h3>The Claude bits</h3>'
+      + '<p>Three things here ask Claude for help: the <strong>Log it</strong> box, the <strong>recap</strong> in Year in review, and <strong>Sharpen</strong> in Suggest something. They only run when you tap them, they use your own Claude account, and they see only the entries they need. The first time, Claude asks your permission. Say no and those buttons disappear; the rest of the ledger does not care. Claude never remembers anything between taps.</p>'
+      + '<h3>Who can see this</h3>'
+      + '<p>Anyone with the link sees the whole thing — every entry, note, and name. There is no way to hide some entries from viewers on a shared page. If something should stay private, keep it out, or unshare the link.</p>'
+      + '<h3>Talking to Claude about it</h3>'
       + '<p>Paste this address into a Claude project and Claude can read and update the ledger the same way you do:</p>'
       + '<code class="snippet">' + esc(here) + '</code>'
-      + '<p class="quote">\u201cAdd Gjelina to my ledger \u2014 went last night with Ari, get the lamb. Tag it venice.\u201d</p>'
-      + '<p class="quote">\u201cMove Severance to watched, finished it Tuesday.\u201d</p>'
-      + '<p class="quote">\u201cWrite me three suggestions for this weekend and put them in the ledger.\u201d</p>'
-      + '<h3>For the project instructions</h3>'
+      + '<p class="quote">“Add Gjelina to my ledger — went last night with Ari, get the lamb. Tag it venice.”</p>'
+      + '<p class="quote">“Move Severance to watched, finished it Tuesday.”</p>'
+      + '<p class="quote">“Stock Discovery with Thai places near WeHo and comedy shows this month.”</p>'
+      + '<h3>For Claude: project instructions</h3>'
       + '<code class="snippet">' + esc('My activity ledger lives at ' + here + '\n\n'
         + 'When I mention a restaurant, bar, movie, show, concert, or live event, update the ledger: read it with the Artifact tool, edit the JSON in the script block with id "entry-data", and publish back to the same URL.\n\n'
-        + 'Categories: food, screen, live, place. Statuses: food, live and place use "logged" or "wishlist"; screen also allows "watching". Tags are lowercase. Put street addresses in fields.address on food and live entries so the map links work, and what to order in fields.dish. Keep my wording in the note.\n\n'
+        + 'Categories: food, screen, live, place. Statuses: food, live and place use "logged" or "wishlist"; screen also allows "watching". Tags are lowercase. Put street addresses in fields.address so the map links work, and what to order in fields.dish. Keep my wording in the note.\n\n'
         + 'Entries also carry createdAt and updatedAt (ISO 8601) and "again": true, false, or null. createdAt/updatedAt are set automatically when I save through the page — leave them alone, and never guess a timestamp. Only set "again" to true or false if I actually tell you whether I would go/watch again; otherwise leave it null. Null means not answered, never treat it as false.\n\n'
         + 'There is also a top-level "trash" array. Deleted entries move there with a deletedAt timestamp instead of disappearing. Never delete an entry by removing it outright — move it to trash the same way, and never empty or edit trash unless I explicitly ask.\n\n'
         + 'To write suggestions, set the top-level "recs" to {"at": "<today>", "items": [{"category": "food", "title": "...", "body": "..."}]}. Base them only on what is already in the ledger. Match the "tone" field: plain, dry, or salty.') + '</code>'
       + '<h3>Stocking Discovery</h3>'
       + '<p>The page is sandboxed and cannot call an API, so the Discovery index holds whatever Claude has put in it. Ask for a search and it appends to the top-level catalog array:</p>'
-      + '<code class="snippet">' + esc('{ "id": "unique", "kind": "screen" | "food" | "place" | "live", "title": "...",\n  "year": "2022", "by": "director or creator", "form": "Film | Series | Museum | Landmark",\n  "cuisine": "...", "city": "...", "address": "street address",\n  "tags": ["lowercase"], "w": 1-5 how notable, "q": "extra search words",\n  "blurb": "candid overview: what it is, why bother, the drawback",\n  "source": "Wikipedia", "sourceUrl": "https://...",\n  "verifiedAt": "2026-08-29" | null,\n  "venue": "live only", "when": "Oct 3, Sat · 8:30 PM", "date": "2026-10-03" }') + '</code>'
+      + '<code class="snippet">' + esc('{ "id": "unique", "kind": "screen" | "food" | "place" | "live", "title": "...",\n  "year": "2022", "by": "director or creator", "form": "Film | Series | Museum | Landmark | Comedy | Concert",\n  "cuisine": "...", "city": "...", "address": "street address",\n  "venue": "live only", "when": "Oct 3, Sat · 8:30 PM", "date": "2026-10-03",\n  "tags": ["lowercase"], "w": 1-5 how notable, "q": "extra search words",\n  "blurb": "candid overview: what it is, why bother, the drawback",\n  "source": "Wikipedia", "sourceUrl": "https://...",\n  "verifiedAt": "2026-09-15" | null }') + '</code>'
       + '<p>Use only facts that are actually in the source; leave a field out rather than guessing, and the card will say an address is missing. Bump catalogAt to the date. '
-      + 'Set verifiedAt to the date you actually confirmed the address/details against a live source — leave it null if you did not check. Never guess a date just to fill it in.</p>'
+      + 'Set verifiedAt to the date you actually confirmed the details against a live source — leave it null if you did not check. Never guess a date just to fill it in.</p>'
       + '</div>' + dlgFoot();
     onClose(dlg);
     dlg.showModal();
