@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "sked-social": {
+      "type": "http",
+      "url": "https://app-mcp.skedsocial.com/mcp"
+    }
+  }
+}
