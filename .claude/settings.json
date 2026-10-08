@@ -1,0 +1,8 @@
+{
+  "model": "sonnet",
+  "effortLevel": "high",
+  "advisorModel": "claude-opus-5-5",
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "haiku"
+  }
+}
