@@ -2,6 +2,10 @@
   "model": "sonnet",
   "effortLevel": "high",
   "advisorModel": "claude-opus-5-5",
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}/.claude/statusline.sh\""
+  },
   "env": {
     "CLAUDE_CODE_SUBAGENT_MODEL": "haiku"
   }
