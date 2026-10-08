@@ -10,7 +10,8 @@
 - Scouts return structured AST summaries and docs snippets only. They never modify files or return raw file dumps
 
 ## Advisor checkpoints
-- Consult /advisor opus before finalizing any plan that touches multiple files or modules
-- Summon /advisor opus automatically when the same test or compiler error fails twice
-- Before declaring a task complete or staging a git commit, run an advisor diff contract audit:
+The advisor is the `advisor` tool, backed by Opus via `advisorModel` in settings.json (change it with /advisor)
+- Call the advisor tool before finalizing any plan that touches multiple files or modules
+- Call the advisor tool automatically when the same test or compiler error fails twice
+- Before declaring a task complete or staging a git commit, call the advisor tool for a diff contract audit:
   compare the diff against the stated requirements and report gaps, unrequested changes, and unverified claims
