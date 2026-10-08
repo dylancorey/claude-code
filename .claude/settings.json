@@ -4,7 +4,7 @@
   "advisorModel": "claude-opus-5-5",
   "statusLine": {
     "type": "command",
-    "command": "bash \"${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}/.claude/statusline.sh\""
+    "command": "in=$(cat); d=$(jq -r '.workspace.project_dir // .cwd // empty' <<<\"$in\"); bash \"${d:-${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}}/.claude/statusline.sh\" <<<\"$in\""
   },
   "env": {
     "CLAUDE_CODE_SUBAGENT_MODEL": "haiku"
