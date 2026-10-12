@@ -16,7 +16,7 @@ Exposes a safe subset of the Paychex Flex API (spec: api.paychex.com, OpenAPI 3.
 ## Always-on setup (cloud sessions)
 - `.mcp.json` at the repo root launches this server in every session, reading credentials from environment variables
 - Add `PAYCHEX_CLIENT_ID` and `PAYCHEX_CLIENT_SECRET` as environment secrets for the cloud environment
-- Add this to the environment setup script so the pinned dependencies exist each session: `python3 -m venv paychex-mcp/.venv && paychex-mcp/.venv/bin/pip install -q -r paychex-mcp/requirements.txt`
+- No setup script needed: `run.sh` builds the pinned venv on first launch
 
 ## Notes
 - `statetaxes` on workers is not exposed. Company-level `statetaxes` is
