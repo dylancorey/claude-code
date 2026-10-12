@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "paychex": {
+      "command": "paychex-mcp/.venv/bin/python",
+      "args": ["paychex-mcp/server.py"],
+      "env": {
+        "PAYCHEX_CLIENT_ID": "${PAYCHEX_CLIENT_ID}",
+        "PAYCHEX_CLIENT_SECRET": "${PAYCHEX_CLIENT_SECRET}"
+      }
+    }
+  }
+}
