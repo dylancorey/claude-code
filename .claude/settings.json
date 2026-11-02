@@ -4,7 +4,7 @@
   "advisorModel": "claude-opus-5-5",
   "statusLine": {
     "type": "command",
-    "command": "in=$(cat); d=$(jq -r '.workspace.project_dir // .cwd // empty' <<<\"$in\"); bash \"${d:-${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}}/.claude/statusline.sh\" <<<\"$in\""
+    "command": "bash -c 'in=$(cat); d=$(jq -r \".workspace.project_dir // .cwd // empty\" <<<\"$in\" 2>/dev/null); for r in \"$d\" \"$CLAUDE_PROJECT_DIR\" \"$(git rev-parse --show-toplevel 2>/dev/null)\" \"$HOME\"; do if [ -n \"$r\" ] && [ -f \"$r/.claude/statusline.sh\" ]; then exec bash \"$r/.claude/statusline.sh\" <<<\"$in\"; fi; done; echo \"Claude Code\"'"
   },
   "env": {
     "CLAUDE_CODE_SUBAGENT_MODEL": "haiku"
