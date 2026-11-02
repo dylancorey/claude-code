@@ -1,6 +1,6 @@
 ---
 name: scout
-description: Parallel file discovery and docs retrieval. Returns structured summaries only, never edits files.
+description: Read-only search for broad discovery across many directories or unknown names. Use only when a direct Grep or Glob by the lead is not enough. Not for reading a known file or finding a single symbol. Returns structured summaries only, never edits files.
 model: haiku
 effort: medium
 tools: Read, Grep, Glob, WebFetch
